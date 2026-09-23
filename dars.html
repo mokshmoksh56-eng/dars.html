@@ -246,7 +246,7 @@ input[type=range] { accent-color: var(--primary-600); }
 .schedule-conflict-warning .conflict-group-name { color: #7F1D1D; background: rgba(255,255,255,0.6); padding: 1px 6px; border-radius: 4px; }
 
 /* =============================================== */
-/* 🌟 كارت التقويم الذكي - مع المواعيد داخل الخلايا */
+/* 🌟 كارت التقويم الذكي */
 /* =============================================== */
 .smart-calendar-card {
     background: linear-gradient(135deg, #FFFFFF, #F8FAFC);
@@ -288,7 +288,7 @@ input[type=range] { accent-color: var(--primary-600); }
 }
 
 .calendar-cell {
-    min-height: 74px;
+    min-height: 58px;
     border-radius: 8px;
     background: #fff;
     border: 1.5px solid #E2E8F0;
@@ -299,7 +299,7 @@ input[type=range] { accent-color: var(--primary-600); }
     overflow: hidden;
 }
 .calendar-cell:not(.empty):hover {
-    transform: scale(1.03); z-index: 2;
+    transform: scale(1.05); z-index: 2;
     border-color: var(--primary-400);
     box-shadow: 0 4px 12px -4px rgba(30,58,138,0.3);
 }
@@ -327,97 +327,239 @@ input[type=range] { accent-color: var(--primary-600); }
 .calendar-cell.today .calendar-day-num { color: var(--primary-700); }
 .calendar-cell.selected-day .calendar-day-num { color: var(--gold-600); }
 
-/* 🌟 الأشرطة الآن تحتوي على الوقت */
-.calendar-bars {
-    flex: 1;
-    display: flex; flex-direction: column;
-    gap: 1.5px;
-    padding: 0 1px;
-    overflow: hidden;
-    justify-content: flex-start;
+/* 🌟 نقاط ملونة للأيام */
+.calendar-day-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
+    min-height: 10px;
+}
+.calendar-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    animation: dotPop 0.3s ease-out;
+}
+.calendar-dot.dot-kg { background: #F59E0B; }
+.calendar-dot.dot-primary { background: #10B981; }
+.calendar-dot.dot-prep { background: #3B82F6; }
+.calendar-dot.dot-secondary { background: #8B5CF6; }
+.calendar-dot.dot-custom { background: #EF4444; }
+
+@keyframes dotPop {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
 }
 
-.calendar-bar {
+/* رقم صغير للحجوزات */
+.calendar-count-mini {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: #0F172A;
+    color: #fff;
+    font-size: 7px;
+    font-weight: 900;
+    min-width: 13px;
+    height: 13px;
+    padding: 0 3px;
+    border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2px 1px;
-    border-radius: 4px;
-    font-size: 8px;
-    font-weight: 900;
-    color: #fff;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 12px;
-    text-align: center;
-    letter-spacing: -0.2px;
-    animation: slideInFromTop 0.3s ease-out;
-}
-@media (max-width: 500px) {
-    .calendar-bar { font-size: 7px; padding: 2px 0; min-height: 11px; }
-    .calendar-day-num { font-size: 9px; }
-    .calendar-cell { min-height: 66px; }
-    .calendar-weekdays span { font-size: 7.5px; padding: 3px 0; }
-}
-
-.calendar-bar.bar-kg { background: #F59E0B; }
-.calendar-bar.bar-primary { background: #10B981; }
-.calendar-bar.bar-prep { background: #3B82F6; }
-.calendar-bar.bar-secondary { background: #8B5CF6; }
-.calendar-bar.bar-custom { background: #EF4444; }
-
-.calendar-more-indicator {
-    font-size: 7px; text-align: center;
-    color: #64748B; font-weight: 900;
-    line-height: 1;
-    padding: 1px 0;
-}
-
-.calendar-count-badge {
-    position: absolute;
-    top: -4px; left: -4px;
-    background: #0F172A;
-    color: #fff;
-    font-size: 8px;
-    font-weight: 900;
-    width: 15px; height: 15px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    border: 1.5px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    border: 1px solid #fff;
     z-index: 3;
 }
 
-.calendar-day-details {
-    margin-top: 10px;
+/* اليوم المختار - لون ذهبي واضح */
+.calendar-cell.active-selected {
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    border-color: #D97706;
+    border-width: 2px;
+    box-shadow: 0 4px 12px -3px rgba(217,119,6,0.4);
+    transform: scale(1.05);
+    z-index: 5;
+}
+.calendar-cell.active-selected .calendar-day-num {
+    color: #92400E;
+    font-size: 12px;
+}
+
+/* الأيام اللي فيها حجوزات - خلفية خفيفة */
+.calendar-cell.has-bookings {
+    background: #F8FAFC;
+    border-color: #CBD5E1;
+}
+.calendar-cell.has-bookings:hover {
+    background: #F1F5F9;
+    border-color: var(--primary-400);
+}
+
+/* =============================================== */
+/* 🎯 بانر اليوم المختار */
+/* =============================================== */
+.calendar-day-banner {
+    margin-top: 12px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    min-height: 80px;
+}
+
+.calendar-day-banner.has-content {
+    border-color: var(--primary-300);
+    background: linear-gradient(135deg, #FFFFFF, #F8FAFC);
+    box-shadow: 0 6px 18px -8px rgba(30,58,138,0.25);
+}
+
+.banner-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #F8FAFC;
+    border: 2px dashed #CBD5E1;
+    border-radius: 14px;
+    color: #94A3B8;
+    font-size: 12px;
+    font-weight: 900;
+    text-align: center;
+    gap: 6px;
+}
+
+.banner-content {
+    animation: bannerSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes bannerSlideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.banner-header {
+    padding: 10px 14px;
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-900));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 900;
+}
+.banner-header .day-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.banner-header .day-badge {
+    background: rgba(255,255,255,0.25);
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.banner-body {
     padding: 10px;
-    border-radius: 12px;
-    background: var(--primary-50);
-    border: 1.5px dashed var(--primary-300);
-    display: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 240px;
+    overflow-y: auto;
 }
-.calendar-day-details.show { display: block; animation: slideInFromTop 0.3s ease-out; }
-.calendar-day-details .detail-title {
-    font-size: 12px; font-weight: 900;
-    color: var(--primary-800);
-    margin-bottom: 6px;
-    display: flex; align-items: center; gap: 4px;
+
+.banner-empty-day {
+    padding: 16px;
+    text-align: center;
+    color: #64748B;
+    font-size: 12px;
+    font-weight: 800;
+    background: #F8FAFC;
+    border-radius: 10px;
+    border: 1.5px dashed #CBD5E1;
 }
-.calendar-day-details .detail-item {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 8px; border-radius: 8px;
-    background: #fff; margin-bottom: 4px;
-    border-right: 3px solid;
-    font-size: 11px; font-weight: 800;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+/* كارت المجموعة داخل البانر */
+.banner-group-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-right: 4px solid;
+    font-size: 11.5px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+    animation: itemSlideIn 0.3s ease-out backwards;
 }
-.calendar-day-details .detail-item:last-child { margin-bottom: 0; }
-.calendar-day-details .empty-state {
-    text-align: center; font-size: 11px;
-    color: #64748B; font-weight: 800;
-    padding: 6px 0;
+.banner-group-item:nth-child(1) { animation-delay: 0.05s; }
+.banner-group-item:nth-child(2) { animation-delay: 0.1s; }
+.banner-group-item:nth-child(3) { animation-delay: 0.15s; }
+.banner-group-item:nth-child(4) { animation-delay: 0.2s; }
+.banner-group-item:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes itemSlideIn {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.banner-group-item:hover {
+    transform: translateX(-3px);
+    box-shadow: 0 4px 10px -4px rgba(0,0,0,0.15);
+}
+
+.banner-group-time {
+    background: #F1F5F9;
+    color: #334155;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 900;
+    direction: ltr;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.banner-group-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.banner-group-name {
+    font-size: 12px;
+    font-weight: 900;
+    color: #1E293B;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.banner-group-meta {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: #64748B;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.banner-group-badge {
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #F1F5F9;
+    font-size: 9px;
+}
+
+.banner-group-icon {
+    font-size: 18px;
+    flex-shrink: 0;
 }
 </style>
 </head>
@@ -619,7 +761,7 @@ input[type=range] { accent-color: var(--primary-600); }
                     <input type="hidden" id="teacherRadius"> 
                 </div>
 
-                <!-- 📅 كارت التقويم الذكي -->
+                <!-- 📅 كارت التقويم الذكي - الشكل 6 -->
                 <div class="mb-4">
                     <label class="field-label flex items-center gap-2">
                         <span>📅</span>
@@ -627,7 +769,7 @@ input[type=range] { accent-color: var(--primary-600); }
                         <span class="single-badge !bg-sky-100 !text-sky-800 !border-sky-300">المواعيد ظاهرة</span>
                     </label>
                     <p class="text-[11px] text-slate-500 font-bold mb-2 leading-relaxed">
-                        💡 كل خلية تعرض المواعيد المحجوزة في ذلك اليوم. اضغط على أي يوم للتفاصيل الكاملة.
+                        💡 الأيام الملونة = فيها حجوزات. اضغط على أي يوم لعرض كل المواعيد بالتفصيل.
                     </p>
                     <div class="smart-calendar-card">
                         <div class="calendar-header">
@@ -635,12 +777,26 @@ input[type=range] { accent-color: var(--primary-600); }
                             <span class="calendar-month-label" id="calendarMonthLabel">--</span>
                             <button type="button" class="calendar-nav-btn" onclick="changeCalendarMonth(1)">▶</button>
                         </div>
+
                         <div class="calendar-weekdays">
                             <span>السبت</span><span>الأحد</span><span>الاثنين</span>
                             <span>الثلاثاء</span><span>الأربعاء</span><span>الخميس</span><span>الجمعة</span>
                         </div>
+
                         <div class="calendar-grid" id="calendarGrid"></div>
-                        <div class="calendar-day-details" id="calendarDayDetails"></div>
+
+                        <!-- 🎯 بانر اليوم المختار -->
+                        <div class="calendar-day-banner" id="calendarDayBanner">
+                            <div class="banner-empty" id="calendarBannerEmpty">
+                                <span class="text-2xl">👆</span>
+                                <p>اضغط على أي يوم لعرض المواعيد</p>
+                            </div>
+                            <div class="banner-content" id="calendarBannerContent" style="display: none;">
+                                <div class="banner-header" id="calendarBannerHeader"></div>
+                                <div class="banner-body" id="calendarBannerBody"></div>
+                            </div>
+                        </div>
+
                         <div class="flex items-center justify-center gap-2 mt-3 text-[9px] font-black flex-wrap">
                             <span class="flex items-center gap-1"><span class="w-3 h-1 rounded-full" style="background:#F59E0B"></span> KG</span>
                             <span class="flex items-center gap-1"><span class="w-3 h-1 rounded-full" style="background:#10B981"></span> ابتدائي</span>
@@ -928,7 +1084,6 @@ input[type=range] { accent-color: var(--primary-600); }
         return `${hour12}:${m} ${ampm}`;
     }
 
-    // 🌟 دالة تنسيق الوقت المختصر للعرض داخل خلايا التقويم
     function formatTimeRangeShort(start, end) {
         if (!start || !end) return '';
         const [sh, sm] = start.split(':').map(Number);
@@ -943,7 +1098,6 @@ input[type=range] { accent-color: var(--primary-600); }
         const startText = sm > 0 ? `${startH12}:${String(sm).padStart(2,'0')}` : `${startH12}`;
         const endText = em > 0 ? `${endH12}:${String(em).padStart(2,'0')}` : `${endH12}`;
         
-        // لو نفس الفترة (الاتنين صباحاً أو مساءً) نكتفي بمؤشر واحد
         if (startPeriod === endPeriod) {
             return `${startText}-${endText}${endPeriod}`;
         }
@@ -1739,7 +1893,9 @@ input[type=range] { accent-color: var(--primary-600); }
             renderClassStageSelector();
             renderDaysSelector();
             updateSchedulePreview();
+            selectedCalendarDay = null;
             renderSmartCalendar();
+            renderDayBanner();
         }
     };
 
@@ -1824,13 +1980,15 @@ input[type=range] { accent-color: var(--primary-600); }
         warningEl.classList.add('show');
     }
 
-    // ==================== 🌟 كارت التقويم الذكي (مع المواعيد داخل الخلايا) ====================
+    // ==================== 🌟 الشكل 6: تقويم شهري + بانر ====================
     let currentCalendarDate = new Date();
+    let selectedCalendarDay = null;
 
     function changeCalendarMonth(delta) {
         currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+        selectedCalendarDay = null;
         renderSmartCalendar();
-        document.getElementById('calendarDayDetails')?.classList.remove('show');
+        renderDayBanner();
     }
 
     function getWeekdayKeyFromDate(date) {
@@ -1860,56 +2018,50 @@ input[type=range] { accent-color: var(--primary-600); }
         const lastDay = new Date(year, month + 1, 0);
         const daysInMonth = lastDay.getDate();
         
-        // التقويم العربي يبدأ من السبت
         const startOffset = (firstDay.getDay() + 1) % 7;
         
         const today = new Date();
         let html = '';
         
-        // خلايا فارغة قبل بداية الشهر
         for (let i = 0; i < startOffset; i++) {
             html += `<div class="calendar-cell empty"></div>`;
         }
         
-        // أيام الشهر
         for (let d = 1; d <= daysInMonth; d++) {
             const dateObj = new Date(year, month, d);
             const dayKey = getWeekdayKeyFromDate(dateObj);
             const bookings = (classesDB || []).filter(c => c.days && c.days.includes(dayKey));
             const todayFlag = isSameDay(dateObj, today);
             const selectedFlag = selectedDays.includes(dayKey);
+            const isActiveDay = selectedCalendarDay === d;
+            const hasBookings = bookings.length > 0;
             
             let cellClasses = 'calendar-cell';
             if (todayFlag) cellClasses += ' today';
             if (selectedFlag) cellClasses += ' selected-day';
+            if (hasBookings) cellClasses += ' has-bookings';
+            if (isActiveDay) cellClasses += ' active-selected';
             
-            // 🌟 الأشرطة تحتوي على الوقت نفسه
-            const maxBars = 3;
-            let barsHtml = '';
+            const maxDots = 6;
+            let dotsHtml = '';
             const sortedBookings = [...bookings].sort((a,b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
             
-            sortedBookings.slice(0, maxBars).forEach(cls => {
+            sortedBookings.slice(0, maxDots).forEach(cls => {
                 const stageKey = getStageForGrade(cls.grade) !== 'custom' 
                     ? getStageForGrade(cls.grade) 
                     : getStageForSubject(cls.subject);
-                const timeText = formatTimeRangeShort(cls.startTime, cls.endTime);
-                const tooltip = `${cls.groupName}\n${formatTime(cls.startTime)} - ${formatTime(cls.endTime)}`;
-                barsHtml += `<div class="calendar-bar bar-${stageKey}" title="${tooltip}">${timeText}</div>`;
+                dotsHtml += `<span class="calendar-dot dot-${stageKey}"></span>`;
             });
             
-            if (bookings.length > maxBars) {
-                barsHtml += `<div class="calendar-more-indicator">+${bookings.length - maxBars} أخرى</div>`;
-            }
-            
-            const countBadge = bookings.length > 0 
-                ? `<div class="calendar-count-badge">${bookings.length}</div>` 
+            const countMini = bookings.length > 0 
+                ? `<div class="calendar-count-mini">${bookings.length}</div>` 
                 : '';
             
             html += `
-                <div class="${cellClasses}" onclick="showCalendarDayDetails(${d})">
-                    ${countBadge}
+                <div class="${cellClasses}" onclick="selectCalendarDay(${d})">
+                    ${countMini}
                     <div class="calendar-day-num">${d}</div>
-                    <div class="calendar-bars">${barsHtml}</div>
+                    <div class="calendar-day-dots">${dotsHtml}</div>
                 </div>
             `;
         }
@@ -1917,52 +2069,85 @@ input[type=range] { accent-color: var(--primary-600); }
         grid.innerHTML = html;
     }
 
-    function showCalendarDayDetails(day) {
-        const detailsEl = document.getElementById('calendarDayDetails');
-        if (!detailsEl) return;
+    function selectCalendarDay(day) {
+        selectedCalendarDay = day;
+        renderSmartCalendar();
+        renderDayBanner();
+    }
+
+    function renderDayBanner() {
+        const banner = document.getElementById('calendarDayBanner');
+        const emptyEl = document.getElementById('calendarBannerEmpty');
+        const contentEl = document.getElementById('calendarBannerContent');
+        const headerEl = document.getElementById('calendarBannerHeader');
+        const bodyEl = document.getElementById('calendarBannerBody');
+        
+        if (!banner || !emptyEl || !contentEl || !headerEl || !bodyEl) return;
+        
+        if (selectedCalendarDay === null) {
+            banner.classList.remove('has-content');
+            emptyEl.style.display = 'flex';
+            contentEl.style.display = 'none';
+            return;
+        }
+        
+        banner.classList.add('has-content');
+        emptyEl.style.display = 'none';
+        contentEl.style.display = 'block';
         
         const year = currentCalendarDate.getFullYear();
         const month = currentCalendarDate.getMonth();
-        const dateObj = new Date(year, month, day);
+        const dateObj = new Date(year, month, selectedCalendarDay);
         const dayKey = getWeekdayKeyFromDate(dateObj);
         const dayName = WEEK_DAYS.find(d => d.key === dayKey)?.name || '';
+        const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+        const monthName = arabicMonths[month];
+        
         const bookings = (classesDB || []).filter(c => c.days && c.days.includes(dayKey));
         
+        headerEl.innerHTML = `
+            <div class="day-info">
+                <span>📅</span>
+                <span>${dayName} ${selectedCalendarDay} ${monthName}</span>
+            </div>
+            <span class="day-badge">${bookings.length} ${bookings.length === 1 ? 'مجموعة' : 'مجموعات'}</span>
+        `;
+        
         if (bookings.length === 0) {
-            detailsEl.innerHTML = `
-                <div class="empty-state">
-                    📅 ${dayName} ${day} - لا توجد حجوزات في هذا اليوم
+            bodyEl.innerHTML = `
+                <div class="banner-empty-day">
+                    🎉 لا توجد حجوزات في هذا اليوم - يوم فراغ
                 </div>
             `;
-            detailsEl.classList.add('show');
             return;
         }
         
         const sortedBookings = [...bookings].sort((a,b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
         
-        const items = sortedBookings.map(cls => {
+        bodyEl.innerHTML = sortedBookings.map(cls => {
             const stageKey = getStageForGrade(cls.grade) !== 'custom' 
                 ? getStageForGrade(cls.grade) 
                 : getStageForSubject(cls.subject);
             const colorInfo = STAGE_COLORS[stageKey] || STAGE_COLORS.custom;
             
+            let locationIcon = '🏫';
+            if (cls.type === 'teacher_home') locationIcon = '🏡';
+            else if (cls.type === 'student_home') locationIcon = '🚗';
+            
             return `
-                <div class="detail-item" style="border-right-color: ${colorInfo.solid};">
-                    <span style="color: ${colorInfo.text};">👥</span>
-                    <span class="flex-1 text-slate-800 truncate">${cls.groupName}</span>
-                    <span class="text-slate-500 text-[10px]">${cls.grade || ''}</span>
-                    <span class="text-slate-600 text-[10px]" dir="ltr">${formatTime(cls.startTime)} - ${formatTime(cls.endTime)}</span>
+                <div class="banner-group-item" style="border-right-color: ${colorInfo.solid};">
+                    <span class="banner-group-icon">${locationIcon}</span>
+                    <div class="banner-group-info">
+                        <div class="banner-group-name">${cls.groupName}</div>
+                        <div class="banner-group-meta">
+                            <span class="banner-group-badge">🎯 ${cls.grade || ''}</span>
+                            <span class="banner-group-badge" style="color:${colorInfo.text}; background:${colorInfo.bg};">📚 ${cls.subject || ''}</span>
+                        </div>
+                    </div>
+                    <span class="banner-group-time">${formatTimeRangeShort(cls.startTime, cls.endTime)}</span>
                 </div>
             `;
         }).join('');
-        
-        detailsEl.innerHTML = `
-            <div class="detail-title">
-                <span>📅</span> ${dayName} ${day} - ${bookings.length} ${bookings.length === 1 ? 'مجموعة' : 'مجموعات'}
-            </div>
-            ${items}
-        `;
-        detailsEl.classList.add('show');
     }
 
     function handleAddClass(e) {
@@ -2049,6 +2234,7 @@ input[type=range] { accent-color: var(--primary-600); }
         document.querySelector('input[name="classType"][value="center"]').checked = true;
         
         selectedDays = [];
+        selectedCalendarDay = null;
         renderDaysSelector();
         document.getElementById('startTime').value = '16:00';
         document.getElementById('endTime').value = '18:00';
