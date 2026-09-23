@@ -194,11 +194,14 @@ input[type=range] { accent-color: var(--primary-600); }
 .custom-subject-input { display:none; margin-top:12px; }
 .custom-subject-input.active { display:block; }
 
-/* شريط تمرير مخصص لمنطقة الأرشيف */
 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* إخفاء شريط التمرير الأفقي للأجهزة المحمولة مع إبقاء إمكانية التمرير */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 </head>
 <body>
@@ -207,6 +210,13 @@ input[type=range] { accent-color: var(--primary-600); }
     <header class="app-header">
         <h1 class="app-title">منصة <span class="accent">احجزلى</span></h1>
         <p class="app-subtitle">بوابة المعلم - إدارة المجموعات والدروس</p>
+        
+        <!-- 🟢 شريط تتبع رحلة المعلم المبتكر (ديناميكي وقابل للضغط) -->
+        <div class="mt-4 w-full overflow-x-auto no-scrollbar flex justify-start sm:justify-center pb-2 px-2">
+            <div id="liveJourneyTrackerContainer" class="inline-flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-xl border border-white/20 text-[12px] font-black text-white shadow-sm whitespace-nowrap min-w-max mx-auto">
+                <!-- سيتم تحديثه برمجياً عبر الجافاسكريبت -->
+            </div>
+        </div>
     </header>
 
     <div class="flex-1 relative w-full">
@@ -232,11 +242,11 @@ input[type=range] { accent-color: var(--primary-600); }
 
         <!-- 🌟 الخطوة الأولى: بيانات المعلم الأساسية -->
         <div id="teacherBasicProfileView" class="fade-enter">
-            <button onclick="showView('roleView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
+            <button onclick="navigateToStep('roleView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 عودة
             </button>
-            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">بيانات المعلم الأساسية 👤 (1/2)</h2>
+            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">بيانات المعلم الأساسية 👤 (1/4)</h2>
             
             <form id="teacherBasicForm" onsubmit="handleBasicProfileSubmit(event)">
                 <label class="field-label">اللقب</label>
@@ -286,75 +296,28 @@ input[type=range] { accent-color: var(--primary-600); }
 
         <!-- 🌟 الخطوة الثانية: اختيار المراحل والصفوف والمواد -->
         <div id="teacherStagesProfileView" class="fade-enter">
-            <button onclick="showView('teacherBasicProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
+            <button onclick="navigateToStep('teacherBasicProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 تعديل البيانات الأساسية
             </button>
-            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">اختيار المراحل والصفوف والمواد 📚 (2/2)</h2>
+            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">اختيار المراحل والصفوف والمواد 📚 (2/4)</h2>
             
             <form id="teacherStagesForm" onsubmit="handleStagesProfileSubmit(event)">
                 <p class="text-[11px] text-slate-500 font-bold mb-3">اضغط على المرحلة لتفتح، ثم اختر منها الصفوف والمواد.</p>
                 
                 <div id="unifiedEducationSelector" class="flex flex-col mb-4"></div>
 
-                <button type="submit" class="btn-primary mt-4">حفظ والانتقال لوحة التحكم 🚀</button>
+                <button type="submit" class="btn-primary mt-4">حفظ والانتقال لإضافة مجموعة 🚀</button>
             </form>
         </div>
 
-        <!-- لوحة تحكم المعلم -->
-        <div id="teacherDashboardView" class="fade-enter">
-            <button onclick="showView('teacherBasicProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">⚙️ تعديل بياناتي الأساسية</button>
-            
-            <div class="teacher-info-card">
-                <h2 id="dashTeacherName" class="text-[18px] font-black">مرحباً، --</h2>
-                <p id="dashTeacherAgePhone" class="text-xs font-bold mt-1 text-slate-600">--</p>
-                <p id="dashTeacherSubject" class="text-sm font-bold mt-1">📍 محافظة: --</p>
-                <div class="contact-info-box">
-                    <span class="icon">💬</span>
-                    <span>رقم الواتساب:</span>
-                    <span class="num" id="dashTeacherPhone">--</span>
-                </div>
-                <div id="dashGradesTags" class="flex flex-wrap gap-1 mt-2"></div>
-                <div id="dashSubjectsTags" class="flex flex-wrap gap-1 mt-2"></div>
-            </div>
-
-            <div class="flex justify-between items-center mb-4 mt-6">
-                <h3 class="font-black text-[var(--primary-950)] text-[18px]">مجموعاتي 📋</h3>
-                <button onclick="showView('teacherClassDetailsView')" class="bg-[var(--primary-600)] text-white font-black text-sm px-5 py-2.5 rounded-xl shadow-md active:scale-95 transition-all hover:bg-[var(--primary-700)]">➕ إضافة مجموعة</button>
-            </div>
-
-            <div id="teacherClassesList" class="space-y-4 pb-8"></div>
-        </div>
-
-        <!-- تفاصيل المجموعة -->
-        <div id="groupDetailsView" class="fade-enter">
-            <div class="flex justify-between items-center mb-4">
-                <button onclick="showView('teacherDashboardView')" class="btn-ghost !m-0 !w-auto px-4 py-2 text-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    عودة للمجموعات
-                </button>
-                <div class="bg-[var(--primary-50)] text-[var(--primary-800)] px-3 py-1.5 rounded-lg border border-[var(--primary-200)] text-xs font-black" id="groupDetailName">مجموعة: --</div>
-            </div>
-
-            <button onclick="openManualAddModal()" class="w-full bg-[var(--primary-700)] text-white font-black py-3.5 rounded-xl shadow-md mb-4 active:scale-95 transition-all text-sm hover:bg-[var(--primary-800)]">
-                ➕ تسجيل حجز يدوياً (مباشر)
-            </button>
-
-            <div class="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm flex flex-col items-center">
-                <p class="text-[12px] text-slate-500 font-bold mb-1">إجمالي المحجوز في المجموعة</p>
-                <h3 class="text-3xl font-black text-[var(--primary-950)]" dir="ltr" id="groupDetailTotal">0 / 0</h3>
-            </div>
-
-            <div class="student-list-container" id="excelTablesContainer"></div>
-        </div>
-
-        <!-- إضافة مجموعة جديدة -->
+        <!-- 🌟 الخطوة الثالثة: إضافة مجموعة جديدة -->
         <div id="teacherClassDetailsView" class="fade-enter">
-            <button onclick="showView('teacherDashboardView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
+            <button onclick="navigateToStep('teacherDashboardView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                إلغاء والعودة للوحة التحكم
+                إلغاء والعودة لمجموعاتي
             </button>
-            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">➕ إضافة مجموعة جديدة 📚</h2>
+            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">➕ إضافة مجموعة جديدة 📚 (3/4)</h2>
             
             <form id="addClassForm" onsubmit="handleAddClass(event)">
                 
@@ -458,6 +421,53 @@ input[type=range] { accent-color: var(--primary-600); }
                 <button type="submit" class="btn-primary mt-2">حفظ ونشر المجموعة ✔️</button>
             </form>
         </div>
+
+        <!-- 🌟 الخطوة الرابعة: لوحة تحكم المعلم (مجموعاتي) -->
+        <div id="teacherDashboardView" class="fade-enter">
+            <button onclick="navigateToStep('teacherBasicProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">⚙️ تعديل بياناتي الأساسية</button>
+            
+            <div class="teacher-info-card">
+                <h2 id="dashTeacherName" class="text-[18px] font-black">مرحباً، --</h2>
+                <p id="dashTeacherAgePhone" class="text-xs font-bold mt-1 text-slate-600">--</p>
+                <p id="dashTeacherSubject" class="text-sm font-bold mt-1">📍 محافظة: --</p>
+                <div class="contact-info-box">
+                    <span class="icon">💬</span>
+                    <span>رقم الواتساب:</span>
+                    <span class="num" id="dashTeacherPhone">--</span>
+                </div>
+                <div id="dashGradesTags" class="flex flex-wrap gap-1 mt-2"></div>
+                <div id="dashSubjectsTags" class="flex flex-wrap gap-1 mt-2"></div>
+            </div>
+
+            <div class="flex justify-between items-center mb-4 mt-6">
+                <h3 class="font-black text-[var(--primary-950)] text-[18px]">مجموعاتي 📋</h3>
+            </div>
+
+            <div id="teacherClassesList" class="space-y-4 pb-8"></div>
+        </div>
+
+        <!-- تفاصيل المجموعة للطلاب (لوحة جانبية) -->
+        <div id="groupDetailsView" class="fade-enter">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="navigateToStep('teacherDashboardView')" class="btn-ghost !m-0 !w-auto px-4 py-2 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    العودة لمجموعاتي
+                </button>
+                <div class="bg-[var(--primary-50)] text-[var(--primary-800)] px-3 py-1.5 rounded-lg border border-[var(--primary-200)] text-xs font-black" id="groupDetailName">مجموعة: --</div>
+            </div>
+
+            <button onclick="openManualAddModal()" class="w-full bg-[var(--primary-700)] text-white font-black py-3.5 rounded-xl shadow-md mb-4 active:scale-95 transition-all text-sm hover:bg-[var(--primary-800)]">
+                ➕ تسجيل حجز يدوياً (مباشر)
+            </button>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm flex flex-col items-center">
+                <p class="text-[12px] text-slate-500 font-bold mb-1">إجمالي المحجوز في المجموعة</p>
+                <h3 class="text-3xl font-black text-[var(--primary-950)]" dir="ltr" id="groupDetailTotal">0 / 0</h3>
+            </div>
+
+            <div class="student-list-container" id="excelTablesContainer"></div>
+        </div>
+
     </div>
 </div>
 
@@ -502,7 +512,7 @@ input[type=range] { accent-color: var(--primary-600); }
                     <div class="option-btn">👦 ولد</div>
                 </label>
                 <label>
-                    <input type="radio" name="manualStudentGender" value="girl" class="hidden">
+                    <input type="radio" name="manualStudentGender" value="girl" checked class="hidden">
                     <div class="option-btn">👧 بنت</div>
                 </label>
             </div>
@@ -882,6 +892,106 @@ input[type=range] { accent-color: var(--primary-600); }
         }
     }
 
+    function navigateToStep(viewId) {
+        if (viewId === 'teacherStagesProfileView') {
+            const name = document.getElementById('basicTeacherName').value.trim();
+            if (!name) {
+                alert('⚠️ يرجى إدخال اسم المعلم أولاً للانتقال لخطوة التخصص.');
+                return;
+            }
+        }
+        if (['teacherClassDetailsView', 'teacherDashboardView', 'groupDetailsView'].includes(viewId)) {
+            if (!currentTeacherProfile || !currentTeacherProfile.teacherName) {
+                alert('⚠️ يرجى استكمال بياناتك وحفظها أولاً للوصول للخطوة التالية.');
+                return;
+            }
+        }
+        showView(viewId);
+    }
+
+    function updateLiveJourneyTracker(viewId) {
+        const container = document.getElementById('liveJourneyTrackerContainer');
+        if(!container) return;
+
+        // إظهار الأونلاين فقط إذا كان المعلم لديه مجموعات محفوظة بالفعل (تم النشر)
+        const hasPublishedClasses = classesDB && classesDB.length > 0;
+        const isAppView = ['teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(viewId);
+        
+        let html = '';
+        
+        // الأيقونة الخضراء للونلاين تظهر فقط في حال تم النشر والتواجد داخل النظام
+        if (hasPublishedClasses && isAppView) {
+            html += `
+                <div class="flex items-center gap-1.5 px-2 text-emerald-300">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span class="font-extrabold tracking-wide">نشر أونلاين</span>
+                </div>
+                <span class="text-white/30 px-1">|</span>
+            `;
+        }
+
+        // الترتيب المنطقي الجديد بعد التبديل
+        let steps = [
+            { id: 'teacherBasicProfileView', label: '1. البيانات' },
+            { id: 'teacherStagesProfileView', label: '2. التخصص' },
+            { id: 'teacherClassDetailsView', label: '3. إضافة مجموعة' },
+            { id: 'teacherDashboardView', label: '4. مجموعاتي' }
+        ];
+
+        if (viewId === 'groupDetailsView') {
+            steps[3] = { id: 'groupDetailsView', label: '4. إدارة المجموعة' };
+        }
+        
+        if (viewId === 'roleView') {
+            steps = [{ id: 'roleView', label: 'اختيار الدور' }];
+        }
+
+        const separator = `<span class="text-white/30 text-[10px] px-1">➔</span>`;
+
+        const hasBasicData = (currentTeacherProfile && currentTeacherProfile.teacherName) || (tempBasicData && tempBasicData.teacherName) ? true : false;
+        const hasSpecialization = currentTeacherProfile && currentTeacherProfile.subjects && currentTeacherProfile.subjects.length > 0 ? true : false;
+
+        html += steps.map((step) => {
+            const isActive = step.id === viewId;
+            let isCompleted = false;
+
+            if (step.id === 'teacherBasicProfileView' && hasBasicData) isCompleted = true;
+            if (step.id === 'teacherStagesProfileView' && hasSpecialization) isCompleted = true;
+            if (step.id === 'teacherClassDetailsView' && hasPublishedClasses) isCompleted = true;
+            if ((step.id === 'teacherDashboardView' || step.id === 'groupDetailsView') && hasPublishedClasses) isCompleted = true;
+
+            let classes = "px-2 py-1 rounded-lg transition-all font-bold flex items-center justify-center gap-1 whitespace-nowrap ";
+            let icon = '';
+
+            if (isCompleted) {
+                icon = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            }
+
+            if (isActive) {
+                if (isCompleted) {
+                    classes += "bg-amber-400/20 text-amber-300 shadow-sm cursor-default ring-1 ring-amber-400/50";
+                } else {
+                    classes += "bg-white/20 text-white shadow-sm cursor-default ring-1 ring-white/30";
+                }
+            } else {
+                if (isCompleted) {
+                    classes += "text-amber-300 hover:bg-amber-400/10 cursor-pointer";
+                } else {
+                    classes += "text-white/50 hover:text-white hover:bg-white/10 cursor-pointer";
+                }
+            }
+            
+            const labelStr = icon ? `<span>${step.label}</span>${icon}` : `<span>${step.label}</span>`;
+
+            return `<button type="button" ${isActive ? '' : `onclick="navigateToStep('${step.id}')"`} class="${classes}">${labelStr}</button>`;
+        }).join(separator);
+
+        container.innerHTML = html;
+    }
+
     function showView(viewId) {
         document.querySelectorAll('.fade-enter-active, .fade-enter').forEach(el => {
             if (['roleView', 'teacherBasicProfileView', 'teacherStagesProfileView', 'teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(el.id)) {
@@ -890,6 +1000,9 @@ input[type=range] { accent-color: var(--primary-600); }
         });
         const target = document.getElementById(viewId);
         target.classList.remove('fade-enter'); target.classList.add('fade-enter-active');
+        
+        updateLiveJourneyTracker(viewId);
+
         if(viewId === 'teacherDashboardView') renderTeacherDashboard();
         if(viewId === 'teacherStagesProfileView') renderUnifiedSelection();
     }
@@ -1097,7 +1210,6 @@ input[type=range] { accent-color: var(--primary-600); }
             return;
         }
 
-        // حفظ المؤقت والانتقال للخطوة التالية
         tempBasicData = { teacherTitle: title, teacherName: name, teacherAge: age, phone: phone, gov: gov };
         showView('teacherStagesProfileView');
     }
@@ -1125,7 +1237,9 @@ input[type=range] { accent-color: var(--primary-600); }
         applyTheme(currentTeacherProfile.teacherTitle);
         
         alert('✅ تم حفظ بياناتك بنجاح!');
-        showView('teacherDashboardView');
+        
+        // بعد حفظ التخصص ننتقل لإضافة مجموعة
+        showView('teacherClassDetailsView');
     }
 
     window.onload = function() {
@@ -1163,6 +1277,8 @@ input[type=range] { accent-color: var(--primary-600); }
         
         document.getElementById('startTime')?.addEventListener('change', updateSchedulePreview);
         document.getElementById('endTime')?.addEventListener('change', updateSchedulePreview);
+        
+        updateLiveJourneyTracker('roleView');
     };
 
     function renderClassSubjectSelector() {
@@ -1373,6 +1489,8 @@ input[type=range] { accent-color: var(--primary-600); }
         status.innerText = "❌ لم يتم تحديد الموقع بعد (مطلوب)"; status.className = "text-xs text-rose-600 font-bold text-center";
 
         updateLocationPlaceholder();
+        
+        // التوجيه إلى مجموعاتي بعد الإضافة
         showView('teacherDashboardView'); 
     }
 
@@ -1422,7 +1540,7 @@ input[type=range] { accent-color: var(--primary-600); }
         container.innerHTML = '';
 
         if (classesDB.length === 0) {
-            container.innerHTML = '<div class="text-center py-10 text-slate-400 font-black bg-slate-50 rounded-2xl border-2 border-slate-200 border-dashed">لا توجد لديك مجموعات حتى الآن.<br>اضغط على إضافة مجموعة للبدء.</div>';
+            container.innerHTML = '<div class="text-center py-10 text-slate-400 font-black bg-slate-50 rounded-2xl border-2 border-slate-200 border-dashed">لا توجد لديك مجموعات حتى الآن.<br>أضف مجموعاتك من الزر في شريط التتبع بالأعلى.</div>';
             return;
         }
 
@@ -1533,6 +1651,8 @@ input[type=range] { accent-color: var(--primary-600); }
             classesDB = classesDB.filter(c => c.id !== classId);
             localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
             alert('تم إلغاء المجموعة بنجاح.');
+            
+            updateLiveJourneyTracker('teacherDashboardView');
             renderTeacherDashboard();
         }
     }
