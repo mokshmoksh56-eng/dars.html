@@ -246,6 +246,159 @@ input[type=range] { accent-color: var(--primary-600); }
 .schedule-conflict-warning .conflict-group-name { color: #7F1D1D; background: rgba(255,255,255,0.6); padding: 1px 6px; border-radius: 4px; }
 
 /* =============================================== */
+/* 🚗 تنبيه GPS عند اختيار "يروح للطالب" */
+/* =============================================== */
+.gps-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+    border: 2px solid #93C5FD;
+    box-shadow: 0 6px 16px -8px rgba(37,99,235,0.35);
+    animation: gpsNoticeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.gps-notice::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 60%);
+    animation: gpsPulseBg 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes gpsNoticeIn {
+    from { opacity: 0; transform: translateY(-10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes gpsPulseBg {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.gps-notice-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563EB, #1E40AF);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px -2px rgba(37,99,235,0.5);
+    animation: gpsIconFloat 2s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes gpsIconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.gps-notice-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.gps-notice-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: #1E3A8A;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gps-notice-title::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+    animation: dotBlink 1.5s ease-in-out infinite;
+}
+
+@keyframes dotBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.gps-notice-text {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #1E40AF;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.gps-notice-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.85);
+    border: 1.5px solid #60A5FA;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 900;
+    color: #1D4ED8;
+    box-shadow: 0 2px 6px -2px rgba(37,99,235,0.3);
+}
+
+.gps-notice-badge span:first-child {
+    font-size: 13px;
+}
+
+/* 🏡 تنبيه GPS لبيت المستر - بألوان بنفسجية مميزة */
+.gps-notice-home {
+    background: linear-gradient(135deg, #FAF5FF, #F3E8FF);
+    border-color: #C4B5FD;
+    box-shadow: 0 6px 16px -8px rgba(139,92,246,0.35);
+}
+
+.gps-notice-home::before {
+    background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 60%);
+}
+
+.gps-notice-icon-home {
+    background: linear-gradient(135deg, #8B5CF6, #6B21A8);
+    box-shadow: 0 4px 10px -2px rgba(139,92,246,0.5);
+}
+
+.gps-notice-title-home {
+    color: #5B21B6;
+}
+
+.gps-notice-title-home::before {
+    background: #8B5CF6;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.25);
+}
+
+.gps-notice-text-home {
+    color: #6B21A8;
+}
+
+.gps-notice-badge-home {
+    border-color: #A78BFA;
+    color: #6D28D9;
+    box-shadow: 0 2px 6px -2px rgba(139,92,246,0.3);
+}
+
+/* =============================================== */
 /* 🌟 كارت التقويم الذكي */
 /* =============================================== */
 .smart-calendar-card {
@@ -327,7 +480,6 @@ input[type=range] { accent-color: var(--primary-600); }
 .calendar-cell.today .calendar-day-num { color: var(--primary-700); }
 .calendar-cell.selected-day .calendar-day-num { color: var(--gold-600); }
 
-/* 🌟 نقاط ملونة للأيام */
 .calendar-day-dots {
     display: flex;
     flex-wrap: wrap;
@@ -354,7 +506,6 @@ input[type=range] { accent-color: var(--primary-600); }
     100% { transform: scale(1); }
 }
 
-/* رقم صغير للحجوزات */
 .calendar-count-mini {
     position: absolute;
     top: 2px;
@@ -374,7 +525,6 @@ input[type=range] { accent-color: var(--primary-600); }
     z-index: 3;
 }
 
-/* اليوم المختار - لون ذهبي واضح */
 .calendar-cell.active-selected {
     background: linear-gradient(135deg, #FEF3C7, #FDE68A);
     border-color: #D97706;
@@ -388,7 +538,6 @@ input[type=range] { accent-color: var(--primary-600); }
     font-size: 12px;
 }
 
-/* الأيام اللي فيها حجوزات - خلفية خفيفة */
 .calendar-cell.has-bookings {
     background: #F8FAFC;
     border-color: #CBD5E1;
@@ -484,7 +633,6 @@ input[type=range] { accent-color: var(--primary-600); }
     border: 1.5px dashed #CBD5E1;
 }
 
-/* كارت المجموعة داخل البانر */
 .banner-group-item {
     display: flex;
     align-items: center;
@@ -726,7 +874,7 @@ input[type=range] { accent-color: var(--primary-600); }
                 </div>
 
                 <label class="field-label">مكان ونوع الدرس</label>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                     <label>
                         <input type="radio" name="classType" value="center" checked class="hidden" onchange="updateLocationPlaceholder()">
                         <div class="type-btn flex flex-col items-center justify-center">
@@ -746,22 +894,82 @@ input[type=range] { accent-color: var(--primary-600); }
                         </div>
                     </label>
                 </div>
-                
-                <label class="field-label" id="locationLabel">اسم السنتر / العنوان التفصيلي</label>
-                <input type="text" id="centerName" required placeholder="مثال: سنتر الأوائل - شارع المحطة" class="input-base">
 
-                <div class="mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                    <label class="field-label">تحديد الموقع على الخريطة</label>
-                    <button type="button" onclick="openMapModal()" class="btn-ghost !bg-[var(--primary-50)] !text-[var(--primary-700)] !border-[var(--primary-200)] !mb-2 !py-3">
-                        📍 افتح الخريطة لتحديد المكان
-                    </button>
-                    <p id="teacherLocationStatus" class="text-xs text-rose-600 font-bold text-center">❌ لم يتم تحديد الموقع بعد (مطلوب)</p>
+                <!-- 🚗 تنبيه GPS يظهر فقط عند "يروح للطالب" -->
+                <div id="studentHomeGPSNotice" class="gps-notice mb-4 hidden">
+                    <div class="gps-notice-icon">📍</div>
+                    <div class="gps-notice-content">
+                        <div class="gps-notice-title">موقعك هو نقطة انطلاقك</div>
+                        <div class="gps-notice-text">
+                            حدد موقعك الحالي بدقة، عشان الطلاب القريبين منك يظهروا لك أولاً في قائمة الحجز، وتكون الرحلات أقصر وأسرع.
+                        </div>
+                        <div class="gps-notice-badge">
+                            <span>🎯</span>
+                            <span>كل ما تحدد موقعك بدقة، كل ما توصلك طلبات أقرب</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🏡 تنبيه GPS يظهر فقط عند "بيت المستر" -->
+                <div id="teacherHomeGPSNotice" class="gps-notice gps-notice-home mb-4 hidden">
+                    <div class="gps-notice-icon gps-notice-icon-home">🏡</div>
+                    <div class="gps-notice-content">
+                        <div class="gps-notice-title gps-notice-title-home">عنوانك هو بطاقة تعريفك</div>
+                        <div class="gps-notice-text gps-notice-text-home">
+                            حدد موقع بيتك بدقة، عشان الطلاب القريبين يلاقوك بسهولة، ويشوفوا المسافة الحقيقية قبل الحجز، وتوصل لهم رسالتك بوضوح.
+                        </div>
+                        <div class="gps-notice-badge gps-notice-badge-home">
+                            <span>🏠</span>
+                            <span>كل ما يكون عنوانك أوضح، كل ما يثق بيك الطالب أسرع</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 🏢 اسم السنتر/المستر -->
+                <label class="field-label" id="locationLabel">اسم السنتر / المستر <span class="text-rose-500">*</span></label>
+                <input type="text" id="centerName" required placeholder="مثال: سنتر الأوائل / مستر أحمد" class="input-base">
+
+                <!-- 📍 العنوان من GPS (مقفول) -->
+                <div class="mb-4 bg-gradient-to-br from-emerald-50 to-teal-50/40 p-4 rounded-2xl border-2 border-emerald-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                        <label class="field-label !mb-0 !text-[14px] flex items-center gap-2">
+                            <span>📍</span>
+                            <span>العنوان من الـ GPS</span>
+                            <span class="single-badge !bg-emerald-100 !text-emerald-800 !border-emerald-300">تلقائي</span>
+                        </label>
+                        <button type="button" onclick="openMapModal()" class="!bg-emerald-600 !text-white !border-none !mb-0 !py-2 !px-3 !w-auto text-xs font-black rounded-lg shadow-md hover:!bg-emerald-700 active:scale-95 transition-all flex items-center gap-1">
+                            <span>🗺️</span>
+                            <span>فتح الخريطة</span>
+                        </button>
+                    </div>
+                    
+                    <div class="relative">
+                        <input type="text" 
+                               id="centerAddress" 
+                               readonly 
+                               placeholder="📍 لم يتم تحديد الموقع بعد - اضغط على زر الخريطة" 
+                               class="w-full p-3 pl-10 bg-white border-2 border-emerald-200 rounded-xl font-bold text-[13px] text-slate-700 cursor-not-allowed outline-none transition-all"
+                               style="direction: rtl;">
+                        <span class="absolute top-1/2 -translate-y-1/2 left-3 text-lg">🔒</span>
+                    </div>
+                    
+                    <div id="gpsCoordsDisplay" class="hidden mt-2 bg-white/70 border border-emerald-200 rounded-lg p-2 flex items-center gap-2 text-[10px] font-black text-emerald-800">
+                        <span>📌</span>
+                        <span>الإحداثيات:</span>
+                        <span id="gpsCoordsText" dir="ltr" class="tracking-wider">--</span>
+                    </div>
+                    
+                    <p id="teacherLocationStatus" class="text-xs text-rose-600 font-bold text-center mt-3 flex items-center justify-center gap-1">
+                        <span>❌</span>
+                        <span>لم يتم تحديد الموقع بعد (مطلوب)</span>
+                    </p>
+                    
                     <input type="hidden" id="teacherLat">
                     <input type="hidden" id="teacherLng">
                     <input type="hidden" id="teacherRadius"> 
                 </div>
 
-                <!-- 📅 كارت التقويم الذكي - الشكل 6 -->
+                <!-- 📅 كارت التقويم الذكي -->
                 <div class="mb-4">
                     <label class="field-label flex items-center gap-2">
                         <span>📅</span>
@@ -785,7 +993,6 @@ input[type=range] { accent-color: var(--primary-600); }
 
                         <div class="calendar-grid" id="calendarGrid"></div>
 
-                        <!-- 🎯 بانر اليوم المختار -->
                         <div class="calendar-day-banner" id="calendarDayBanner">
                             <div class="banner-empty" id="calendarBannerEmpty">
                                 <span class="text-2xl">👆</span>
@@ -1247,15 +1454,24 @@ input[type=range] { accent-color: var(--primary-600); }
         document.getElementById('teacherLng').value = tempLng;
         document.getElementById('teacherRadius').value = tempRadius; 
         
+        const coordsDisplay = document.getElementById('gpsCoordsDisplay');
+        const coordsText = document.getElementById('gpsCoordsText');
+        if (coordsDisplay && coordsText) {
+            coordsDisplay.classList.remove('hidden');
+            coordsText.innerText = `${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
+        }
+        
         const status = document.getElementById('teacherLocationStatus');
-        status.innerText = "⏳ جاري جلب العنوان من الـ GPS..."; 
-        status.className = "text-xs text-[var(--primary-500)] font-bold text-center";
+        status.innerHTML = '<span>⏳</span><span>جاري جلب العنوان من الـ GPS...</span>'; 
+        status.className = "text-xs text-[var(--primary-500)] font-bold text-center mt-3 flex items-center justify-center gap-1";
         
         closeMapModal();
 
         fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${tempLat}&lon=${tempLng}&accept-language=ar`)
             .then(res => res.json())
             .then(data => {
+                const addressInput = document.getElementById('centerAddress');
+                
                 if (data && data.display_name) {
                     let addressName = data.display_name;
                     if(data.address) {
@@ -1264,16 +1480,24 @@ input[type=range] { accent-color: var(--primary-600); }
                         if(data.address.neighbourhood) parts.push(data.address.neighbourhood);
                         if(data.address.suburb) parts.push(data.address.suburb);
                         if(data.address.city || data.address.town || data.address.village) parts.push(data.address.city || data.address.town || data.address.village);
-                        if(parts.length > 0) addressName = parts.join('، '); 
+                        if(parts.length > 0) {
+                            addressName = parts.join('، '); 
+                        }
                     }
-                    document.getElementById('centerName').value = addressName;
+                    addressInput.value = addressName;
+                } else {
+                    addressInput.value = `📍 ${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
                 }
-                status.innerText = "✅ تم جلب العنوان بنجاح"; 
-                status.className = "text-xs text-[var(--primary-600)] font-bold text-center";
+                
+                status.innerHTML = '<span>✅</span><span>تم تحديد الموقع والعنوان بنجاح</span>'; 
+                status.className = "text-xs text-emerald-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
             })
             .catch(err => {
-                status.innerText = "✅ تم الحفظ (لم نتمكن من جلب الاسم، يرجى كتابته)"; 
-                status.className = "text-xs text-orange-600 font-bold text-center";
+                const addressInput = document.getElementById('centerAddress');
+                addressInput.value = `📍 ${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
+                
+                status.innerHTML = '<span>✅</span><span>تم تحديد الموقع (تعذر جلب اسم الشارع)</span>'; 
+                status.className = "text-xs text-orange-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
             });
     }
 
@@ -1281,27 +1505,46 @@ input[type=range] { accent-color: var(--primary-600); }
         const type = document.querySelector('input[name="classType"]:checked').value;
         const label = document.getElementById('locationLabel');
         const input = document.getElementById('centerName');
+        const addressInput = document.getElementById('centerAddress');
+        const studentGpsNotice = document.getElementById('studentHomeGPSNotice');
+        const teacherGpsNotice = document.getElementById('teacherHomeGPSNotice');
         
         document.getElementById('teacherLat').value = '';
         document.getElementById('teacherLng').value = '';
         document.getElementById('teacherRadius').value = '';
         input.value = ''; 
         
+        if (addressInput) addressInput.value = '';
+        
+        const coordsDisplay = document.getElementById('gpsCoordsDisplay');
+        if (coordsDisplay) coordsDisplay.classList.add('hidden');
+        
         const status = document.getElementById('teacherLocationStatus');
-        status.innerText = "❌ لم يتم تحديد الموقع بعد (مطلوب)"; 
-        status.className = "text-xs text-rose-600 font-bold text-center";
+        status.innerHTML = '<span>❌</span><span>لم يتم تحديد الموقع بعد (مطلوب)</span>'; 
+        status.className = "text-xs text-rose-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+
+        // 🌟 إظهار/إخفاء التنبيهات حسب النوع
+        if (studentGpsNotice) {
+            if (type === 'student_home') studentGpsNotice.classList.remove('hidden');
+            else studentGpsNotice.classList.add('hidden');
+        }
+        
+        if (teacherGpsNotice) {
+            if (type === 'teacher_home') teacherGpsNotice.classList.remove('hidden');
+            else teacherGpsNotice.classList.add('hidden');
+        }
 
         if(type === 'center') { 
-            label.innerText = 'اسم السنتر / العنوان التفصيلي'; 
-            input.placeholder = 'مثال: سنتر الأوائل - شارع المحطة'; 
+            label.innerHTML = 'اسم السنتر / المستر <span class="text-rose-500">*</span>'; 
+            input.placeholder = 'مثال: سنتر الأوائل / مستر أحمد'; 
         } 
         else if(type === 'teacher_home') { 
-            label.innerText = 'عنوان منزل المستر التفصيلي'; 
-            input.placeholder = 'مثال: حي الجامعة - شارع جيهان'; 
+            label.innerHTML = 'اسم المستر / منزله <span class="text-rose-500">*</span>'; 
+            input.placeholder = 'مثال: مستر أحمد - حي الجامعة'; 
         } 
         else if(type === 'student_home') { 
-            label.innerText = 'العنوان المرجعي (يُجلب تلقائياً من الـ GPS)'; 
-            input.placeholder = 'اضغط على زر الخريطة بالأسفل لضبط النطاق وتحديد العنوان...'; 
+            label.innerHTML = 'اسم المستر <span class="text-rose-500">*</span>'; 
+            input.placeholder = 'مثال: مستر أحمد'; 
         }
     }
 
@@ -2209,6 +2452,7 @@ input[type=range] { accent-color: var(--primary-600); }
             gender: document.querySelector('input[name="targetGender"]:checked').value,
             type: type,
             location: document.getElementById('centerName').value,
+            address: document.getElementById('centerAddress').value,
             days: selectedDays,
             daysNames: daysNames,
             startTime: startTime,
@@ -2230,8 +2474,17 @@ input[type=range] { accent-color: var(--primary-600); }
         document.getElementById('teacherLng').value = '';
         document.getElementById('teacherRadius').value = '';
         
+        const addressInput = document.getElementById('centerAddress');
+        if (addressInput) addressInput.value = '';
+        const coordsDisplay = document.getElementById('gpsCoordsDisplay');
+        if (coordsDisplay) coordsDisplay.classList.add('hidden');
+        
         document.querySelector('input[name="targetGender"][value="both"]').checked = true;
         document.querySelector('input[name="classType"][value="center"]').checked = true;
+        
+        // 🌟 إخفاء التنبيهات بعد الحفظ
+        document.getElementById('studentHomeGPSNotice')?.classList.add('hidden');
+        document.getElementById('teacherHomeGPSNotice')?.classList.add('hidden');
         
         selectedDays = [];
         selectedCalendarDay = null;
@@ -2247,7 +2500,8 @@ input[type=range] { accent-color: var(--primary-600); }
         document.getElementById('scheduleConflictWarning')?.classList.remove('show');
         
         const status = document.getElementById('teacherLocationStatus');
-        status.innerText = "❌ لم يتم تحديد الموقع بعد (مطلوب)"; status.className = "text-xs text-rose-600 font-bold text-center";
+        status.innerHTML = '<span>❌</span><span>لم يتم تحديد الموقع بعد (مطلوب)</span>'; 
+        status.className = "text-xs text-rose-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
 
         updateLocationPlaceholder();
         
@@ -2344,7 +2598,7 @@ input[type=range] { accent-color: var(--primary-600); }
             if (cls.type === 'center') locationIcon = '🏫';
             else if (cls.type === 'teacher_home') locationIcon = '🏡';
             else if (cls.type === 'student_home') { 
-                locationIcon = '📍'; 
+                locationIcon = '🚗'; 
                 if(cls.radius) displayLocation = `${cls.location} (نطاق ${cls.radius / 1000} كم)`;
             }
 
@@ -2359,6 +2613,8 @@ input[type=range] { accent-color: var(--primary-600); }
             } else if(cls.times) {
                 scheduleText = cls.times;
             }
+
+            const addressLine = cls.address ? `<div class="flex items-center gap-3 text-sm text-slate-800 font-bold"><span class="bg-white shadow-sm p-2 rounded-lg text-lg leading-none">📍</span> <span class="truncate pt-1 text-[12px]">${cls.address}</span></div>` : '';
 
             const card = document.createElement('div');
             card.className = 'class-card cursor-default p-0 flex flex-col justify-between';
@@ -2378,6 +2634,7 @@ input[type=range] { accent-color: var(--primary-600); }
                             <div class="flex items-center gap-3 text-sm text-slate-800 font-bold">
                                 <span class="bg-white shadow-sm p-2 rounded-lg text-lg leading-none">${locationIcon}</span> <span class="truncate pt-1">${displayLocation}</span>
                             </div>
+                            ${addressLine}
                             <div class="flex items-start gap-3 text-sm text-slate-800 font-bold">
                                 <span class="bg-white shadow-sm p-2 rounded-lg text-lg leading-none">⏰</span> 
                                 <span class="text-[13px] leading-relaxed pt-1">${scheduleText}</span>
