@@ -80,7 +80,6 @@ input[type="radio"][name="classType"]:checked + .type-btn { background:var(--pri
 .fade-enter{ opacity:0; transform:translateY(14px); transition:all .3s ease-out; pointer-events:none; position:absolute; width:100%; visibility:hidden; display:none;}
 .fade-enter-active{ opacity:1; transform:translateY(0); pointer-events:auto; position:relative; visibility:visible; display:block;}
 
-/* بطاقات المجموعات */
 .class-card { border: 2px solid var(--line); border-radius: 16px; margin-bottom: 15px; box-shadow: 0 4px 12px -8px rgba(15,23,42,.15); cursor: pointer; transition: all 0.2s; overflow: hidden; }
 .class-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgba(15,23,42,.2); }
 .class-card[data-stage="kg"] { border-color: #F59E0B; background-color: #FEF3C7; } 
@@ -103,7 +102,7 @@ input[type=range] { accent-color: var(--primary-600); }
 .excel-table td { padding:10px 8px; font-size:13px; font-weight:700; border-bottom:1px solid #E2E8F0; vertical-align:middle; }
 
 .table-boys th { background:linear-gradient(135deg,#1E40AF 0%,#2563EB 100%); color:#FFFFFF; border-bottom-color:#1E3A8A; }
-.table-boys td { border-bottom-color:#DBEAFE; color:#1E3A8A; }
+.table-boys td { border-bottom-color:#DBEAFE; color:#1E40AF; }
 .table-boys tbody tr:nth-child(5n+1) { background-color: #EFF6FF !important; }
 .table-boys tbody tr:nth-child(5n+2) { background-color: #F0F9FF !important; }
 .table-boys tbody tr:nth-child(5n+3) { background-color: #F0FDFA !important; }
@@ -225,12 +224,12 @@ input[type=range] { accent-color: var(--primary-600); }
             </button>
         </div>
 
-        <!-- صفحة البروفايل -->
-        <div id="teacherProfileView" class="fade-enter">
+        <!-- 🌟 الخطوة الأولى: بيانات المعلم الأساسية -->
+        <div id="teacherBasicProfileView" class="fade-enter">
             <button onclick="showView('roleView')" class="btn-ghost mb-4 text-xs !w-auto px-4 py-2">🔙 عودة</button>
-            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">بيانات المعلم الأساسية 👤</h2>
+            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">بيانات المعلم الأساسية 👤 (1/2)</h2>
             
-            <form id="teacherProfileForm" onsubmit="handleTeacherProfile(event)">
+            <form id="teacherBasicForm" onsubmit="handleBasicProfileSubmit(event)">
                 <label class="field-label">اللقب</label>
                 <div class="grid grid-cols-2 gap-2 mb-4">
                     <label>
@@ -243,28 +242,26 @@ input[type=range] { accent-color: var(--primary-600); }
                     </label>
                 </div>
                 
-                <label class="field-label">اسم المعلم</label>
-                <input type="text" id="teacherName" required placeholder="الاسم (مثال: أحمد محمد)" class="input-base">
+                <label class="field-label">اسم المعلم <span class="text-rose-500">*</span></label>
+                <input type="text" id="basicTeacherName" required placeholder="الاسم (مثال: أحمد محمد)" class="input-base">
 
-                <label class="field-label">رقم الهاتف <span class="text-rose-500">*</span></label>
+                <label class="field-label">العمر <span class="text-rose-500">*</span></label>
+                <input type="number" id="basicTeacherAge" required placeholder="العمر (مثال: 30)" min="18" max="80" class="input-base text-center">
+
+                <label class="field-label">رقم التليفون المرتبط بواتساب <span class="text-rose-500">*</span></label>
                 <div class="relative mb-4">
-                    <input type="tel" id="teacherPhone" required 
+                    <input type="tel" id="basicTeacherPhone" required 
                            placeholder="01xxxxxxxxx" 
                            pattern="01[0-9]{9}"
                            maxlength="11"
                            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                            class="input-base !mb-0 text-left pr-3 pl-20 font-black tracking-wider" dir="ltr">
-                    <span class="absolute top-1/2 -translate-y-1/2 right-3 text-slate-400 text-xs font-bold">📱 رقمك</span>
+                    <span class="absolute top-1/2 -translate-y-1/2 right-3 text-slate-400 text-xs font-bold">💬 واتساب</span>
                 </div>
-                <p class="text-[11px] text-slate-500 font-bold mb-4 -mt-2">💡 سيظهر هذا الرقم للطلاب للتواصل معك عند الحجز</p>
+                <p class="text-[11px] text-slate-500 font-bold mb-4 -mt-2">💡 سيستخدم للتواصل معك ومع الطلاب</p>
 
-                <label class="field-label">المراحل والصفوف والمواد التي تُدرّسها <span class="text-rose-500">*</span></label>
-                <p class="text-[11px] text-slate-500 font-bold mb-3 -mt-1">اضغط على المرحلة لتفتح، ثم اختر منها الصفوف والمواد.</p>
-                
-                <div id="unifiedEducationSelector" class="flex flex-col mb-4"></div>
-
-                <label class="field-label mt-4">المحافظة</label>
-                <select id="govName" required class="input-base">
+                <label class="field-label">المحافظة <span class="text-rose-500">*</span></label>
+                <select id="basicGovName" required class="input-base">
                     <option value="" disabled selected>اختر المحافظة...</option>
                     <option value="الدقهلية">الدقهلية</option>
                     <option value="القاهرة">القاهرة</option>
@@ -274,20 +271,35 @@ input[type=range] { accent-color: var(--primary-600); }
                     <option value="الغربية">الغربية</option>
                 </select>
                 
-                <button type="submit" class="btn-primary mt-2">حفظ ودخول للوحة التحكم 🚀</button>
+                <button type="submit" class="btn-primary mt-2">حفظ والانتظار لاختيار المراحل والصفوف ➔</button>
+            </form>
+        </div>
+
+        <!-- 🌟 الخطوة الثانية: اختيار المراحل والصفوف والمواد -->
+        <div id="teacherStagesProfileView" class="fade-enter">
+            <button onclick="showView('teacherBasicProfileView')" class="btn-ghost mb-4 text-xs !w-auto px-4 py-2">🔙 تعديل البيانات الأساسية</button>
+            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">اختيار المراحل والصفوف والمواد 📚 (2/2)</h2>
+            
+            <form id="teacherStagesForm" onsubmit="handleStagesProfileSubmit(event)">
+                <p class="text-[11px] text-slate-500 font-bold mb-3">اضغط على المرحلة لتفتح، ثم اختر منها الصفوف والمواد.</p>
+                
+                <div id="unifiedEducationSelector" class="flex flex-col mb-4"></div>
+
+                <button type="submit" class="btn-primary mt-4">حفظ والانتقال لوحة التحكم 🚀</button>
             </form>
         </div>
 
         <!-- لوحة تحكم المعلم -->
         <div id="teacherDashboardView" class="fade-enter">
-            <button onclick="showView('teacherProfileView')" class="btn-ghost mb-4 text-xs !w-auto px-4 py-2">⚙️ تعديل بياناتي</button>
+            <button onclick="showView('teacherBasicProfileView')" class="btn-ghost mb-4 text-xs !w-auto px-4 py-2">⚙️ تعديل بياناتي الأساسية</button>
             
             <div class="teacher-info-card">
                 <h2 id="dashTeacherName" class="text-[18px] font-black">مرحباً، --</h2>
+                <p id="dashTeacherAgePhone" class="text-xs font-bold mt-1 text-slate-600">--</p>
                 <p id="dashTeacherSubject" class="text-sm font-bold mt-1">📍 محافظة: --</p>
                 <div class="contact-info-box">
-                    <span class="icon">📱</span>
-                    <span>رقم التواصل:</span>
+                    <span class="icon">💬</span>
+                    <span>رقم الواتساب:</span>
                     <span class="num" id="dashTeacherPhone">--</span>
                 </div>
                 <div id="dashGradesTags" class="flex flex-wrap gap-1 mt-2"></div>
@@ -745,7 +757,6 @@ input[type=range] { accent-color: var(--primary-600); }
 
     function closeMapModal() { document.getElementById('mapModal').style.display = 'none'; }
     
-    // 🌟 التعديل الخاص بـ GPS هنا (إحضار العنوان أوتوماتيكياً)
     function confirmLocation() {
         if(!tempLat || !tempLng) { 
             let pos = mapMarker.getLatLng(); 
@@ -759,9 +770,8 @@ input[type=range] { accent-color: var(--primary-600); }
         status.innerText = "⏳ جاري جلب العنوان من الـ GPS..."; 
         status.className = "text-xs text-[var(--primary-500)] font-bold text-center";
         
-        closeMapModal(); // إغلاق المودال مباشرة
+        closeMapModal();
 
-        // طلب العنوان من خدمة OpenStreetMap
         fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${tempLat}&lon=${tempLng}&accept-language=ar`)
             .then(res => res.json())
             .then(data => {
@@ -774,7 +784,7 @@ input[type=range] { accent-color: var(--primary-600); }
                         if(data.address.suburb) parts.push(data.address.suburb);
                         if(data.address.city || data.address.town || data.address.village) parts.push(data.address.city || data.address.town || data.address.village);
                         if(parts.length > 0) {
-                            addressName = parts.join('، '); // عنوان مختصر ومفيد
+                            addressName = parts.join('، '); 
                         }
                     }
                     document.getElementById('centerName').value = addressName;
@@ -796,7 +806,7 @@ input[type=range] { accent-color: var(--primary-600); }
         document.getElementById('teacherLat').value = '';
         document.getElementById('teacherLng').value = '';
         document.getElementById('teacherRadius').value = '';
-        input.value = ''; // تصفير حقل العنوان ليتم جلبه مرة أخرى
+        input.value = ''; 
         
         const status = document.getElementById('teacherLocationStatus');
         status.innerText = "❌ لم يتم تحديد الموقع بعد (مطلوب)"; 
@@ -818,13 +828,14 @@ input[type=range] { accent-color: var(--primary-600); }
 
     function showView(viewId) {
         document.querySelectorAll('.fade-enter-active, .fade-enter').forEach(el => {
-            if (['roleView', 'teacherProfileView', 'teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(el.id)) {
+            if (['roleView', 'teacherBasicProfileView', 'teacherStagesProfileView', 'teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(el.id)) {
                 el.classList.remove('fade-enter-active'); el.classList.add('fade-enter');
             }
         });
         const target = document.getElementById(viewId);
         target.classList.remove('fade-enter'); target.classList.add('fade-enter-active');
         if(viewId === 'teacherDashboardView') renderTeacherDashboard();
+        if(viewId === 'teacherStagesProfileView') renderUnifiedSelection();
     }
 
     let selectedGrades = [];
@@ -1012,16 +1023,63 @@ input[type=range] { accent-color: var(--primary-600); }
 
     function checkTeacherProfile() {
         if (currentTeacherProfile && currentTeacherProfile.teacherName) showView('teacherDashboardView');
-        else showView('teacherProfileView');
+        else showView('teacherBasicProfileView');
+    }
+
+    let tempBasicData = {};
+
+    function handleBasicProfileSubmit(e) {
+        e.preventDefault();
+        const title = document.querySelector('input[name="teacherTitle"]:checked').value;
+        const name = document.getElementById('basicTeacherName').value.trim();
+        const age = document.getElementById('basicTeacherAge').value.trim();
+        const phone = document.getElementById('basicTeacherPhone').value.trim();
+        const gov = document.getElementById('basicGovName').value;
+
+        if(!phone || !/^01[0-9]{9}$/.test(phone)) {
+            alert('⚠️ رقم الهاتف غير صحيح\nيجب أن يبدأ بـ 01 ويتكون من 11 رقم');
+            return;
+        }
+
+        // حفظ المؤقت والانتقال للخطوة التالية
+        tempBasicData = { teacherTitle: title, teacherName: name, teacherAge: age, phone: phone, gov: gov };
+        showView('teacherStagesProfileView');
+    }
+
+    function handleStagesProfileSubmit(e) {
+        e.preventDefault();
+        if(selectedGrades.length === 0) { alert('⚠️ يرجى فتح أحد المراحل واختيار صف دراسي واحد على الأقل'); return; }
+        if(selectedSubjects.length === 0) { alert('⚠️ يرجى فتح أحد المراحل واختيار مادة دراسية واحدة على الأقل'); return; }
+        
+        let calcStages = [];
+        ['kg', 'primary', 'prep', 'secondary'].forEach(st => {
+            const hasG = selectedGrades.some(g => EDUCATION_STRUCTURE[st].grades.includes(g));
+            const hasS = selectedSubjects.some(s => EDUCATION_STRUCTURE[st].subjects.includes(s));
+            if(hasG || hasS) calcStages.push(st);
+        });
+
+        currentTeacherProfile = {
+            ...tempBasicData,
+            stages: calcStages,
+            grades: [...selectedGrades],
+            subjects: [...selectedSubjects]
+        };
+
+        localStorage.setItem('draft_teacher_profile', JSON.stringify(currentTeacherProfile));
+        applyTheme(currentTeacherProfile.teacherTitle);
+        
+        alert('✅ تم حفظ بياناتك بنجاح!');
+        showView('teacherDashboardView');
     }
 
     window.onload = function() {
         if(currentTeacherProfile && currentTeacherProfile.teacherName) {
-            document.getElementById('teacherName').value = currentTeacherProfile.teacherName || '';
+            document.getElementById('basicTeacherName').value = currentTeacherProfile.teacherName || '';
+            document.getElementById('basicTeacherAge').value = currentTeacherProfile.teacherAge || '';
             if(currentTeacherProfile.phone) {
-                document.getElementById('teacherPhone').value = currentTeacherProfile.phone;
+                document.getElementById('basicTeacherPhone').value = currentTeacherProfile.phone;
             }
-            if(currentTeacherProfile.gov) document.getElementById('govName').value = currentTeacherProfile.gov;
+            if(currentTeacherProfile.gov) document.getElementById('basicGovName').value = currentTeacherProfile.gov;
             if(currentTeacherProfile.teacherTitle) {
                 document.querySelector(`input[name="teacherTitle"][value="${currentTeacherProfile.teacherTitle}"]`).checked = true;
                 applyTheme(currentTeacherProfile.teacherTitle);
@@ -1033,6 +1091,13 @@ input[type=range] { accent-color: var(--primary-600); }
             if(currentTeacherProfile.subjects && Array.isArray(currentTeacherProfile.subjects)) {
                 selectedSubjects = [...currentTeacherProfile.subjects];
             }
+            tempBasicData = {
+                teacherTitle: currentTeacherProfile.teacherTitle,
+                teacherName: currentTeacherProfile.teacherName,
+                teacherAge: currentTeacherProfile.teacherAge,
+                phone: currentTeacherProfile.phone,
+                gov: currentTeacherProfile.gov
+            };
         } else {
             applyTheme('مستر');
         }
@@ -1043,45 +1108,6 @@ input[type=range] { accent-color: var(--primary-600); }
         document.getElementById('startTime')?.addEventListener('change', updateSchedulePreview);
         document.getElementById('endTime')?.addEventListener('change', updateSchedulePreview);
     };
-
-    function handleTeacherProfile(e) {
-        e.preventDefault();
-        
-        const phone = document.getElementById('teacherPhone').value.trim();
-        
-        if(!phone) { alert('⚠️ يرجى إدخال رقم الهاتف'); return; }
-        if(!/^01[0-9]{9}$/.test(phone)) { 
-            alert('⚠️ رقم الهاتف غير صحيح\nيجب أن يبدأ بـ 01 ويتكون من 11 رقم'); 
-            return; 
-        }
-        
-        if(selectedGrades.length === 0) { alert('⚠️ يرجى فتح أحد المراحل واختيار صف دراسي واحد على الأقل'); return; }
-        if(selectedSubjects.length === 0) { alert('⚠️ يرجى فتح أحد المراحل واختيار مادة دراسية واحدة على الأقل'); return; }
-        
-        let calcStages = [];
-        ['kg', 'primary', 'prep', 'secondary'].forEach(st => {
-            const hasG = selectedGrades.some(g => EDUCATION_STRUCTURE[st].grades.includes(g));
-            const hasS = selectedSubjects.some(s => EDUCATION_STRUCTURE[st].subjects.includes(s));
-            if(hasG || hasS) calcStages.push(st);
-        });
-
-        const title = document.querySelector('input[name="teacherTitle"]:checked').value;
-        
-        currentTeacherProfile = {
-            teacherTitle: title,
-            teacherName: document.getElementById('teacherName').value,
-            phone: phone,
-            stages: calcStages, 
-            grades: [...selectedGrades],
-            subjects: [...selectedSubjects],
-            gov: document.getElementById('govName').value
-        };
-        localStorage.setItem('draft_teacher_profile', JSON.stringify(currentTeacherProfile));
-        applyTheme(title);
-        
-        alert('✅ تم حفظ بياناتك بنجاح!');
-        showView('teacherDashboardView');
-    }
 
     function renderClassSubjectSelector() {
         const container = document.getElementById('classSubjectContainer');
@@ -1302,6 +1328,7 @@ input[type=range] { accent-color: var(--primary-600); }
         if(!currentTeacherProfile) return;
         
         document.getElementById('dashTeacherName').innerText = `مرحباً، ${currentTeacherProfile.teacherTitle} ${currentTeacherProfile.teacherName}`;
+        document.getElementById('dashTeacherAgePhone').innerText = `العمر: ${currentTeacherProfile.teacherAge || '--'} سنة`;
         
         let stagesText = '';
         if(currentTeacherProfile.stages && currentTeacherProfile.stages.length > 0) {
@@ -1550,7 +1577,7 @@ input[type=range] { accent-color: var(--primary-600); }
         else {
             genderSelect.innerHTML = `
                 <label><input type="radio" name="manualStudentGender" value="boy" checked class="hidden"><div class="option-btn">👦 ولد</div></label>
-                <label><input type="radio" name="manualStudentGender" value="girl" class="hidden"><div class="option-btn">👧 بنت</div></label>
+                <label><input type="radio" name="manualStudentGender" value="girl" checked class="hidden"><div class="option-btn">👧 بنت</div></label>
             `;
         }
 
@@ -1630,7 +1657,7 @@ input[type=range] { accent-color: var(--primary-600); }
         const cls = classesDB.find(c => c.id === currentPayClassId);
         const student = cls.students.find(s => s.id === currentPayStudentId);
 
-        student.payments.term1 = document.getElementById('payTerm1').checked;
+        student.payments.term1 = document.getElementById('payTerm1'.checked);
         student.payments.term2 = document.getElementById('payTerm2').checked;
         student.payments.sessions = parseInt(document.getElementById('paySessions').value) || 0;
         student.payments.weeks = parseInt(document.getElementById('payWeeks').value) || 0;
