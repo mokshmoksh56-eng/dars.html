@@ -193,6 +193,12 @@ input[type=range] { accent-color: var(--primary-600); }
 
 .custom-subject-input { display:none; margin-top:12px; }
 .custom-subject-input.active { display:block; }
+
+/* شريط تمرير مخصص لمنطقة الأرشيف */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 </style>
 </head>
 <body>
@@ -226,7 +232,10 @@ input[type=range] { accent-color: var(--primary-600); }
 
         <!-- 🌟 الخطوة الأولى: بيانات المعلم الأساسية -->
         <div id="teacherBasicProfileView" class="fade-enter">
-            <button onclick="showView('roleView')" class="btn-ghost mb-4 text-xs !w-auto px-4 py-2">🔙 عودة</button>
+            <button onclick="showView('roleView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                عودة
+            </button>
             <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">بيانات المعلم الأساسية 👤 (1/2)</h2>
             
             <form id="teacherBasicForm" onsubmit="handleBasicProfileSubmit(event)">
@@ -277,7 +286,10 @@ input[type=range] { accent-color: var(--primary-600); }
 
         <!-- 🌟 الخطوة الثانية: اختيار المراحل والصفوف والمواد -->
         <div id="teacherStagesProfileView" class="fade-enter">
-            <button onclick="showView('teacherBasicProfileView')" class="btn-ghost mb-4 text-xs !w-auto px-4 py-2">🔙 تعديل البيانات الأساسية</button>
+            <button onclick="showView('teacherBasicProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                تعديل البيانات الأساسية
+            </button>
             <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">اختيار المراحل والصفوف والمواد 📚 (2/2)</h2>
             
             <form id="teacherStagesForm" onsubmit="handleStagesProfileSubmit(event)">
@@ -291,7 +303,7 @@ input[type=range] { accent-color: var(--primary-600); }
 
         <!-- لوحة تحكم المعلم -->
         <div id="teacherDashboardView" class="fade-enter">
-            <button onclick="showView('teacherBasicProfileView')" class="btn-ghost mb-4 text-xs !w-auto px-4 py-2">⚙️ تعديل بياناتي الأساسية</button>
+            <button onclick="showView('teacherBasicProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">⚙️ تعديل بياناتي الأساسية</button>
             
             <div class="teacher-info-card">
                 <h2 id="dashTeacherName" class="text-[18px] font-black">مرحباً، --</h2>
@@ -317,7 +329,10 @@ input[type=range] { accent-color: var(--primary-600); }
         <!-- تفاصيل المجموعة -->
         <div id="groupDetailsView" class="fade-enter">
             <div class="flex justify-between items-center mb-4">
-                <button onclick="showView('teacherDashboardView')" class="btn-ghost !m-0 !w-auto px-4 py-2 text-xs">🔙 عودة للمجموعات</button>
+                <button onclick="showView('teacherDashboardView')" class="btn-ghost !m-0 !w-auto px-4 py-2 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    عودة للمجموعات
+                </button>
                 <div class="bg-[var(--primary-50)] text-[var(--primary-800)] px-3 py-1.5 rounded-lg border border-[var(--primary-200)] text-xs font-black" id="groupDetailName">مجموعة: --</div>
             </div>
 
@@ -335,16 +350,27 @@ input[type=range] { accent-color: var(--primary-600); }
 
         <!-- إضافة مجموعة جديدة -->
         <div id="teacherClassDetailsView" class="fade-enter">
-            <button onclick="showView('teacherDashboardView')" class="btn-ghost mb-4 text-xs !w-auto px-4 py-2">🔙 إلغاء والعودة للوحة التحكم</button>
+            <button onclick="showView('teacherDashboardView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                إلغاء والعودة للوحة التحكم
+            </button>
             <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">➕ إضافة مجموعة جديدة 📚</h2>
             
             <form id="addClassForm" onsubmit="handleAddClass(event)">
                 
-                <label class="field-label">المادة الدراسية <span class="text-rose-500">*</span></label>
-                <div id="classSubjectContainer" class="flex flex-col gap-2 mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <!-- قسم المادة الدراسية -->
+                    <div class="flex flex-col">
+                        <label class="field-label">المادة الدراسية <span class="text-rose-500">*</span></label>
+                        <div id="classSubjectContainer" class="flex flex-col gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 flex-1"></div>
+                    </div>
 
-                <label class="field-label">الصف الدراسي <span class="text-rose-500">*</span></label>
-                <div id="classGradeContainer" class="flex flex-col gap-2 mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200"></div>
+                    <!-- قسم الصف الدراسي -->
+                    <div class="flex flex-col">
+                        <label class="field-label">الصف الدراسي <span class="text-rose-500">*</span></label>
+                        <div id="classGradeContainer" class="flex flex-col gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 flex-1"></div>
+                    </div>
+                </div>
 
                 <label class="field-label">اسم المجموعة <span class="text-rose-500">*</span></label>
                 <input type="text" id="groupName" required placeholder="مثال: مجموعة السبت، المجموعة الأولى..." class="input-base">
@@ -489,46 +515,76 @@ input[type=range] { accent-color: var(--primary-600); }
     </div>
 </div>
 
-<!-- Modal المدفوعات -->
+<!-- Modal المدفوعات والأرشيف -->
 <div id="paymentModal" class="modal-overlay">
-    <div class="modal-content !max-w-md">
-        <h3 class="text-center font-black mb-2 text-[var(--primary-900)] text-lg">💳 السجل المالي للطالب</h3>
+    <div class="modal-content !max-w-2xl !h-[90vh] flex flex-col">
+        <h3 class="text-center font-black mb-2 text-[var(--primary-900)] text-lg flex items-center justify-center gap-2"><span>💳</span> السجل المالي وأرشيف الدفع</h3>
         <div id="paymentStudentName" class="text-center font-bold text-sm bg-[var(--primary-50)] text-[var(--primary-800)] border border-[var(--primary-200)] p-2 rounded-lg mb-4">...</div>
 
-        <form onsubmit="saveStudentPayment(event)">
-            <div class="mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <label class="field-label text-slate-700 !mb-2">الدفع بالترم</label>
-                <div class="flex gap-2">
-                    <label class="flex-1 bg-white border border-slate-300 p-2 rounded text-sm font-bold flex items-center justify-between cursor-pointer hover:bg-slate-50">
-                        الترم الأول <input type="checkbox" id="payTerm1" class="payment-checkbox">
-                    </label>
-                    <label class="flex-1 bg-white border border-slate-300 p-2 rounded text-sm font-bold flex items-center justify-between cursor-pointer hover:bg-slate-50">
-                        الترم الثاني <input type="checkbox" id="payTerm2" class="payment-checkbox">
-                    </label>
-                </div>
+        <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            
+            <!-- نموذج إضافة دفعة جديدة -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-5 shadow-sm">
+                <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1"><span>➕</span> تسجيل دفعة جديدة</h4>
+                <form onsubmit="saveStudentPayment(event)">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="field-label !text-xs">نوع الدفع</label>
+                            <select id="payType" required class="input-base !mb-0 !p-2.5 !text-sm" onchange="handlePayTypeChange()">
+                                <option value="" disabled selected>اختر النوع...</option>
+                                <option value="session">بالحصة</option>
+                                <option value="week">بالأسبوع</option>
+                                <option value="month">بالشهر</option>
+                                <option value="term1">الترم الأول</option>
+                                <option value="term2">الترم الثاني</option>
+                                <option value="both_terms">الترمين معاً (العام كاملاً)</option>
+                            </select>
+                        </div>
+                        <div id="payDetailsContainer" class="hidden">
+                            <label class="field-label !text-xs" id="payDetailsLabel">التفاصيل</label>
+                            <input type="number" id="payDetailsNum" class="input-base !mb-0 !p-2.5 !text-sm hidden" min="1" placeholder="العدد...">
+                            <select id="payDetailsMonth" class="input-base !mb-0 !p-2.5 !text-sm hidden">
+                                <option value="أغسطس">أغسطس</option>
+                                <option value="سبتمبر">سبتمبر</option>
+                                <option value="أكتوبر">أكتوبر</option>
+                                <option value="نوفمبر">نوفمبر</option>
+                                <option value="ديسمبر">ديسمبر</option>
+                                <option value="يناير">يناير</option>
+                                <option value="فبراير">فبراير</option>
+                                <option value="مارس">مارس</option>
+                                <option value="أبريل">أبريل</option>
+                                <option value="مايو">مايو</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label class="field-label !text-xs">المبلغ المدفوع (ج.م)</label>
+                            <input type="number" id="payAmount" required placeholder="مثال: 150" min="0" class="input-base !mb-0 !p-2.5 !text-sm text-left" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="field-label !text-xs">ملاحظات (اختياري)</label>
+                            <input type="text" id="payNotes" placeholder="أي ملاحظات إضافية..." class="input-base !mb-0 !p-2.5 !text-sm">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary !mb-0 py-2.5 text-sm w-full">حفظ في الأرشيف 💾</button>
+                </form>
             </div>
 
-            <div class="mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <label class="field-label text-slate-700 !mb-2">الدفع الشهري</label>
-                <div class="grid grid-cols-3 gap-2 text-xs" id="monthCheckboxes"></div>
-            </div>
-
-            <div class="flex gap-3 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <div class="flex-1">
-                    <label class="field-label text-slate-700 !text-xs !mb-2 text-center">دفع حصص</label>
-                    <input type="number" id="paySessions" min="0" class="input-base !mb-0 text-center !p-2" value="0">
-                </div>
-                <div class="flex-1">
-                    <label class="field-label text-slate-700 !text-xs !mb-2 text-center">دفع أسابيع</label>
-                    <input type="number" id="payWeeks" min="0" class="input-base !mb-0 text-center !p-2" value="0">
+            <!-- تقرير الأرشيف -->
+            <div>
+                <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1"><span>🗂️</span> تقرير أرشيف المدفوعات السابقة</h4>
+                <div id="paymentArchiveContainer" class="space-y-2">
+                    <!-- يتم إدراج السجلات هنا -->
                 </div>
             </div>
+        </div>
 
-            <div class="grid grid-cols-2 gap-2 mt-4">
-                <button type="button" onclick="closePaymentModal()" class="btn-ghost !mb-0 py-3 bg-slate-100">إلغاء</button>
-                <button type="submit" class="btn-primary !mb-0 py-3 border-none shadow-md">حفظ السجل ✔️</button>
-            </div>
-        </form>
+        <div class="mt-4 pt-3 border-t border-slate-200">
+            <button type="button" onclick="closePaymentModal()" class="btn-ghost w-full !mb-0 py-3 bg-slate-100">إغلاق</button>
+        </div>
     </div>
 </div>
 
@@ -1607,8 +1663,7 @@ input[type=range] { accent-color: var(--primary-600); }
 
             cls.students.push({
                 id: 'std_' + Date.now(),
-                name: name, phone: phone, gender: gender, date: dateStr,
-                payments: { term1: false, term2: false, months: {}, sessions: 0, weeks: 0 }
+                name: name, phone: phone, gender: gender, date: dateStr
             });
 
             if (gender === 'boy') cls.bookedBoys = (cls.bookedBoys || 0) + 1;
@@ -1621,9 +1676,38 @@ input[type=range] { accent-color: var(--primary-600); }
         }
     }
 
-    const monthsArray = ['أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر','يناير','فبراير','مارس','أبريل','مايو'];
     let currentPayClassId = null;
     let currentPayStudentId = null;
+
+    function handlePayTypeChange() {
+        const type = document.getElementById('payType').value;
+        const container = document.getElementById('payDetailsContainer');
+        const label = document.getElementById('payDetailsLabel');
+        const numInput = document.getElementById('payDetailsNum');
+        const monthSelect = document.getElementById('payDetailsMonth');
+
+        container.classList.remove('hidden');
+        numInput.classList.add('hidden');
+        numInput.removeAttribute('required');
+        monthSelect.classList.add('hidden');
+        monthSelect.removeAttribute('required');
+
+        if(type === 'session') {
+            label.innerText = 'عدد الحصص';
+            numInput.classList.remove('hidden');
+            numInput.setAttribute('required', 'true');
+        } else if(type === 'week') {
+            label.innerText = 'عدد الأسابيع';
+            numInput.classList.remove('hidden');
+            numInput.setAttribute('required', 'true');
+        } else if(type === 'month') {
+            label.innerText = 'اختر الشهر';
+            monthSelect.classList.remove('hidden');
+            monthSelect.setAttribute('required', 'true');
+        } else {
+            container.classList.add('hidden');
+        }
+    }
 
     function openPaymentModal(classId, studentId) {
         currentPayClassId = classId;
@@ -1633,22 +1717,14 @@ input[type=range] { accent-color: var(--primary-600); }
         const student = cls.students.find(s => s.id === studentId);
 
         document.getElementById('paymentStudentName').innerText = `الطالب: ${student.name}`;
+        
+        document.getElementById('payType').value = "";
+        document.getElementById('payDetailsNum').value = "";
+        document.getElementById('payAmount').value = "";
+        document.getElementById('payNotes').value = "";
+        handlePayTypeChange();
 
-        if(!student.payments) student.payments = { term1: false, term2: false, months: {}, sessions: 0, weeks: 0 };
-        const p = student.payments;
-
-        document.getElementById('payTerm1').checked = p.term1;
-        document.getElementById('payTerm2').checked = p.term2;
-        document.getElementById('paySessions').value = p.sessions || 0;
-        document.getElementById('payWeeks').value = p.weeks || 0;
-
-        const monthContainer = document.getElementById('monthCheckboxes');
-        monthContainer.innerHTML = monthsArray.map((m, idx) => `
-            <label class="bg-white border border-slate-300 p-3 rounded-lg text-sm font-bold flex items-center justify-between cursor-pointer hover:bg-slate-50">
-                ${m} <input type="checkbox" id="payMonth_${idx}" class="payment-checkbox" ${p.months[idx] ? 'checked' : ''}>
-            </label>
-        `).join('');
-
+        renderPaymentArchive(student);
         document.getElementById('paymentModal').style.display = 'flex';
     }
 
@@ -1657,18 +1733,76 @@ input[type=range] { accent-color: var(--primary-600); }
         const cls = classesDB.find(c => c.id === currentPayClassId);
         const student = cls.students.find(s => s.id === currentPayStudentId);
 
-        student.payments.term1 = document.getElementById('payTerm1'.checked);
-        student.payments.term2 = document.getElementById('payTerm2').checked;
-        student.payments.sessions = parseInt(document.getElementById('paySessions').value) || 0;
-        student.payments.weeks = parseInt(document.getElementById('payWeeks').value) || 0;
+        const typeVal = document.getElementById('payType').value;
+        const numVal = document.getElementById('payDetailsNum').value;
+        const monthVal = document.getElementById('payDetailsMonth').value;
+        const amount = document.getElementById('payAmount').value;
+        const notes = document.getElementById('payNotes').value;
 
-        monthsArray.forEach((m, idx) => {
-            student.payments.months[idx] = document.getElementById(`payMonth_${idx}`).checked;
+        if(!typeVal) { alert('الرجاء اختيار نوع الدفع'); return; }
+
+        let typeText = '';
+        if(typeVal === 'session') typeText = `حصة (${numVal} حصص)`;
+        else if(typeVal === 'week') typeText = `أسبوع (${numVal} أسابيع)`;
+        else if(typeVal === 'month') typeText = `شهر (${monthVal})`;
+        else if(typeVal === 'term1') typeText = 'الترم الأول';
+        else if(typeVal === 'term2') typeText = 'الترم الثاني';
+        else if(typeVal === 'both_terms') typeText = 'الترمين معاً (عام كامل)';
+
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG') + ' ' + now.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+
+        if(!student.paymentArchive) student.paymentArchive = [];
+
+        student.paymentArchive.unshift({
+            id: 'pay_' + Date.now(),
+            date: dateStr,
+            typeText: typeText,
+            amount: amount,
+            notes: notes
         });
 
         localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
-        alert('✅ تم حفظ السجل المالي للطالب بنجاح!');
-        closePaymentModal();
+        
+        e.target.reset();
+        handlePayTypeChange();
+        renderPaymentArchive(student);
+    }
+
+    function renderPaymentArchive(student) {
+        const container = document.getElementById('paymentArchiveContainer');
+        if(!student.paymentArchive || student.paymentArchive.length === 0) {
+            container.innerHTML = '<div class="text-center py-6 bg-white border border-slate-200 border-dashed rounded-xl text-slate-400 font-bold text-sm">لا توجد مدفوعات مسجلة في الأرشيف حتى الآن.</div>';
+            return;
+        }
+
+        container.innerHTML = student.paymentArchive.map(pay => `
+            <div class="bg-white border border-slate-200 rounded-xl p-3 flex justify-between items-center shadow-sm">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="bg-[var(--primary-100)] text-[var(--primary-800)] px-2 py-0.5 rounded text-[11px] font-black">${pay.typeText}</span>
+                        <span class="text-[11px] text-slate-400 font-bold" dir="ltr">${pay.date}</span>
+                    </div>
+                    <div class="font-black text-[var(--primary-950)] text-sm mb-1">المبلغ: ${pay.amount} ج.م</div>
+                    ${pay.notes ? `<div class="text-[11px] text-slate-500 font-bold flex items-start gap-1"><span class="text-[10px]">📝</span> ${pay.notes}</div>` : ''}
+                </div>
+                <button type="button" onclick="deletePaymentRecord('${pay.id}')" class="text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg transition-colors" title="حذف السجل">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function deletePaymentRecord(recordId) {
+        if(!confirm('⚠️ هل أنت متأكد من حذف هذا السجل المالي؟')) return;
+
+        const cls = classesDB.find(c => c.id === currentPayClassId);
+        const student = cls.students.find(s => s.id === currentPayStudentId);
+        
+        student.paymentArchive = student.paymentArchive.filter(p => p.id !== recordId);
+        localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
+        
+        renderPaymentArchive(student);
     }
 
     function closePaymentModal() {
