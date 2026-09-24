@@ -9,6 +9,14 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A1E3F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="احجزلى">
+<link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
 <style>
 :root{
   --primary-950:#0A1E3F; --primary-900:#0F2D5C; --primary-800:#1E3A8A;
@@ -2227,7 +2235,7 @@ select.input-base{ font-size: 19px !important; }
             lng: parseFloat(lng),
             radius: radius, 
             bookedBoys: 0, bookedGirls: 0,
-            isActive: true, // الإضافة الجديدة: حالة المجموعة (مفتوحة للحجز أم مغلقة)
+            isActive: true,
             students: [] 
         };
 
@@ -2382,7 +2390,6 @@ select.input-base{ font-size: 19px !important; }
 
             const addressLine = cls.address ? `<div class="flex items-center gap-3 text-sm text-slate-800 font-bold"><span class="bg-white shadow-sm p-2 rounded-lg text-lg leading-none">📍</span> <span class="truncate pt-1 text-[12px]">${cls.address}</span></div>` : '';
 
-            // --- التعديل هنا: تحديد العدادات المعروضة بناءً على الفئة ---
             let countersHtml = '';
             if (cls.gender === 'boys') {
                 countersHtml = `<span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👦 ولاد: ${cls.bookedBoys || 0}</span>`;
@@ -2745,6 +2752,20 @@ select.input-base{ font-size: 19px !important; }
 
     function closePaymentModal() {
         document.getElementById('paymentModal').style.display = 'none';
+    }
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((registration) => {
+                    console.log('ServiceWorker registered:', registration.scope);
+                })
+                .catch((error) => {
+                    console.log('ServiceWorker registration failed:', error);
+                });
+        });
     }
 </script>
 </body>
