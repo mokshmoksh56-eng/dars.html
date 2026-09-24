@@ -31,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* أنيميشن الخلفية */
         .bg-shape { position: absolute; filter: blur(60px); z-index: -1; opacity: 0.5; animation: float 8s ease-in-out infinite; }
         .shape-1 { top: -10%; right: -10%; width: 300px; height: 300px; background: var(--primary-600); }
         .shape-2 { bottom: -10%; left: -10%; width: 400px; height: 400px; background: var(--emerald-600); animation-delay: -4s; }
@@ -41,7 +40,6 @@
             50% { transform: translateY(-20px) scale(1.05); }
         }
 
-        /* كروت الاختيار */
         .portal-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -69,12 +67,10 @@
             box-shadow: 0 30px 60px -20px rgba(0,0,0,0.15);
         }
 
-        /* تخصيص كارت المعلم */
         .card-teacher { border-bottom: 6px solid var(--primary-600); }
         .card-teacher:hover { border-color: var(--primary-600); }
         .card-teacher .icon-wrapper { background: linear-gradient(135deg, #DBEAFE, #BFDBFE); color: var(--primary-700); box-shadow: 0 10px 25px -5px rgba(37,99,235,0.3); }
 
-        /* تخصيص كارت الطالب */
         .card-student { border-bottom: 6px solid var(--emerald-600); }
         .card-student:hover { border-color: var(--emerald-600); }
         .card-student .icon-wrapper { background: linear-gradient(135deg, #D1FAE5, #A7F3D0); color: var(--emerald-700); box-shadow: 0 10px 25px -5px rgba(16,185,129,0.3); }
@@ -105,13 +101,11 @@
 </head>
 <body class="relative">
 
-    <!-- مؤثرات الخلفية -->
     <div class="bg-shape shape-1"></div>
     <div class="bg-shape shape-2"></div>
 
     <div class="container mx-auto px-4 py-8 flex flex-col items-center justify-center flex-1 max-w-5xl relative z-10">
         
-        <!-- الهيدر والترحيب -->
         <div class="text-center mb-12 animate-fade-in">
             <div class="inline-block mb-4">
                 <span class="bg-gradient-to-r from-amber-500 to-amber-300 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md">الإصدار 16.0 V</span>
@@ -124,17 +118,14 @@
             </p>
         </div>
 
-        <!-- الإحصائيات (شكل جمالي) -->
         <div class="flex flex-wrap justify-center gap-3 mb-10 animate-fade-in delay-1">
             <div class="stats-badge"><span>👨‍🏫</span> انضم إلينا +500 معلم</div>
             <div class="stats-badge"><span>🎓</span> أكثر من 10,000 طالب</div>
             <div class="stats-badge"><span>⚡</span> حجز فوري وسريع</div>
         </div>
 
-        <!-- كروت التوجيه (أنا معلم / أنا طالب) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full animate-fade-in delay-2 px-2 md:px-10">
             
-            <!-- كارت المعلم -->
             <a href="mester.html" class="portal-card card-teacher">
                 <div class="icon-wrapper">👨‍🏫</div>
                 <h2 class="text-3xl font-black text-slate-800 mb-3">بوابة المعلم</h2>
@@ -146,7 +137,6 @@
                 </div>
             </a>
 
-            <!-- كارت الطالب -->
             <a href="talep.html" class="portal-card card-student">
                 <div class="icon-wrapper">🎓</div>
                 <h2 class="text-3xl font-black text-slate-800 mb-3">بوابة الطالب</h2>
@@ -160,7 +150,6 @@
 
         </div>
 
-        <!-- الفوتر -->
         <div class="mt-16 text-center text-slate-400 font-bold text-sm animate-fade-in delay-2">
             <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى للدروس الخصوصية</p>
         </div>
@@ -171,12 +160,8 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then((registration) => {
-                        console.log('ServiceWorker registered:', registration.scope);
-                    })
-                    .catch((error) => {
-                        console.log('ServiceWorker registration failed:', error);
-                    });
+                    .then((registration) => console.log('SW registered'))
+                    .catch((error) => console.log('SW failed:', error));
             });
         }
     </script>
