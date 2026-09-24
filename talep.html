@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>بوابة الطالب - منصة احجزلى</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary-950:#064E3B; --primary-900:#065F46; --primary-800:#047857;
+  --primary-700:#059669; --primary-600:#10B981; --primary-500:#34D399;
+  --primary-400:#6EE7B7; --primary-300:#A7F3D0; --primary-200:#D1FAE5;
+  --primary-100:#ECFDF5; --primary-50:#F0FDF4;
+  --gold-600:#D97706; --gold-500:#F59E0B; --gold-400:#FBBF24;
+  --ink:#0F172A; --muted:#64748B; --line:#E2E8F0;
+  --surface:#FFFFFF; --surface-2:#F8FAFC;
+}
+
+*{ font-weight:800; font-family:'Cairo',sans-serif; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body{
+  background: radial-gradient(1000px 600px at 50% -10%, var(--primary-100) 0%, transparent 80%),
+              linear-gradient(180deg, #F8FAFC 0%, #E2E8F0 100%);
+  background-attachment:fixed; min-height:100vh; color:var(--ink); padding:20px 10px; font-size: 16px;
+}
+
+@media (max-width: 640px) {
+    body { padding: 0; background: var(--surface-2); }
+    .main-card {
+        border-radius: 0 !important; border: none !important; box-shadow: none !important;
+        padding: 15px !important; min-height: 100vh !important; max-width: 100% !important;
+    }
+    .app-header {
+        margin: -15px -15px 20px !important; padding: calc(20px + env(safe-area-inset-top)) 15px 20px !important;
+        border-radius: 0 0 24px 24px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+    }
+}
+
+.main-card{ background:var(--surface); border:1px solid var(--line); border-radius:26px; box-shadow:0 30px 60px -30px rgba(6,78,59,.2), 0 6px 18px -10px rgba(6,78,59,.1); overflow:hidden; display:flex; flex-direction:column; min-height:640px; padding:20px; max-width:600px; margin:0 auto; }
+.app-header{ margin:-20px -20px 22px; padding:28px 20px 24px; background:radial-gradient(130% 150% at 50% -30%, var(--primary-500) 0%, var(--primary-700) 45%, var(--primary-950) 100%); color:#fff; text-align:center; position:relative; overflow:hidden; }
+.app-header::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:4px; background:linear-gradient(90deg,var(--gold-600),var(--gold-400),var(--gold-600)); }
+.app-title{ font-size:32px; font-weight:900; }
+.app-title .accent{ color:var(--gold-400); }
+.app-subtitle{ font-size:15px; font-weight:800; color:rgba(255,255,255,.9); margin-top:5px; }
+
+.field-label{ display:block; font-size:16px; font-weight:900; color:var(--primary-900); margin-bottom:8px; }
+.input-base{ width:100%; padding:14px 16px; background:#fff; border:2px solid var(--line); border-radius:14px; font-weight:800; font-size:17px; outline:none; transition:all .2s ease; margin-bottom:16px;}
+.input-base:focus{ border-color:var(--primary-600); box-shadow:0 0 0 4px rgba(16,185,129,.15); }
+select.input-base { appearance:none; background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat:no-repeat; background-position:left 1rem center; background-size:1.2em; padding-left:2.5rem; }
+
+.btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:16px; border-radius:14px; font-weight:900; font-size:18px; color:#fff; border:none; cursor:pointer; background:linear-gradient(135deg,var(--primary-600) 0%, var(--primary-800) 100%); box-shadow:0 10px 20px -10px rgba(6,78,59,.6); transition:all .2s ease; margin-bottom: 12px; }
+.btn-primary:active{ transform:scale(.97); }
+.btn-whatsapp{ background:linear-gradient(135deg,#25D366 0%, #128C7E 100%); box-shadow:0 10px 20px -10px rgba(18,140,126,.6); }
+
+.option-btn { background:#F8FAFC; border:2px solid #CBD5E1; color:#475569; text-align:center; padding:12px 5px; border-radius:12px; font-size:15px; font-weight:900; cursor:pointer; transition:all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;}
+input[type="radio"]:checked + .option-btn { background:var(--primary-50); color:var(--primary-800); border-color:var(--primary-600); box-shadow:0 4px 12px rgba(16,185,129,0.2); }
+input[type="radio"]:active + .option-btn { transform:scale(0.95); }
+
+.fade-enter{ opacity:0; transform:translateY(15px); transition:all .3s ease-out; pointer-events:none; position:absolute; width:100%; visibility:hidden; display:none;}
+.fade-enter-active{ opacity:1; transform:translateY(0); pointer-events:auto; position:relative; visibility:visible; display:block;}
+
+.result-card { background: #fff; border: 2px solid var(--primary-100); border-radius: 18px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05); transition: all 0.2s; position: relative; overflow: hidden; }
+.result-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px -8px rgba(6,78,59,0.15); border-color: var(--primary-300); }
+.result-card::before { content: ''; position: absolute; top: 0; right: 0; width: 6px; height: 100%; background: var(--primary-500); }
+
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 900; background: var(--surface-2); border: 1px solid var(--line); }
+.badge-subject { background: #EEF2FF; color: #4F46E5; border-color: #C7D2FE; }
+.badge-grade { background: #FFFBEB; color: #D97706; border-color: #FDE68A; }
+.badge-full { background: #FEF2F2; color: #DC2626; border-color: #FECACA; }
+
+.empty-state { text-align: center; padding: 40px 20px; background: #F8FAFC; border: 2px dashed #CBD5E1; border-radius: 16px; color: #64748B; }
+.empty-state span { font-size: 40px; display: block; margin-bottom: 10px; }
+
+/* Filter Bar */
+.filter-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-chip { flex-shrink: 0; padding: 8px 16px; border-radius: 999px; background: #F1F5F9; border: 2px solid #E2E8F0; font-size: 14px; font-weight: 900; color: #475569; cursor: pointer; transition: all 0.2s; }
+.filter-chip.active { background: var(--primary-100); border-color: var(--primary-500); color: var(--primary-800); }
+
+/* GPS Button */
+.gps-btn { background: #EEF2FF; border: 2px dashed #A5B4FC; color: #4338CA; transition: all 0.2s; }
+.gps-btn:hover { background: #E0E7FF; border-style: solid; }
+.gps-btn.active { background: linear-gradient(135deg, #4F46E5, #3730A3); border: none; color: white; box-shadow: 0 4px 12px rgba(67,56,202,0.3); }
+</style>
+</head>
+<body>
+
+<div class="main-card relative">
+    <header class="app-header">
+        <h1 class="app-title">منصة <span class="accent">احجزلى</span></h1>
+        <p class="app-subtitle">بوابة الطالب - احجز دروسك بسهولة</p>
+    </header>
+
+    <div class="flex-1 relative w-full">
+        
+        <!-- ================= شاشة تسجيل الدخول وإنشاء الحساب ================= -->
+        <div id="loginView" class="fade-enter-active">
+            <h2 class="text-[20px] font-black text-slate-800 mb-2">👋 أهلاً بك يا بطل!</h2>
+            <p class="text-[14px] text-slate-500 mb-6 font-bold">سجل بياناتك مرة واحدة بس عشان نعرضلك المجموعات اللي تناسب صفك.</p>
+            
+            <form onsubmit="handleStudentLogin(event)">
+                <label class="field-label">اسمك ايه؟ <span class="text-rose-500">*</span></label>
+                <input type="text" id="studentName" required placeholder="الاسم الثلاثي" class="input-base">
+
+                <label class="field-label">رقم التليفون (واتساب) <span class="text-rose-500">*</span></label>
+                <input type="tel" id="studentPhone" required placeholder="01xxxxxxxxx" pattern="01[0-9]{9}" maxlength="11" class="input-base text-left" dir="ltr" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+
+                <label class="field-label">النوع <span class="text-rose-500">*</span></label>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <label>
+                        <input type="radio" name="studentGender" value="boy" checked class="hidden">
+                        <div class="option-btn"><span class="text-2xl">👦</span><span>ولد</span></div>
+                    </label>
+                    <label>
+                        <input type="radio" name="studentGender" value="girl" class="hidden">
+                        <div class="option-btn"><span class="text-2xl">👧</span><span>بنت</span></div>
+                    </label>
+                </div>
+
+                <label class="field-label">أنت في أي مرحلة؟ <span class="text-rose-500">*</span></label>
+                <select id="stageSelect" class="input-base" required onchange="updateGrades()">
+                    <option value="" disabled selected>اختر المرحلة...</option>
+                    <option value="kg">رياض الأطفال (KG)</option>
+                    <option value="primary">المرحلة الابتدائية</option>
+                    <option value="prep">المرحلة الإعدادية</option>
+                    <option value="secondary">المرحلة الثانوية</option>
+                </select>
+
+                <label class="field-label">الصف الدراسي <span class="text-rose-500">*</span></label>
+                <select id="gradeSelect" class="input-base" required disabled>
+                    <option value="" disabled selected>اختر المرحلة أولاً...</option>
+                </select>
+
+                <button type="submit" class="btn-primary mt-4">تسجيل الدخول والبحث 🚀</button>
+            </form>
+        </div>
+
+        <!-- ================= شاشة البحث وعرض المجموعات ================= -->
+        <div id="searchView" class="fade-enter">
+            <!-- الكارت الشخصي للطالب -->
+            <div class="bg-gradient-to-l from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-4 mb-6 shadow-sm flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-black text-emerald-900" id="displayStudentName">--</h3>
+                    <p class="text-sm font-bold text-emerald-700 mt-1" id="displayStudentGrade">--</p>
+                </div>
+                <button onclick="logout()" class="bg-white text-rose-600 border border-rose-200 px-3 py-1.5 rounded-lg text-xs font-black shadow-sm active:scale-95">تعديل البيانات</button>
+            </div>
+
+            <h2 class="text-[18px] font-black text-slate-800 mb-3 flex items-center gap-2">🔍 ابحث عن مجموعتك</h2>
+            
+            <!-- أدوات الفلترة -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
+                
+                <!-- زر تفعيل الـ GPS -->
+                <button type="button" id="gpsToggleBtn" onclick="requestGPSLocation()" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-black text-[15px] mb-4 gps-btn">
+                    <span class="text-xl">📍</span> <span id="gpsBtnText">البحث بالأقرب لي (تفعيل الـ GPS)</span>
+                </button>
+                <p id="gpsStatusText" class="text-[11px] text-center text-slate-500 font-bold -mt-2 mb-4 hidden"></p>
+
+                <label class="field-label !text-sm">المادة الدراسية</label>
+                <select id="filterSubject" class="input-base !py-2.5 !text-sm mb-3" onchange="renderClasses()">
+                    <option value="all">📚 كل المواد</option>
+                </select>
+
+                <label class="field-label !text-sm">المعلم (مستر / مس)</label>
+                <div class="flex gap-2 mb-3">
+                    <label class="flex-1">
+                        <input type="radio" name="filterTeacher" value="all" checked class="hidden" onchange="renderClasses()">
+                        <div class="option-btn !py-2 !text-xs !flex-row">الكل</div>
+                    </label>
+                    <label class="flex-1">
+                        <input type="radio" name="filterTeacher" value="مستر" class="hidden" onchange="renderClasses()">
+                        <div class="option-btn !py-2 !text-xs !flex-row">👨‍🏫 مستر</div>
+                    </label>
+                    <label class="flex-1">
+                        <input type="radio" name="filterTeacher" value="مس" class="hidden" onchange="renderClasses()">
+                        <div class="option-btn !py-2 !text-xs !flex-row">👩‍🏫 مس</div>
+                    </label>
+                </div>
+
+                <label class="field-label !text-sm">مكان الدرس</label>
+                <div class="filter-bar">
+                    <div class="filter-chip active" onclick="setPlaceFilter('all', this)">🌍 أي مكان</div>
+                    <div class="filter-chip" onclick="setPlaceFilter('center', this)">🏫 سنتر</div>
+                    <div class="filter-chip" onclick="setPlaceFilter('teacher_home', this)">🏡 بيت المستر</div>
+                    <div class="filter-chip" onclick="setPlaceFilter('student_home', this)">🚗 في منزلي</div>
+                </div>
+            </div>
+
+            <!-- عرض النتائج -->
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-black text-slate-800 text-[16px]">المجموعات المتاحة لك:</h3>
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2 py-1 rounded-md border border-emerald-200" id="resultCount">0</span>
+            </div>
+
+            <div id="classesContainer" class="space-y-4 pb-10">
+                <!-- المجموعات هتظهر هنا -->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ---------------------------------------------------------
+    // قاعدة بيانات المراحل والصفوف 
+    // ---------------------------------------------------------
+    const EDUCATION_STRUCTURE = {
+        kg: { grades: ['KG 1', 'KG 2'], subjects: ['لغة عربية (KG)','لغة إنجليزية (KG)','رياضيات (KG)','تربية دينية (KG)','تربية رياضية (KG)'] },
+        primary: { grades: ['الأول الابتدائي', 'الثاني الابتدائي', 'الثالث الابتدائي', 'الرابع الابتدائي', 'الخامس الابتدائي', 'السادس الابتدائي'], subjects: ['لغة عربية (ابتدائي)','لغة إنجليزية (ابتدائي)','رياضيات (ابتدائي)','علوم (ابتدائي)','دراسات اجتماعية (ابتدائي)','تربية دينية (ابتدائي)'] },
+        prep: { grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'], subjects: ['لغة عربية (إعدادي)','لغة إنجليزية (إعدادي)','رياضيات (إعدادي)','علوم (إعدادي)','دراسات اجتماعية (إعدادي)'] },
+        secondary: { grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'], subjects: ['لغة عربية (ثانوي)','لغة إنجليزية (ثانوي)','لغة فرنسية (ثانوي)','تاريخ (ثانوي)','جغرافيا (ثانوي)','فيزياء (ثانوي)','كيمياء (ثانوي)','أحياء (ثانوي)','رياضيات (ثانوي)'] }
+    };
+
+    let studentProfile = JSON.parse(localStorage.getItem('current_student_profile')) || null;
+    let classesDB = JSON.parse(localStorage.getItem('tutoring_classes_v15')) || [];
+    let currentPlaceFilter = 'all';
+    
+    // متغيرات الـ GPS
+    let studentLat = null;
+    let studentLng = null;
+    let isGpsActive = false;
+
+    // ---------------------------------------------------------
+    // تهيئة التطبيق عند الفتح
+    // ---------------------------------------------------------
+    window.onload = function() {
+        if (studentProfile) {
+            setupStudentDashboard();
+            showView('searchView');
+        } else {
+            showView('loginView');
+        }
+    };
+
+    function showView(viewId) {
+        document.querySelectorAll('.fade-enter-active, .fade-enter').forEach(el => {
+            el.classList.remove('fade-enter-active'); el.classList.add('fade-enter');
+        });
+        document.getElementById(viewId).classList.remove('fade-enter');
+        document.getElementById(viewId).classList.add('fade-enter-active');
+    }
+
+    // ---------------------------------------------------------
+    // شاشة تسجيل الدخول
+    // ---------------------------------------------------------
+    function updateGrades() {
+        const stage = document.getElementById('stageSelect').value;
+        const gradeSelect = document.getElementById('gradeSelect');
+        gradeSelect.innerHTML = '<option value="" disabled selected>اختر الصف الدراسي...</option>';
+        
+        if (stage && EDUCATION_STRUCTURE[stage]) {
+            EDUCATION_STRUCTURE[stage].grades.forEach(grade => {
+                gradeSelect.innerHTML += `<option value="${grade}">${grade}</option>`;
+            });
+            gradeSelect.disabled = false;
+        } else {
+            gradeSelect.disabled = true;
+        }
+    }
+
+    function handleStudentLogin(e) {
+        e.preventDefault();
+        const name = document.getElementById('studentName').value.trim();
+        const phone = document.getElementById('studentPhone').value.trim();
+        const gender = document.querySelector('input[name="studentGender"]:checked').value;
+        const stage = document.getElementById('stageSelect').value;
+        const grade = document.getElementById('gradeSelect').value;
+
+        if (!name || !phone || !grade) return alert('يرجى إكمال جميع البيانات.');
+
+        studentProfile = { name, phone, gender, stage, grade };
+        localStorage.setItem('current_student_profile', JSON.stringify(studentProfile));
+        
+        setupStudentDashboard();
+        showView('searchView');
+    }
+
+    function logout() {
+        if(confirm('هل تريد تعديل بياناتك والعودة لشاشة التسجيل؟')) {
+            studentProfile = null;
+            isGpsActive = false;
+            studentLat = null;
+            studentLng = null;
+            document.getElementById('gpsToggleBtn').className = 'w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-black text-[15px] mb-4 gps-btn';
+            document.getElementById('gpsBtnText').innerText = 'البحث بالأقرب لي (تفعيل الـ GPS)';
+            document.getElementById('gpsStatusText').classList.add('hidden');
+            localStorage.removeItem('current_student_profile');
+            showView('loginView');
+        }
+    }
+
+    // ---------------------------------------------------------
+    // دوال الـ GPS وحساب المسافة
+    // ---------------------------------------------------------
+    function requestGPSLocation() {
+        const btn = document.getElementById('gpsToggleBtn');
+        const statusText = document.getElementById('gpsStatusText');
+
+        if (isGpsActive) {
+            // إيقاف الـ GPS
+            isGpsActive = false;
+            studentLat = null;
+            studentLng = null;
+            btn.className = 'w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-black text-[15px] mb-4 gps-btn';
+            document.getElementById('gpsBtnText').innerText = 'البحث بالأقرب لي (تفعيل الـ GPS)';
+            statusText.classList.add('hidden');
+            renderClasses();
+            return;
+        }
+
+        if (!navigator.geolocation) {
+            alert('عفواً، متصفحك لا يدعم تحديد الموقع.');
+            return;
+        }
+
+        document.getElementById('gpsBtnText').innerText = 'جاري تحديد موقعك... ⏳';
+        statusText.classList.remove('hidden');
+        statusText.innerText = 'يرجى السماح للمتصفح بالوصول لموقعك...';
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                studentLat = position.coords.latitude;
+                studentLng = position.coords.longitude;
+                isGpsActive = true;
+                
+                btn.className = 'w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-black text-[15px] mb-4 gps-btn active';
+                document.getElementById('gpsBtnText').innerText = 'الـ GPS مفعل (إيقاف)';
+                statusText.innerText = '✅ تم تحديد موقعك بنجاح. المجموعات الآن مرتبة بالأقرب لك.';
+                statusText.classList.replace('text-slate-500', 'text-emerald-600');
+                
+                renderClasses();
+            },
+            (error) => {
+                let msg = 'حدث خطأ غير معروف.';
+                if (error.code === 1) msg = 'قمت برفض صلاحية الموقع. يرجى تفعيلها من إعدادات المتصفح.';
+                else if (error.code === 2) msg = 'الموقع غير متوفر حالياً.';
+                else if (error.code === 3) msg = 'انتهى وقت الطلب.';
+                
+                alert('فشل تحديد الموقع: ' + msg);
+                document.getElementById('gpsBtnText').innerText = 'البحث بالأقرب لي (تفعيل الـ GPS)';
+                statusText.innerText = '❌ فشل التحديد. ' + msg;
+                statusText.classList.replace('text-slate-500', 'text-rose-500');
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    }
+
+    // دالة Haversine لحساب المسافة بالكيلومتر
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        var R = 6371; // نصف قطر الأرض بالكيلومتر
+        var dLat = deg2rad(lat2 - lat1);
+        var dLon = deg2rad(lon2 - lon1); 
+        var a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2); 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c; 
+        return d;
+    }
+
+    function deg2rad(deg) { return deg * (Math.PI/180); }
+
+    // ---------------------------------------------------------
+    // شاشة البحث والفلترة
+    // ---------------------------------------------------------
+    function setupStudentDashboard() {
+        const genderEmoji = studentProfile.gender === 'boy' ? '👦' : '👧';
+        document.getElementById('displayStudentName').innerText = `${genderEmoji} ${studentProfile.name}`;
+        document.getElementById('displayStudentGrade').innerText = `🎯 ${studentProfile.grade}`;
+
+        const subjectSelect = document.getElementById('filterSubject');
+        subjectSelect.innerHTML = '<option value="all">📚 كل المواد</option>';
+        
+        if (EDUCATION_STRUCTURE[studentProfile.stage]) {
+            EDUCATION_STRUCTURE[studentProfile.stage].subjects.forEach(sub => {
+                subjectSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
+            });
+        }
+        const customSubjects = new Set();
+        classesDB.forEach(c => {
+            if (c.grade === studentProfile.grade && !EDUCATION_STRUCTURE[studentProfile.stage].subjects.includes(c.subject)) {
+                customSubjects.add(c.subject);
+            }
+        });
+        customSubjects.forEach(sub => {
+            subjectSelect.innerHTML += `<option value="${sub}">✏️ ${sub}</option>`;
+        });
+
+        renderClasses();
+    }
+
+    function setPlaceFilter(val, element) {
+        currentPlaceFilter = val;
+        document.querySelectorAll('.filter-chip').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        renderClasses();
+    }
+
+    function renderClasses() {
+        const container = document.getElementById('classesContainer');
+        container.innerHTML = '';
+
+        const filterSubject = document.getElementById('filterSubject').value;
+        const filterTeacher = document.querySelector('input[name="filterTeacher"]:checked').value;
+
+        // 1. فلترة مبدئية
+        let filteredClasses = classesDB.filter(c => {
+            if (c.isActive === false) return false;
+            if (c.grade !== studentProfile.grade) return false;
+            if (c.gender === 'boys' && studentProfile.gender === 'girl') return false;
+            if (c.gender === 'girls' && studentProfile.gender === 'boy') return false;
+            if (filterSubject !== 'all' && c.subject !== filterSubject) return false;
+            if (filterTeacher !== 'all' && c.teacherTitle !== filterTeacher) return false;
+            if (currentPlaceFilter !== 'all' && c.type !== currentPlaceFilter) return false;
+            return true;
+        });
+
+        // 2. حساب المسافات إذا كان الـ GPS مفعل واستبعاد الخوارج
+        if (isGpsActive && studentLat && studentLng) {
+            // حساب المسافة لكل مجموعة
+            filteredClasses.forEach(c => {
+                if (c.lat && c.lng) {
+                    c.calculatedDistance = getDistanceFromLatLonInKm(studentLat, studentLng, c.lat, c.lng);
+                } else {
+                    c.calculatedDistance = 99999; // رقم كبير جداً لجعله في الآخر
+                }
+            });
+
+            // فلترة المجموعات من نوع "يروح للطالب" إذا كان الطالب خارج نطاق المعلم
+            filteredClasses = filteredClasses.filter(c => {
+                if (c.type === 'student_home' && c.radius) {
+                    const radiusKm = c.radius / 1000;
+                    if (c.calculatedDistance > radiusKm) return false; // الطالب أبعد من نطاق المستر
+                }
+                return true;
+            });
+
+            // ترتيب المجموعات من الأقرب للأبعد
+            filteredClasses.sort((a, b) => a.calculatedDistance - b.calculatedDistance);
+        } else {
+            // إذا لم يكن مفعل، نرتب من الأحدث للأقدم
+            filteredClasses.reverse();
+        }
+
+        document.getElementById('resultCount').innerText = filteredClasses.length;
+
+        if (filteredClasses.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <span>🕵️‍♂️</span>
+                    <h3 class="font-black text-lg mb-1">لا توجد مجموعات متاحة حالياً</h3>
+                    <p class="text-sm font-bold opacity-80">جرب تغيير الفلاتر أو البحث عن مادة أخرى.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // عرض المجموعات
+        filteredClasses.forEach(cls => {
+            const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
+            const isFull = totalBooked >= cls.maxCapacity;
+
+            let typeIcon = '🏫'; let typeText = 'سنتر';
+            if(cls.type === 'teacher_home') { typeIcon = '🏡'; typeText = 'بيت المستر'; }
+            if(cls.type === 'student_home') { typeIcon = '🚗'; typeText = 'في منزلك'; }
+
+            let scheduleText = '';
+            if(cls.daysNames && cls.daysNames.length > 0) {
+                scheduleText = `${cls.daysNames.join(' - ')} | ${formatTime(cls.startTime)}`;
+            }
+
+            // تجهيز نص المسافة
+            let distanceHtml = '';
+            if (isGpsActive && cls.calculatedDistance !== 99999) {
+                distanceHtml = `<div class="bg-indigo-50 border border-indigo-200 text-indigo-700 text-[12px] font-black px-3 py-1.5 rounded-lg w-fit mb-3">📍 على بُعد ${cls.calculatedDistance.toFixed(1)} كم</div>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'result-card';
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h4 class="text-[18px] font-black text-slate-800">${cls.teacherTitle} ${cls.teacherName}</h4>
+                        <p class="text-[13px] font-bold text-slate-500 mt-1 flex items-center gap-1">
+                            <span>👥</span> المجموعة: ${cls.groupName}
+                        </p>
+                    </div>
+                    <span class="badge badge-subject">📚 ${cls.subject}</span>
+                </div>
+
+                ${distanceHtml}
+
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 mb-4">
+                    <div class="flex items-center gap-2 text-[14px] font-bold text-slate-700">
+                        <span class="text-lg w-6 text-center">${typeIcon}</span> 
+                        <span>المكان: ${cls.location} (${typeText})</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-[14px] font-bold text-slate-700">
+                        <span class="text-lg w-6 text-center">⏰</span> 
+                        <span>الموعد: <span dir="ltr">${scheduleText}</span></span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 mb-4">
+                    ${isFull 
+                        ? `<span class="badge badge-full w-full justify-center py-2">⚠️ المجموعة مكتملة العدد</span>` 
+                        : `<span class="badge bg-emerald-50 text-emerald-700 border-emerald-200 flex-1 justify-center py-2">✅ متاح ${cls.maxCapacity - totalBooked} مكان</span>`
+                    }
+                </div>
+
+                <button onclick="bookClass('${cls.id}')" class="btn-primary btn-whatsapp !mb-0 ${isFull ? 'opacity-50 grayscale cursor-not-allowed' : ''}" ${isFull ? 'disabled' : ''}>
+                    <span class="text-2xl leading-none">💬</span> تواصل مع المستر للحجز
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // ---------------------------------------------------------
+    // دالة الحجز عبر الواتساب
+    // ---------------------------------------------------------
+    function bookClass(classId) {
+        const cls = classesDB.find(c => c.id === classId);
+        if(!cls) return;
+
+        let distanceMsg = '';
+        if (isGpsActive && cls.calculatedDistance && cls.calculatedDistance !== 99999) {
+            distanceMsg = `📍 ملحوظة: أنا موجود على بُعد (${cls.calculatedDistance.toFixed(1)} كم) من موقع الدرس.\n`;
+        }
+
+        const msg = `السلام عليكم ${cls.teacherTitle} ${cls.teacherName}،
+أنا الطالب: ${studentProfile.name}
+الصف: ${studentProfile.grade}
+
+حابب احجز معاك في مجموعة ( ${cls.groupName} ) لمادة ${cls.subject}.
+${distanceMsg}
+هل يوجد مكان متاح لتأكيد الحجز؟`;
+
+        let phone = cls.phone;
+        if(phone.startsWith('0')) phone = '2' + phone;
+
+        const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    // تنسيق الوقت
+    function formatTime(time) {
+        if(!time) return '';
+        const [h, m] = time.split(':');
+        const hour = parseInt(h);
+        const ampm = hour >= 12 ? 'م' : 'ص';
+        const hour12 = hour % 12 || 12;
+        return `${hour12}:${m} ${ampm}`;
+    }
+</script>
+</body>
+</html>
