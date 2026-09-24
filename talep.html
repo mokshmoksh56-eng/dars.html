@@ -92,14 +92,10 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 .filter-chip { flex-shrink: 0; padding: 8px 16px; border-radius: 999px; background: #F1F5F9; border: 2px solid #E2E8F0; font-size: 14px; font-weight: 900; color: #475569; cursor: pointer; transition: all 0.2s; }
 .filter-chip.active { background: var(--primary-100); border-color: var(--primary-500); color: var(--primary-800); }
 
-.gps-btn { background: #EEF2FF; border: 2px dashed #A5B4FC; color: #4338CA; transition: all 0.2s; }
-.gps-btn:hover { background: #E0E7FF; border-style: solid; }
-.gps-btn.active { background: linear-gradient(135deg, #4F46E5, #3730A3); border: none; color: white; box-shadow: 0 4px 12px rgba(67,56,202,0.3); }
-
 /* تنسيقات الخريطة الدائمة */
 #studentMap { width: 100%; height: 45vh; min-height: 350px; border-radius: 16px; border: 2px solid var(--line); z-index: 1; margin-bottom: 24px; box-shadow: 0 10px 25px -10px rgba(0,0,0,0.1); }
 .map-marker-custom { display: flex; align-items: center; justify-content: center; font-size: 24px; background: white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid var(--primary-600); width: 40px !important; height: 40px !important; margin-left: -20px; margin-top: -20px;}
-.map-marker-student { display: flex; align-items: center; justify-content: center; background: #3B82F6; border-radius: 50%; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4); border: 2px solid white; width: 20px !important; height: 20px !important; margin-left: -10px; margin-top: -10px;}
+.map-marker-student { display: flex; align-items: center; justify-content: center; background: #3B82F6; border-radius: 50%; box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.35); border: 2px solid white; width: 24px !important; height: 24px !important; margin-left: -12px !important; margin-top: -12px !important;}
 .leaflet-popup-content-wrapper { border-radius: 14px; font-family: 'Cairo'; font-weight: bold; text-align: right; direction: rtl;}
 .map-popup-btn { background: linear-gradient(135deg,#25D366 0%, #128C7E 100%); color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900; width: 100%; margin-top: 8px; font-size: 13px; display: flex; justify-content: center; gap: 5px; align-items: center;}
 </style>
@@ -166,12 +162,7 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 
             <h2 class="text-[18px] font-black text-slate-800 mb-3 flex items-center gap-2">🔍 ابحث عن مجموعتك</h2>
             
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
-                <button type="button" id="gpsToggleBtn" onclick="requestGPSLocation()" class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-black text-[15px] mb-4 gps-btn">
-                    <span class="text-xl">📍</span> <span id="gpsBtnText">البحث بالأقرب لي (تفعيل الـ GPS)</span>
-                </button>
-                <p id="gpsStatusText" class="text-[11px] text-center text-slate-500 font-bold -mt-2 mb-4 hidden"></p>
-
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4">
                 <label class="field-label !text-sm">المادة الدراسية</label>
                 <select id="filterSubject" class="input-base !py-2.5 !text-sm mb-3" onchange="renderClasses()">
                     <option value="all">📚 كل المواد</option>
@@ -194,11 +185,36 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
                 </div>
 
                 <label class="field-label !text-sm">مكان الدرس</label>
-                <div class="filter-bar">
+                <div class="filter-bar !mb-0">
                     <div class="filter-chip active" onclick="setPlaceFilter('all', this)">🌍 أي مكان</div>
                     <div class="filter-chip" onclick="setPlaceFilter('center', this)">🏫 سنتر</div>
                     <div class="filter-chip" onclick="setPlaceFilter('teacher_home', this)">🏡 بيت المستر</div>
                     <div class="filter-chip" onclick="setPlaceFilter('student_home', this)">🚗 في منزلي</div>
+                </div>
+            </div>
+
+            <!-- لوحة التحكم في الخريطة والبحث بالنطاق -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm relative z-10">
+                <h3 class="font-black text-slate-800 text-[15px] mb-3 flex items-center gap-2">
+                    <span>📍</span> حدد نطاق البحث على الخريطة
+                </h3>
+                <p class="text-[11px] text-slate-500 font-bold mb-3 leading-relaxed">حرك النقطة الزرقاء لموقعك على الخريطة، واضبط مسافة البحث المطلوبة، ثم اضغط على زر البحث.</p>
+                
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between items-center text-sm font-bold text-slate-600">
+                        <span>مسافة البحث:</span>
+                        <span id="searchRadiusDisplay" class="text-emerald-600 font-black">5 كم</span>
+                    </div>
+                    <input type="range" id="searchRadiusSlider" min="1" max="50" value="5" class="w-full accent-emerald-500" oninput="updateSearchRadius(this.value)">
+                    
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <button type="button" onclick="requestGPSLocation()" class="bg-slate-100 text-slate-700 border border-slate-300 font-black py-2.5 rounded-xl text-xs flex justify-center items-center gap-1 active:scale-95 transition-all">
+                            <span>🎯</span> تحديد موقعي
+                        </button>
+                        <button type="button" onclick="applyMapSearch()" class="bg-emerald-600 text-white font-black py-2.5 rounded-xl text-xs flex justify-center items-center gap-1 shadow-md hover:bg-emerald-700 active:scale-95 transition-all">
+                            <span>🔍</span> بحث في النطاق
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -229,14 +245,18 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
     let studentProfile = JSON.parse(localStorage.getItem('current_student_profile')) || null;
     let classesDB = JSON.parse(localStorage.getItem('tutoring_classes_v15')) || [];
     let currentPlaceFilter = 'all';
+    
+    // متغيرات البحث والنطاق
     let studentLat = null;
     let studentLng = null;
     let isGpsActive = false;
-    
+    let studentSearchRadiusKm = 5;
+
     // متغيرات الخريطة
     let map = null;
-    let mapMarkers = [];
-    let studentMarkerLayer = null;
+    let studentSearchMarker = null;
+    let studentSearchCircle = null;
+    let teacherMarkersLayer = null;
 
     window.onload = function() {
         if (studentProfile) {
@@ -249,15 +269,90 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 
     function initMap() {
         if (map) return;
-        // مركز افتراضي (المنصورة) في حالة عدم وجود GPS
+        
+        // مركز افتراضي (المنصورة)
         let defaultLat = 31.0409, defaultLng = 31.3785; 
-        if (studentLat && studentLng) {
-            defaultLat = studentLat;
-            defaultLng = studentLng;
-        }
 
         map = L.map('studentMap').setView([defaultLat, defaultLng], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+
+        // طبقة خاصة لماركرز المدرسين عشان يسهل مسحها بدون التأثير على علامة الطالب
+        teacherMarkersLayer = L.layerGroup().addTo(map);
+
+        // إضافة علامة الطالب التفاعلية والدائرة
+        const studentIcon = L.divIcon({
+            className: 'map-marker-student',
+            iconSize: [24, 24]
+        });
+
+        studentSearchMarker = L.marker([defaultLat, defaultLng], {icon: studentIcon, draggable: true})
+            .bindPopup('<div class="text-center font-bold text-xs">حرك هذه العلامة لموقعك</div>')
+            .addTo(map);
+            
+        studentSearchCircle = L.circle([defaultLat, defaultLng], {
+            color: '#10B981',
+            fillColor: '#34D399',
+            fillOpacity: 0.15,
+            radius: studentSearchRadiusKm * 1000
+        }).addTo(map);
+
+        // إحداثيات البحث الحالية (بشكل مبدئي)
+        studentLat = defaultLat;
+        studentLng = defaultLng;
+
+        // تحديث الدائرة عند سحب العلامة
+        studentSearchMarker.on('dragend', function(e) {
+            const pos = e.target.getLatLng();
+            studentLat = pos.lat;
+            studentLng = pos.lng;
+            studentSearchCircle.setLatLng(pos);
+        });
+
+        // نقل العلامة عند الضغط على أي مكان في الخريطة
+        map.on('click', function(e) {
+            studentLat = e.latlng.lat;
+            studentLng = e.latlng.lng;
+            studentSearchMarker.setLatLng(e.latlng);
+            studentSearchCircle.setLatLng(e.latlng);
+        });
+    }
+
+    function updateSearchRadius(km) {
+        studentSearchRadiusKm = parseInt(km);
+        document.getElementById('searchRadiusDisplay').innerText = km + ' كم';
+        if (studentSearchCircle) {
+            studentSearchCircle.setRadius(studentSearchRadiusKm * 1000);
+        }
+    }
+
+    function requestGPSLocation() {
+        if (!navigator.geolocation) { alert('عفواً، متصفحك لا يدعم تحديد الموقع.'); return; }
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                
+                if(map && studentSearchMarker && studentSearchCircle) {
+                    studentSearchMarker.setLatLng([lat, lng]);
+                    studentSearchCircle.setLatLng([lat, lng]);
+                    studentLat = lat;
+                    studentLng = lng;
+                    map.setView([lat, lng], 13);
+                }
+            },
+            (error) => {
+                alert('فشل تحديد الموقع. يرجى التأكد من تفعيل الـ GPS في جهازك والسماح للمتصفح بالوصول إليه.');
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    }
+
+    function applyMapSearch() {
+        isGpsActive = true; 
+        renderClasses();
+        // التمرير السلس إلى الأسفل لرؤية النتائج
+        document.getElementById('classesContainer').scrollIntoView({behavior: 'smooth', block: 'start'});
     }
 
     function showView(viewId) {
@@ -268,7 +363,6 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         document.getElementById(viewId).classList.add('fade-enter-active');
 
         if (viewId === 'searchView') {
-            // تهيئة الخريطة وتحديث حجمها بعد ظهورها على الشاشة
             setTimeout(() => {
                 initMap();
                 map.invalidateSize();
@@ -309,49 +403,9 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         if(confirm('هل تريد تعديل بياناتك والعودة لشاشة التسجيل؟')) {
             studentProfile = null;
             isGpsActive = false;
-            studentLat = null;
-            studentLng = null;
-            document.getElementById('gpsToggleBtn').className = 'w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-black text-[15px] mb-4 gps-btn';
-            document.getElementById('gpsBtnText').innerText = 'البحث بالأقرب لي (تفعيل الـ GPS)';
-            document.getElementById('gpsStatusText').classList.add('hidden');
             localStorage.removeItem('current_student_profile');
             showView('loginView');
         }
-    }
-
-    function requestGPSLocation() {
-        const btn = document.getElementById('gpsToggleBtn');
-        const statusText = document.getElementById('gpsStatusText');
-        if (isGpsActive) {
-            isGpsActive = false; studentLat = null; studentLng = null;
-            btn.className = 'w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-black text-[15px] mb-4 gps-btn';
-            document.getElementById('gpsBtnText').innerText = 'البحث بالأقرب لي (تفعيل الـ GPS)';
-            statusText.classList.add('hidden'); renderClasses(); return;
-        }
-        if (!navigator.geolocation) { alert('عفواً، متصفحك لا يدعم تحديد الموقع.'); return; }
-        document.getElementById('gpsBtnText').innerText = 'جاري تحديد موقعك... ⏳';
-        statusText.classList.remove('hidden');
-        statusText.innerText = 'يرجى السماح للمتصفح بالوصول لموقعك...';
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                studentLat = position.coords.latitude; studentLng = position.coords.longitude; isGpsActive = true;
-                btn.className = 'w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-black text-[15px] mb-4 gps-btn active';
-                document.getElementById('gpsBtnText').innerText = 'الـ GPS مفعل (إيقاف)';
-                statusText.innerText = '✅ تم تحديد موقعك بنجاح. المجموعات الآن مرتبة بالأقرب لك.';
-                statusText.classList.replace('text-slate-500', 'text-emerald-600'); renderClasses();
-            },
-            (error) => {
-                let msg = 'حدث خطأ غير معروف.';
-                if (error.code === 1) msg = 'قمت برفض صلاحية الموقع.';
-                else if (error.code === 2) msg = 'الموقع غير متوفر حالياً.';
-                else if (error.code === 3) msg = 'انتهى وقت الطلب.';
-                alert('فشل تحديد الموقع: ' + msg);
-                document.getElementById('gpsBtnText').innerText = 'البحث بالأقرب لي (تفعيل الـ GPS)';
-                statusText.innerText = '❌ فشل التحديد. ' + msg;
-                statusText.classList.replace('text-slate-500', 'text-rose-500');
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
     }
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
@@ -379,7 +433,6 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
             }
         });
         customSubjects.forEach(sub => { subjectSelect.innerHTML += `<option value="${sub}">✏️ ${sub}</option>`; });
-        // لا نقوم باستدعاء renderClasses هنا لمنع التكرار لأن showView سيقوم بذلك
     }
 
     function setPlaceFilter(val, element) {
@@ -389,30 +442,17 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
     }
 
     function updateMapMarkers(filteredClasses) {
-        if (!map) return;
+        if (!map || !teacherMarkersLayer) return;
 
-        // مسح الماركرز والدوائر القديمة
-        mapMarkers.forEach(item => {
-            map.removeLayer(item.marker);
-            if(item.circle) map.removeLayer(item.circle);
-        });
-        mapMarkers = [];
-        if (studentMarkerLayer) map.removeLayer(studentMarkerLayer);
+        // مسح ماركرز المدرسين القديمة فقط
+        teacherMarkersLayer.clearLayers();
 
         let bounds = L.latLngBounds();
         let hasValidMarkers = false;
 
-        // إضافة موقع الطالب الفعلي لو كان مفعل الـ GPS
-        if (isGpsActive && studentLat && studentLng) {
-            const studentIcon = L.divIcon({
-                className: 'map-marker-student',
-                iconSize: [20, 20]
-            });
-            studentMarkerLayer = L.marker([studentLat, studentLng], {icon: studentIcon})
-                .bindPopup('<div class="text-center text-xs">📍 موقعك الحالي</div>')
-                .addTo(map);
-            bounds.extend([studentLat, studentLng]);
-            hasValidMarkers = true;
+        // إضافة موقع بحث الطالب إلى حدود الخريطة
+        if (studentSearchMarker) {
+            bounds.extend(studentSearchMarker.getLatLng());
         }
 
         filteredClasses.forEach(cls => {
@@ -427,7 +467,7 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
                     iconSize: [40, 40]
                 });
 
-                const marker = L.marker([cls.lat, cls.lng], {icon: customIcon}).addTo(map);
+                const marker = L.marker([cls.lat, cls.lng], {icon: customIcon});
                 
                 const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
                 const isFull = totalBooked >= cls.maxCapacity;
@@ -445,27 +485,27 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
                     </div>
                 `;
                 marker.bindPopup(popupHtml);
+                teacherMarkersLayer.addLayer(marker);
 
-                let circle = null;
-                // رسم دائرة التغطية إذا كانت المجموعة من نوع "يروح للطالب"
+                // رسم دائرة التغطية الخاصة بالمعلم
                 if (cls.type === 'student_home' && cls.radius) {
-                    circle = L.circle([cls.lat, cls.lng], {
+                    const circle = L.circle([cls.lat, cls.lng], {
                         color: borderColor,
                         fillColor: borderColor,
                         fillOpacity: 0.1,
                         radius: cls.radius
-                    }).addTo(map);
+                    });
+                    teacherMarkersLayer.addLayer(circle);
                     bounds.extend(circle.getBounds());
                 } else {
                     bounds.extend([cls.lat, cls.lng]);
                 }
 
-                mapMarkers.push({marker: marker, circle: circle});
                 hasValidMarkers = true;
             }
         });
 
-        // ضبط زووم الخريطة ليحتوي جميع الماركرز
+        // ضبط زووم الخريطة ليحتوي جميع الماركرز إذا كانت موجودة
         if (hasValidMarkers) {
             map.fitBounds(bounds, {padding: [30, 30], maxZoom: 14});
         }
@@ -489,10 +529,19 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         });
 
         if (isGpsActive && studentLat && studentLng) {
+            // 1. حساب المسافة لجميع المجموعات
             filteredClasses.forEach(c => {
-                if (c.lat && c.lng) { c.calculatedDistance = getDistanceFromLatLonInKm(studentLat, studentLng, c.lat, c.lng); } 
-                else { c.calculatedDistance = 99999; }
+                if (c.lat && c.lng) { 
+                    c.calculatedDistance = getDistanceFromLatLonInKm(studentLat, studentLng, c.lat, c.lng); 
+                } else { 
+                    c.calculatedDistance = 99999; 
+                }
             });
+
+            // 2. فلترة المجموعات بناءً على نطاق دائرة بحث الطالب
+            filteredClasses = filteredClasses.filter(c => c.calculatedDistance <= studentSearchRadiusKm);
+
+            // 3. تطبيق شرط نطاق التغطية الخاص بالمعلم للمجموعات اللي بتيجي البيت
             filteredClasses = filteredClasses.filter(c => {
                 if (c.type === 'student_home' && c.radius) {
                     const radiusKm = c.radius / 1000;
@@ -500,16 +549,19 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
                 }
                 return true;
             });
+
             filteredClasses.sort((a, b) => a.calculatedDistance - b.calculatedDistance);
-        } else { filteredClasses.reverse(); }
+        } else { 
+            filteredClasses.reverse(); 
+        }
 
         document.getElementById('resultCount').innerText = filteredClasses.length;
 
-        // تحديث الخريطة بشكل دائم مع المجموعات
+        // تحديث الماركرز على الخريطة بشكل دائم
         updateMapMarkers(filteredClasses);
 
         if (filteredClasses.length === 0) {
-            container.innerHTML = `<div class="empty-state"><span>🕵️‍♂️</span><h3 class="font-black text-lg mb-1">لا توجد مجموعات متاحة حالياً</h3><p class="text-sm font-bold opacity-80">جرب تغيير الفلاتر أو البحث عن مادة أخرى.</p></div>`;
+            container.innerHTML = `<div class="empty-state"><span>🕵️‍♂️</span><h3 class="font-black text-lg mb-1">لا توجد مجموعات في هذا النطاق</h3><p class="text-sm font-bold opacity-80">جرب توسيع دائرة البحث أو تغيير الفلاتر.</p></div>`;
             return;
         }
 
