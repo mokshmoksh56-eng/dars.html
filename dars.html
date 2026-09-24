@@ -599,10 +599,7 @@ select.input-base{ font-size: 19px !important; }
             <form id="addClassForm" onsubmit="handleAddClass(event)">
                 
                 <div class="bg-gradient-to-br from-slate-50 to-blue-50/40 p-4 rounded-2xl border-2 border-[var(--primary-200)] mb-4 shadow-sm">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">1</div>
-                        <label class="field-label !mb-0 !text-[15px]">اختر المرحلة الدراسية <span class="text-rose-500">*</span></label>
-                    </div>
+                    
                     <div id="classStageSelector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                     <p class="text-[11px] text-slate-500 font-bold mt-3 text-center">💡 اختر المرحلة لعرض الصفوف والمواد الخاصة بها فقط</p>
                 </div>
@@ -610,7 +607,7 @@ select.input-base{ font-size: 19px !important; }
                 <div id="classSubjectGradeGrid" class="hidden grade-subject-grid mb-4">
                     <div id="gradeSectionWrapper" class="section-box">
                         <div class="section-head">
-                            <div class="step-badge" id="gradeStepBadge">2</div>
+                            
                             <div class="section-title">الصف الدراسي <span class="text-rose-500">*</span></div>
                         </div>
                         <div id="classGradeContainer" class="flex flex-wrap gap-2"></div>
@@ -618,14 +615,17 @@ select.input-base{ font-size: 19px !important; }
 
                     <div id="subjectSectionWrapper" class="section-box">
                         <div class="section-head">
-                            <div class="step-badge" id="subjectStepBadge">3</div>
+                            
                             <div class="section-title">المادة الدراسية <span class="text-rose-500">*</span></div>
                         </div>
                         <div id="classSubjectContainer" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
 
-                <label class="field-label">اسم المجموعة <span class="text-rose-500">*</span></label>
+                <div class="flex items-center gap-2 mb-2 mt-4">
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">1</div>
+                    <label class="field-label !mb-0">اسم المجموعة <span class="text-rose-500">*</span></label>
+                </div>
                 <input type="text" id="groupName" required placeholder="مثال: مجموعة السبت، المجموعة الأولى..." class="input-base">
 
                 <label class="field-label">الفئة المسموح بها</label>
@@ -694,7 +694,10 @@ select.input-base{ font-size: 19px !important; }
                     </div>
                 </div>
                 
-                <label class="field-label" id="locationLabel">اسم السنتر / المستر <span class="text-rose-500">*</span></label>
+                <div class="flex items-center gap-2 mb-2 mt-4">
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">2</div>
+                    <label class="field-label !mb-0" id="locationLabel">اسم السنتر / المستر <span class="text-rose-500">*</span></label>
+                </div>
                 <input type="text" id="centerName" required placeholder="مثال: سنتر الأوائل / مستر أحمد" class="input-base">
 
                 <div class="mb-4 bg-gradient-to-br from-emerald-50 to-teal-50/40 p-4 rounded-2xl border-2 border-emerald-200 shadow-sm">
@@ -780,12 +783,18 @@ select.input-base{ font-size: 19px !important; }
                     </div>
                 </div>
 
-                <label class="field-label">أيام الأسبوع <span class="text-rose-500">*</span></label>
+                <div class="flex items-center gap-2 mb-2 mt-4">
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">3</div>
+                    <label class="field-label !mb-0">أيام الأسبوع <span class="text-rose-500">*</span></label>
+                </div>
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
                     <div class="days-selector" id="daysSelector"></div>
                 </div>
 
-                <label class="field-label">وقت الحصة <span class="text-rose-500">*</span></label>
+                <div class="flex items-center gap-2 mb-2 mt-4">
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">4</div>
+                    <label class="field-label !mb-0">وقت الحصة <span class="text-rose-500">*</span></label>
+                </div>
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
                     <div class="time-inputs-grid">
                         <div>
@@ -1774,18 +1783,11 @@ select.input-base{ font-size: 19px !important; }
         
         const gradeWrapper = document.getElementById('gradeSectionWrapper');
         const subjectWrapper = document.getElementById('subjectSectionWrapper');
-        const gradeStepBadge = document.getElementById('gradeStepBadge');
-        const subjectStepBadge = document.getElementById('subjectStepBadge');
         
         [gradeWrapper, subjectWrapper].forEach(wrapper => {
             if (!wrapper) return;
             wrapper.style.background = colorInfo.bg;
             wrapper.style.borderColor = colorInfo.border;
-        });
-        
-        [gradeStepBadge, subjectStepBadge].forEach(badge => {
-            if (!badge) return;
-            badge.style.background = colorInfo.solid;
         });
     }
 
@@ -2225,6 +2227,7 @@ select.input-base{ font-size: 19px !important; }
             lng: parseFloat(lng),
             radius: radius, 
             bookedBoys: 0, bookedGirls: 0,
+            isActive: true, // الإضافة الجديدة: حالة المجموعة (مفتوحة للحجز أم مغلقة)
             students: [] 
         };
 
@@ -2327,6 +2330,7 @@ select.input-base{ font-size: 19px !important; }
         reversedDB.forEach(cls => {
             const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
             const isFull = totalBooked >= cls.maxCapacity;
+            const isActive = cls.isActive !== false; 
             
             const stageKey = getStageForGrade(cls.grade) !== 'custom' ? getStageForGrade(cls.grade) : getStageForSubject(cls.subject);
 
@@ -2378,18 +2382,34 @@ select.input-base{ font-size: 19px !important; }
 
             const addressLine = cls.address ? `<div class="flex items-center gap-3 text-sm text-slate-800 font-bold"><span class="bg-white shadow-sm p-2 rounded-lg text-lg leading-none">📍</span> <span class="truncate pt-1 text-[12px]">${cls.address}</span></div>` : '';
 
+            // --- التعديل هنا: تحديد العدادات المعروضة بناءً على الفئة ---
+            let countersHtml = '';
+            if (cls.gender === 'boys') {
+                countersHtml = `<span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👦 ولاد: ${cls.bookedBoys || 0}</span>`;
+            } else if (cls.gender === 'girls') {
+                countersHtml = `<span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👧 بنات: ${cls.bookedGirls || 0}</span>`;
+            } else {
+                countersHtml = `
+                    <span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👦 ولاد: ${cls.bookedBoys || 0}</span>
+                    <span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👧 بنات: ${cls.bookedGirls || 0}</span>
+                `;
+            }
+
             const card = document.createElement('div');
             card.className = 'class-card cursor-default p-0 flex flex-col justify-between';
             card.setAttribute('data-stage', stageKey);
             
             card.innerHTML = `
                 <div class="cursor-pointer flex flex-col" onclick="openGroupDetails('${cls.id}')">
-                    <div style="background: ${headerBg};" class="px-5 py-4 flex justify-between items-center text-white shadow-sm">
-                        <h4 class="text-[17px] font-black text-white">👥 ${cls.groupName}</h4>
+                    <div style="background: ${headerBg};" class="px-5 py-4 flex justify-between items-center text-white shadow-sm ${!isActive ? 'opacity-80 grayscale-[30%]' : ''}">
+                        <h4 class="text-[17px] font-black text-white flex items-center gap-2">
+                            👥 ${cls.groupName} 
+                            ${!isActive ? '<span class="bg-rose-600 border border-white/30 text-white text-[10px] px-2 py-0.5 rounded-md leading-none shadow-sm">مغلق</span>' : ''}
+                        </h4>
                         <div class="text-white opacity-90 text-xl font-bold">➔</div>
                     </div>
                     
-                    <div class="p-5 pb-0">
+                    <div class="p-5 pb-0 ${!isActive ? 'opacity-80' : ''}">
                         <div class="flex flex-wrap gap-2 mb-4">${gradeBadge} ${subjectBadge} ${genderBadge}</div>
                         
                         <div class="space-y-3 mb-4">
@@ -2409,15 +2429,17 @@ select.input-base{ font-size: 19px !important; }
                                 <span class="text-base font-black ${isFull ? 'text-rose-600' : 'text-slate-800'}" dir="ltr">${totalBooked} / ${cls.maxCapacity}</span>
                             </div>
                             <div class="flex gap-2">
-                                <span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👦 ولاد: ${cls.bookedBoys || 0}</span>
-                                <span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👧 بنات: ${cls.bookedGirls || 0}</span>
+                                ${countersHtml}
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="px-5 pb-5">
-                    <button onclick="deleteGroup('${cls.id}')" class="w-full bg-white text-rose-600 border border-rose-200 shadow-sm font-black py-3 rounded-xl text-[13px] hover:bg-rose-50 active:scale-95 transition-all">
-                        🗑️ إلغاء المجموعة
+                <div class="px-5 pb-5 grid grid-cols-2 gap-2 relative z-10">
+                    <button onclick="toggleGroupStatus('${cls.id}'); event.stopPropagation();" class="w-full ${isActive ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'} border shadow-sm font-black py-3 rounded-xl text-[13px] active:scale-95 transition-all">
+                        ${isActive ? '⏸️ قفل الحجز' : '▶️ فتح الحجز'}
+                    </button>
+                    <button onclick="deleteGroup('${cls.id}'); event.stopPropagation();" class="w-full bg-white text-rose-600 border border-rose-200 shadow-sm font-black py-3 rounded-xl text-[13px] hover:bg-rose-50 active:scale-95 transition-all">
+                        🗑️ إلغاء نهائي
                     </button>
                 </div>
             `;
@@ -2431,6 +2453,22 @@ select.input-base{ font-size: 19px !important; }
             localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
             alert('تم إلغاء المجموعة بنجاح.');
             updateLiveJourneyTracker('teacherDashboardView');
+            renderTeacherDashboard();
+        }
+    }
+
+    function toggleGroupStatus(classId) {
+        const clsIndex = classesDB.findIndex(c => c.id === classId);
+        if (clsIndex > -1) {
+            const currentStatus = classesDB[clsIndex].isActive !== false;
+            const newStatus = !currentStatus;
+            
+            if (!newStatus) { 
+                if(!confirm("هل أنت متأكد أنك تريد قفل الحجز لهذه المجموعة؟\nلن يتمكن الطلاب الجدد من رؤيتها أو الحجز بها عبر المنصة.")) return;
+            }
+            
+            classesDB[clsIndex].isActive = newStatus;
+            localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
             renderTeacherDashboard();
         }
     }
@@ -2520,6 +2558,10 @@ select.input-base{ font-size: 19px !important; }
         const cls = classesDB.find(c => c.id === currentOpenedGroupId);
         const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
         
+        if (cls.isActive === false) {
+            if(!confirm('⚠️ هذه المجموعة مغلقة للحجز حالياً.\nهل تريد الاستمرار وتسجيل طالب يدوياً على أي حال؟')) return;
+        }
+
         if (totalBooked >= cls.maxCapacity) { alert('عذراً، هذه المجموعة اكتمل عددها تماماً!'); return; }
 
         document.getElementById('manualClassId').value = currentOpenedGroupId;
