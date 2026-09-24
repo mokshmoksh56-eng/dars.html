@@ -4,6 +4,7 @@
   "description": "الطريق الأسهل لتنظيم الدروس الخصوصية",
   "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#F8FAFC",
   "theme_color": "#0A1E3F",
   "dir": "rtl",
