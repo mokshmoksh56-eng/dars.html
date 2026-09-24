@@ -1,10 +1,12 @@
-const CACHE_NAME = 'manasa-pwa-v2'; // تم تحديث الإصدار
+const CACHE_NAME = 'manasa-pwa-v3'; // تم تحديث الإصدار
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './talep.html',
   './mester.html',
-  './manifest.json'
+  './manifest.json',
+  './icon-192x192.png',
+  './icon-512x512.png'
 ];
 
 // 1. تثبيت الـ Service Worker
