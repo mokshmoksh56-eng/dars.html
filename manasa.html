@@ -7,6 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0A1E3F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="احجزلى">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
     <style>
         :root {
             --primary-950:#0A1E3F; --primary-900:#0F2D5C; --primary-600:#2563EB;
@@ -127,7 +135,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full animate-fade-in delay-2 px-2 md:px-10">
             
             <!-- كارت المعلم -->
-            <a href="dars.html" class="portal-card card-teacher">
+            <a href="mester.html" class="portal-card card-teacher">
                 <div class="icon-wrapper">👨‍🏫</div>
                 <h2 class="text-3xl font-black text-slate-800 mb-3">بوابة المعلم</h2>
                 <p class="text-slate-500 font-bold text-[15px] leading-relaxed px-4">
@@ -159,5 +167,18 @@
 
     </div>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registered:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
