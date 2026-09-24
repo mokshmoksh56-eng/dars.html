@@ -4,16 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>منصة احجزلى - الرئيسية</title>
+    
+    <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تسريع Tailwind وتخصيص الإعدادات لبيئة الـ APK -->
+    <script>
+        tailwind.config = { 
+            corePlugins: { preflight: true } 
+        }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#0A1E3F">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="احجزلى">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
     
     <style>
         :root {
@@ -126,7 +135,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full animate-fade-in delay-2 px-2 md:px-10">
             
-            <a href="mester.html" class="portal-card card-teacher">
+            <a href="./mester.html" class="portal-card card-teacher">
                 <div class="icon-wrapper">👨‍🏫</div>
                 <h2 class="text-3xl font-black text-slate-800 mb-3">بوابة المعلم</h2>
                 <p class="text-slate-500 font-bold text-[15px] leading-relaxed px-4">
@@ -137,7 +146,7 @@
                 </div>
             </a>
 
-            <a href="talep.html" class="portal-card card-student">
+            <a href="./talep.html" class="portal-card card-student">
                 <div class="icon-wrapper">🎓</div>
                 <h2 class="text-3xl font-black text-slate-800 mb-3">بوابة الطالب</h2>
                 <p class="text-slate-500 font-bold text-[15px] leading-relaxed px-4">
