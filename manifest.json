@@ -2,7 +2,7 @@
   "name": "منصة احجزلى",
   "short_name": "احجزلى",
   "description": "الطريق الأسهل لتنظيم الدروس الخصوصية",
-  "start_url": "./manasa.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F8FAFC",
   "theme_color": "#0A1E3F",
