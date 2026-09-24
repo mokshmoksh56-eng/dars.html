@@ -15,6 +15,9 @@
 </script>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
+<!-- إضافة مكتبة الخرائط Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <!-- PWA -->
 <link rel="manifest" href="./manifest.json">
@@ -91,6 +94,13 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 .gps-btn { background: #EEF2FF; border: 2px dashed #A5B4FC; color: #4338CA; transition: all 0.2s; }
 .gps-btn:hover { background: #E0E7FF; border-style: solid; }
 .gps-btn.active { background: linear-gradient(135deg, #4F46E5, #3730A3); border: none; color: white; box-shadow: 0 4px 12px rgba(67,56,202,0.3); }
+
+/* تنسيقات الخريطة */
+#studentMap { width: 100%; height: 400px; border-radius: 16px; border: 2px solid var(--line); z-index: 1; display: none; margin-bottom: 16px; }
+.map-marker-custom { display: flex; align-items: center; justify-content: center; font-size: 24px; background: white; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 2px solid var(--primary-600); width: 40px !important; height: 40px !important; margin-left: -20px; margin-top: -20px;}
+.map-marker-student { display: flex; align-items: center; justify-content: center; background: #3B82F6; border-radius: 50%; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4); border: 2px solid white; width: 20px !important; height: 20px !important; margin-left: -10px; margin-top: -10px;}
+.leaflet-popup-content-wrapper { border-radius: 14px; font-family: 'Cairo'; font-weight: bold; text-align: right; direction: rtl;}
+.map-popup-btn { background: linear-gradient(135deg,#25D366 0%, #128C7E 100%); color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900; width: 100%; margin-top: 8px; font-size: 13px; display: flex; justify-content: center; gap: 5px; align-items: center;}
 </style>
 </head>
 <body>
@@ -192,10 +202,15 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
             </div>
 
             <div class="flex justify-between items-center mb-3">
-                <h3 class="font-black text-slate-800 text-[16px]">المجموعات المتاحة لك:</h3>
-                <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2 py-1 rounded-md border border-emerald-200" id="resultCount">0</span>
+                <h3 class="font-black text-slate-800 text-[16px] flex items-center gap-1">المتاح لك: <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2 py-0.5 rounded-md border border-emerald-200" id="resultCount">0</span></h3>
+                
+                <div class="flex gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                    <button id="viewListBtn" onclick="toggleViewMode('list')" class="px-3 py-1.5 text-xs font-black rounded-md transition-colors bg-white shadow-sm text-emerald-700">قائمة</button>
+                    <button id="viewMapBtn" onclick="toggleViewMode('map')" class="px-3 py-1.5 text-xs font-black rounded-md transition-colors text-slate-500 hover:text-slate-700">خريطة 🗺️</button>
+                </div>
             </div>
 
+            <div id="studentMap"></div>
             <div id="classesContainer" class="space-y-4 pb-10"></div>
         </div>
 
@@ -216,6 +231,12 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
     let studentLat = null;
     let studentLng = null;
     let isGpsActive = false;
+    let currentViewMode = 'list'; // 'list' or 'map'
+    
+    // متغيرات الخريطة
+    let map = null;
+    let mapMarkers = [];
+    let studentMarkerLayer = null;
 
     window.onload = function() {
         if (studentProfile) {
@@ -232,6 +253,45 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         });
         document.getElementById(viewId).classList.remove('fade-enter');
         document.getElementById(viewId).classList.add('fade-enter-active');
+    }
+
+    function toggleViewMode(mode) {
+        currentViewMode = mode;
+        const listBtn = document.getElementById('viewListBtn');
+        const mapBtn = document.getElementById('viewMapBtn');
+        const container = document.getElementById('classesContainer');
+        const mapDiv = document.getElementById('studentMap');
+
+        if (mode === 'list') {
+            listBtn.className = 'px-3 py-1.5 text-xs font-black rounded-md transition-colors bg-white shadow-sm text-emerald-700';
+            mapBtn.className = 'px-3 py-1.5 text-xs font-black rounded-md transition-colors text-slate-500 hover:text-slate-700';
+            container.style.display = 'block';
+            mapDiv.style.display = 'none';
+        } else {
+            mapBtn.className = 'px-3 py-1.5 text-xs font-black rounded-md transition-colors bg-white shadow-sm text-emerald-700';
+            listBtn.className = 'px-3 py-1.5 text-xs font-black rounded-md transition-colors text-slate-500 hover:text-slate-700';
+            container.style.display = 'none';
+            mapDiv.style.display = 'block';
+            
+            if (!map) {
+                initMap();
+            } else {
+                map.invalidateSize();
+            }
+            renderClasses(); // تحديث الماركرز
+        }
+    }
+
+    function initMap() {
+        // مركز افتراضي (المنصورة) في حالة عدم وجود GPS
+        let defaultLat = 31.0409, defaultLng = 31.3785; 
+        if (studentLat && studentLng) {
+            defaultLat = studentLat;
+            defaultLng = studentLng;
+        }
+
+        map = L.map('studentMap').setView([defaultLat, defaultLng], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
     }
 
     function updateGrades() {
@@ -345,6 +405,87 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         element.classList.add('active'); renderClasses();
     }
 
+    function updateMapMarkers(filteredClasses) {
+        if (!map) return;
+
+        // مسح الماركرز القديمة
+        mapMarkers.forEach(item => {
+            map.removeLayer(item.marker);
+            if(item.circle) map.removeLayer(item.circle);
+        });
+        mapMarkers = [];
+        if (studentMarkerLayer) map.removeLayer(studentMarkerLayer);
+
+        let bounds = L.latLngBounds();
+        let hasValidMarkers = false;
+
+        // إضافة موقع الطالب لو مفعل
+        if (isGpsActive && studentLat && studentLng) {
+            const studentIcon = L.divIcon({
+                className: 'map-marker-student',
+                iconSize: [20, 20]
+            });
+            studentMarkerLayer = L.marker([studentLat, studentLng], {icon: studentIcon})
+                .bindPopup('<div class="text-center text-xs">📍 موقعك الحالي</div>')
+                .addTo(map);
+            bounds.extend([studentLat, studentLng]);
+            hasValidMarkers = true;
+        }
+
+        filteredClasses.forEach(cls => {
+            if (cls.lat && cls.lng) {
+                let emoji = '🏫'; let borderColor = '#2563EB';
+                if (cls.type === 'teacher_home') { emoji = '🏡'; borderColor = '#D97706'; }
+                if (cls.type === 'student_home') { emoji = '🚗'; borderColor = '#10B981'; }
+
+                const customIcon = L.divIcon({
+                    className: 'map-marker-custom',
+                    html: `<span style="border-color: ${borderColor}">${emoji}</span>`,
+                    iconSize: [40, 40]
+                });
+
+                const marker = L.marker([cls.lat, cls.lng], {icon: customIcon}).addTo(map);
+                
+                const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
+                const isFull = totalBooked >= cls.maxCapacity;
+                
+                let scheduleText = (cls.daysNames && cls.daysNames.length > 0) ? `${cls.daysNames.join(' - ')}` : '';
+                
+                let popupHtml = `
+                    <div class="w-48 pb-1">
+                        <div class="text-[13px] text-slate-800 mb-1 leading-tight">${cls.teacherTitle} ${cls.teacherName}</div>
+                        <div class="text-[11px] text-slate-500 mb-1">${cls.subject}</div>
+                        <div class="text-[10px] text-slate-500 mb-2">⏰ ${scheduleText} | ${formatTime(cls.startTime)}</div>
+                        <button onclick="window.bookClass('${cls.id}')" class="map-popup-btn ${isFull ? 'opacity-50 grayscale' : ''}" ${isFull ? 'disabled' : ''}>
+                            <span class="text-sm">💬</span> ${isFull ? 'مكتملة' : 'تواصل للحجز'}
+                        </button>
+                    </div>
+                `;
+                marker.bindPopup(popupHtml);
+
+                let circle = null;
+                if (cls.type === 'student_home' && cls.radius) {
+                    circle = L.circle([cls.lat, cls.lng], {
+                        color: borderColor,
+                        fillColor: borderColor,
+                        fillOpacity: 0.1,
+                        radius: cls.radius
+                    }).addTo(map);
+                    bounds.extend(circle.getBounds());
+                } else {
+                    bounds.extend([cls.lat, cls.lng]);
+                }
+
+                mapMarkers.push({marker: marker, circle: circle});
+                hasValidMarkers = true;
+            }
+        });
+
+        if (hasValidMarkers) {
+            map.fitBounds(bounds, {padding: [30, 30], maxZoom: 14});
+        }
+    }
+
     function renderClasses() {
         const container = document.getElementById('classesContainer');
         container.innerHTML = '';
@@ -379,6 +520,11 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 
         document.getElementById('resultCount').innerText = filteredClasses.length;
 
+        // تحديث الخريطة إذا كانت معروضة
+        if (currentViewMode === 'map') {
+            updateMapMarkers(filteredClasses);
+        }
+
         if (filteredClasses.length === 0) {
             container.innerHTML = `<div class="empty-state"><span>🕵️‍♂️</span><h3 class="font-black text-lg mb-1">لا توجد مجموعات متاحة حالياً</h3><p class="text-sm font-bold opacity-80">جرب تغيير الفلاتر أو البحث عن مادة أخرى.</p></div>`;
             return;
@@ -411,13 +557,13 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
                 <div class="flex items-center gap-2 mb-4">
                     ${isFull ? `<span class="badge badge-full w-full justify-center py-2">⚠️ المجموعة مكتملة العدد</span>` : `<span class="badge bg-emerald-50 text-emerald-700 border-emerald-200 flex-1 justify-center py-2">✅ متاح ${cls.maxCapacity - totalBooked} مكان</span>`}
                 </div>
-                <button onclick="bookClass('${cls.id}')" class="btn-primary btn-whatsapp !mb-0 ${isFull ? 'opacity-50 grayscale cursor-not-allowed' : ''}" ${isFull ? 'disabled' : ''}><span class="text-2xl leading-none">💬</span> تواصل مع المستر للحجز</button>
+                <button onclick="window.bookClass('${cls.id}')" class="btn-primary btn-whatsapp !mb-0 ${isFull ? 'opacity-50 grayscale cursor-not-allowed' : ''}" ${isFull ? 'disabled' : ''}><span class="text-2xl leading-none">💬</span> تواصل مع المستر للحجز</button>
             `;
             container.appendChild(card);
         });
     }
 
-    function bookClass(classId) {
+    window.bookClass = function(classId) {
         const cls = classesDB.find(c => c.id === classId);
         if(!cls) return;
         let distanceMsg = '';
