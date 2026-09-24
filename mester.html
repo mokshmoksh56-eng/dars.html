@@ -43,22 +43,8 @@ body{
 
 @media (max-width: 640px) {
     body { padding: 0; background: var(--surface-2); }
-    .main-card {
-        border-radius: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 15px !important;
-        padding-top: max(15px, env(safe-area-inset-top)) !important;
-        padding-bottom: max(15px, env(safe-area-inset-bottom)) !important;
-        min-height: 100vh !important;
-        max-width: 100% !important;
-    }
-    .app-header {
-        margin: -15px -15px 20px !important;
-        padding: calc(20px + env(safe-area-inset-top)) 15px 20px !important;
-        border-radius: 0 0 24px 24px !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;
-    }
+    .main-card { border-radius: 0 !important; border: none !important; box-shadow: none !important; padding: 15px !important; padding-top: max(15px, env(safe-area-inset-top)) !important; padding-bottom: max(15px, env(safe-area-inset-bottom)) !important; min-height: 100vh !important; max-width: 100% !important; }
+    .app-header { margin: -15px -15px 20px !important; padding: calc(20px + env(safe-area-inset-top)) 15px 20px !important; border-radius: 0 0 24px 24px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important; }
     .days-selector { grid-template-columns: repeat(3, 1fr) !important; }
 }
 
@@ -253,43 +239,18 @@ input[type=range] { accent-color: var(--primary-600); }
 .schedule-conflict-warning li { margin-bottom: 4px; font-size: 12px; font-weight: 800; }
 .schedule-conflict-warning .conflict-group-name { color: #7F1D1D; background: rgba(255,255,255,0.6); padding: 1px 6px; border-radius: 4px; }
 
-.gps-notice {
-    display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 14px;
-    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
-    border: 2px solid #93C5FD;
-    box-shadow: 0 6px 16px -8px rgba(37,99,235,0.35);
-    animation: gpsNoticeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative; overflow: hidden;
-}
-.gps-notice::before {
-    content: ''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 60%);
-    animation: gpsPulseBg 3s ease-in-out infinite; pointer-events: none;
-}
+.gps-notice { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #EFF6FF, #DBEAFE); border: 2px solid #93C5FD; box-shadow: 0 6px 16px -8px rgba(37,99,235,0.35); animation: gpsNoticeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
+.gps-notice::before { content: ''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 60%); animation: gpsPulseBg 3s ease-in-out infinite; pointer-events: none; }
 @keyframes gpsNoticeIn { from { opacity: 0; transform: translateY(-10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes gpsPulseBg { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-.gps-notice-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: linear-gradient(135deg, #2563EB, #1E40AF); color: #fff;
-    display: flex; align-items: center; justify-content: center; font-size: 22px;
-    flex-shrink: 0; box-shadow: 0 4px 10px -2px rgba(37,99,235,0.5);
-    animation: gpsIconFloat 2s ease-in-out infinite; position: relative; z-index: 1;
-}
+.gps-notice-icon { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #2563EB, #1E40AF); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 4px 10px -2px rgba(37,99,235,0.5); animation: gpsIconFloat 2s ease-in-out infinite; position: relative; z-index: 1; }
 @keyframes gpsIconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 .gps-notice-content { flex: 1; position: relative; z-index: 1; }
 .gps-notice-title { font-size: 14px; font-weight: 900; color: #1E3A8A; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-.gps-notice-title::before {
-    content: ''; width: 6px; height: 6px; border-radius: 50%; background: #3B82F6;
-    box-shadow: 0 0 0 3px rgba(59,130,246,0.25); animation: dotBlink 1.5s ease-in-out infinite;
-}
+.gps-notice-title::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,0.25); animation: dotBlink 1.5s ease-in-out infinite; }
 @keyframes dotBlink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.85); } }
 .gps-notice-text { font-size: 11.5px; font-weight: 700; color: #1E40AF; line-height: 1.6; margin-bottom: 10px; }
-.gps-notice-badge {
-    display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
-    background: rgba(255,255,255,0.85); border: 1.5px solid #60A5FA; border-radius: 999px;
-    font-size: 10.5px; font-weight: 900; color: #1D4ED8;
-    box-shadow: 0 2px 6px -2px rgba(37,99,235,0.3);
-}
+.gps-notice-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(255,255,255,0.85); border: 1.5px solid #60A5FA; border-radius: 999px; font-size: 10.5px; font-weight: 900; color: #1D4ED8; box-shadow: 0 2px 6px -2px rgba(37,99,235,0.3); }
 .gps-notice-badge span:first-child { font-size: 13px; }
 .gps-notice-home { background: linear-gradient(135deg, #FAF5FF, #F3E8FF); border-color: #C4B5FD; box-shadow: 0 6px 16px -8px rgba(139,92,246,0.35); }
 .gps-notice-home::before { background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 60%); }
@@ -355,16 +316,10 @@ input[type=range] { accent-color: var(--primary-600); }
 .banner-group-badge { padding: 1px 6px; border-radius: 4px; background: #F1F5F9; font-size: 9px; }
 .banner-group-icon { font-size: 18px; flex-shrink: 0; }
 
-/* ================================================================ */
-/*  🔠🔍  تكبير الخطوط والأرقام + Bold + تقويم أكبر                */
-/* ================================================================ */
-
 *{ font-weight: 800 !important; }
 body{ font-size: 17px; }
 
-.text-\[9px\], .text-\[9\.5px\], .text-\[10px\], .text-\[11px\]{
-  font-size: 13.5px !important; font-weight: 900 !important;
-}
+.text-\[9px\], .text-\[9\.5px\], .text-\[10px\], .text-\[11px\]{ font-size: 13.5px !important; font-weight: 900 !important; }
 .text-\[12px\], .text-\[13px\]{ font-size: 15.5px !important; }
 .text-\[14px\], .text-\[15px\]{ font-size: 17px !important; }
 .text-\[16px\], .text-\[17px\]{ font-size: 19.5px !important; }
@@ -444,7 +399,6 @@ select.input-base{ font-size: 19px !important; }
 .schedule-conflict-warning li{ font-size: 14px !important; }
 .schedule-conflict-warning .conflict-group-name{ font-size: 14px !important; }
 
-/* 📅 التقويم الذكي — تكبير كامل */
 .smart-calendar-card{ padding: 16px !important; border-radius: 22px !important; }
 .calendar-header{ padding: 10px 4px 16px !important; margin-bottom: 12px !important; }
 .calendar-nav-btn{ width: 46px !important; height: 46px !important; font-size: 20px !important; border-radius: 14px !important; }
@@ -2759,12 +2713,8 @@ select.input-base{ font-size: 19px !important; }
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
-                .then((registration) => {
-                    console.log('ServiceWorker registered:', registration.scope);
-                })
-                .catch((error) => {
-                    console.log('ServiceWorker registration failed:', error);
-                });
+                .then((registration) => console.log('SW registered'))
+                .catch((error) => console.log('SW failed:', error));
         });
     }
 </script>
