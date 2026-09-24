@@ -1,6 +1,6 @@
 const CACHE_NAME = 'manasa-pwa-v1';
 const ASSETS_TO_CACHE = [
-  './manasa.html',
+  './index.html',   // تم التعديل هنا
   './talep.html',
   './mester.html',
   'https://cdn.tailwindcss.com',
