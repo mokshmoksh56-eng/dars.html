@@ -1,14 +1,15 @@
-const CACHE_NAME = 'manasa-pwa-v1';
+const CACHE_NAME = 'manasa-pwa-v2'; // تم تحديث الإصدار
 const ASSETS_TO_CACHE = [
-  './index.html',   // تم التعديل هنا
+  './',
+  './index.html',
   './talep.html',
   './mester.html',
-  'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap'
+  './manifest.json'
 ];
 
-// تثبيت الـ Service Worker وتخزين الملفات
+// 1. تثبيت الـ Service Worker
 self.addEventListener('install', (event) => {
+  self.skipWaiting(); // تفعيل النسخة الجديدة فوراً دون انتظار
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
@@ -16,26 +17,45 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// تفعيل الـ Service Worker
+// 2. تنظيف الكاش القديم
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
+            return caches.delete(cache); // مسح أي إصدار قديم
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-// جلب الملفات من الكاش لو مفيش إنترنت
+// 3. استراتيجية Stale-While-Revalidate
 self.addEventListener('fetch', (event) => {
+  // استثناء طلبات الخرائط (Leaflet) من الكاش لأنها ديناميكية
+  if (event.request.url.includes('openstreetmap') || event.request.url.includes('nominatim')) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        // تحديث الكاش بالنسخة الجديدة من الإنترنت في الخلفية
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // لو مفيش إنترنت، تجاهل الخطأ لأننا سنعرض الكاش
+      });
+
+      // إرجاع الكاش فوراً لسرعة التطبيق، أو انتظار الإنترنت لو لم يكن في الكاش
+      return cachedResponse || fetchPromise;
     })
   );
 });
