@@ -391,8 +391,9 @@ select.input-base{ font-size: 19px !important; }
 .type-btn{ font-size: 16.5px !important; font-weight: 900 !important; padding: 15px 6px !important; }
 .type-btn span:first-child{ font-size: 27px !important; }
 
-.btn-primary{ font-size: 19.5px !important; padding: 17px !important; font-weight: 900 !important; }
-.btn-ghost{ font-size: 16px !important; padding: 14px !important; font-weight: 900 !important; }
+.btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:17px; font-weight:900; font-size:19.5px; color:#fff; border:none; cursor:pointer; background:linear-gradient(135deg,var(--primary-600) 0%, var(--primary-900) 100%); box-shadow:0 12px 24px -14px rgba(30,58,138,.9); transition:all .22s ease; border-radius:14px; margin-top: 15px;}
+.btn-primary:active{ transform:scale(.975); }
+.btn-ghost{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border-radius:14px; font-weight:900; font-size:16px; cursor:pointer; background:var(--surface-3); color:var(--primary-800); border:1.5px solid var(--line); margin-bottom:15px;}
 
 .day-chip{ font-size: 16px !important; padding: 16px 5px !important; }
 .day-chip .day-emoji{ font-size: 25px !important; }
@@ -474,6 +475,17 @@ select.input-base{ font-size: 19px !important; }
   .banner-group-name{ font-size: 14.5px !important; }
   #groupDetailTotal{ font-size: 36px !important; }
 }
+
+/* Tabs styles for login/register */
+.auth-tabs { display: flex; border-radius: 14px; background: var(--surface-3); padding: 6px; margin-bottom: 20px; border: 1px solid var(--line); }
+.auth-tab { flex: 1; text-align: center; padding: 12px; font-weight: 900; font-size: 16px; color: var(--muted); cursor: pointer; border-radius: 10px; transition: all 0.3s ease; }
+.auth-tab.active { background: #fff; color: var(--primary-800); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.auth-form-container { display: none; }
+.auth-form-container.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.password-input-wrapper { position: relative; }
+.password-toggle { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; opacity: 0.6; }
+
 </style>
 </head>
 <body>
@@ -489,83 +501,99 @@ select.input-base{ font-size: 19px !important; }
     </header>
 
     <div class="flex-1 relative w-full">
-        <div id="roleView" class="fade-enter-active">
-            <h2 class="text-[16px] font-black text-[var(--primary-900)] mb-4 flex items-center gap-2"><span class="w-1 h-5 bg-[#C9A227] rounded"></span> ما هو دورك؟</h2>
-            
-            <button onclick="checkTeacherProfile()" class="role-card">
-                <div class="role-icon">👨‍🏫</div>
-                <div class="text-right flex-1">
-                    <h3 class="text-lg font-black text-slate-900">أنا أستاذ / مستر</h3>
-                    <p class="text-[13px] text-slate-500 font-bold mt-1">إدارة المجموعات، وتسجيل الطلاب والمدفوعات</p>
-                </div>
-            </button>
-            
-            <button onclick="alert('واجهة الطالب سيتم برمجتها في الخطوة القادمة ⏳');" class="role-card" style="opacity: 0.6;">
-                <div class="role-icon">🎓</div>
-                <div class="text-right flex-1">
-                    <h3 class="text-lg font-black text-slate-900">أنا طالب (قريباً)</h3>
-                    <p class="text-[13px] text-slate-500 font-bold mt-1">حجز الدروس الخصوصية عبر المنصة</p>
-                </div>
-            </button>
-        </div>
 
-        <div id="teacherBasicProfileView" class="fade-enter">
-            <button onclick="navigateToStep('roleView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                عودة
-            </button>
-            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">بيانات المعلم الأساسية 👤 (1/4)</h2>
-            
-            <form id="teacherBasicForm" onsubmit="handleBasicProfileSubmit(event)">
-                <label class="field-label">اللقب</label>
-                <div class="grid grid-cols-2 gap-2 mb-4">
-                    <label>
-                        <input type="radio" name="teacherTitle" value="مستر" checked class="hidden" onchange="applyTheme('مستر')">
-                        <div class="option-btn flex justify-center items-center gap-2">👨‍🏫 مستر</div>
-                    </label>
-                    <label>
-                        <input type="radio" name="teacherTitle" value="مس" class="hidden" onchange="applyTheme('مس')">
-                        <div class="option-btn flex justify-center items-center gap-2">👩‍🏫 مس</div>
-                    </label>
-                </div>
-                
-                <label class="field-label">اسم المعلم <span class="text-rose-500">*</span></label>
-                <input type="text" id="basicTeacherName" required placeholder="الاسم (مثال: أحمد محمد)" class="input-base">
+        <!-- واجهة المصادقة (تسجيل دخول / إنشاء حساب) -->
+        <div id="authView" class="fade-enter-active">
+            <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4 flex items-center gap-2">
+                <span>🔐</span> تسجيل الدخول للمعلمين
+            </h2>
 
-                <label class="field-label">العمر <span class="text-rose-500">*</span></label>
-                <input type="number" id="basicTeacherAge" required placeholder="العمر (مثال: 30)" min="18" max="80" class="input-base text-center">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب جديد</div>
+            </div>
 
-                <label class="field-label">رقم التليفون المرتبط بواتساب <span class="text-rose-500">*</span></label>
-                <div class="relative mb-4">
-                    <input type="tel" id="basicTeacherPhone" required 
-                           placeholder="01xxxxxxxxx" 
-                           pattern="01[0-9]{9}"
-                           maxlength="11"
-                           oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-                           class="input-base !mb-0 text-left pr-3 pl-20 font-black tracking-wider" dir="ltr">
-                    <span class="absolute top-1/2 -translate-y-1/2 right-3 text-slate-400 text-xs font-bold">💬 واتساب</span>
-                </div>
-                <p class="text-[11px] text-slate-500 font-bold mb-4 -mt-2">💡 سيستخدم للتواصل معك ومع الطلاب</p>
+            <!-- نموذج تسجيل الدخول -->
+            <div id="loginFormContainer" class="auth-form-container active">
+                <form onsubmit="handleLogin(event)">
+                    <label class="field-label">رقم الهاتف (11 رقم) <span class="text-rose-500">*</span></label>
+                    <input type="tel" id="loginPhone" required placeholder="01xxxxxxxxx" pattern="01[0-9]{9}" maxlength="11" class="input-base text-left font-black tracking-widest" dir="ltr" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 
-                <label class="field-label">المحافظة <span class="text-rose-500">*</span></label>
-                <select id="basicGovName" required class="input-base">
-                    <option value="" disabled selected>اختر المحافظة...</option>
-                    <option value="الدقهلية">الدقهلية</option>
-                    <option value="القاهرة">القاهرة</option>
-                    <option value="الجيزة">الجيزة</option>
-                    <option value="الإسكندرية">الإسكندرية</option>
-                    <option value="الشرقية">الشرقية</option>
-                    <option value="الغربية">الغربية</option>
-                </select>
-                
-                <button type="submit" class="btn-primary mt-2">حفظ والانتظار لاختيار المراحل والصفوف ➔</button>
-            </form>
+                    <label class="field-label">كلمة المرور (4 أرقام) <span class="text-rose-500">*</span></label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="loginPassword" required placeholder="****" pattern="[0-9]{4}" maxlength="4" class="input-base text-left font-black tracking-widest" dir="ltr" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <span class="password-toggle" onclick="togglePassword('loginPassword')">👁️</span>
+                    </div>
+
+                    <button type="submit" class="btn-primary mt-4">دخول ➔</button>
+                </form>
+            </div>
+
+            <!-- نموذج إنشاء الحساب -->
+            <div id="registerFormContainer" class="auth-form-container">
+                <form onsubmit="handleRegister(event)">
+                    <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl mb-4 text-sm font-bold text-blue-800">
+                        سجل بياناتك مرة واحدة فقط لإنشاء حسابك وإدارة مجموعاتك.
+                    </div>
+
+                    <label class="field-label">اللقب</label>
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <label>
+                            <input type="radio" name="regTeacherTitle" value="مستر" checked class="hidden" onchange="applyTheme('مستر')">
+                            <div class="option-btn flex justify-center items-center gap-2">👨‍🏫 مستر</div>
+                        </label>
+                        <label>
+                            <input type="radio" name="regTeacherTitle" value="مس" class="hidden" onchange="applyTheme('مس')">
+                            <div class="option-btn flex justify-center items-center gap-2">👩‍🏫 مس</div>
+                        </label>
+                    </div>
+
+                    <label class="field-label">الاسم بالكامل <span class="text-rose-500">*</span></label>
+                    <input type="text" id="regName" required placeholder="الاسم (مثال: أحمد محمد)" class="input-base">
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="field-label">العمر <span class="text-rose-500">*</span></label>
+                            <input type="number" id="regAge" required placeholder="العمر" min="18" max="80" class="input-base text-center">
+                        </div>
+                        <div>
+                            <label class="field-label">المحافظة <span class="text-rose-500">*</span></label>
+                            <select id="regGov" required class="input-base !pr-3">
+                                <option value="" disabled selected>المحافظة...</option>
+                                <option value="القاهرة">القاهرة</option>
+                                <option value="الجيزة">الجيزة</option>
+                                <option value="الإسكندرية">الإسكندرية</option>
+                                <option value="الدقهلية">الدقهلية</option>
+                                <option value="الشرقية">الشرقية</option>
+                                <option value="الغربية">الغربية</option>
+                                <!-- أضف باقي المحافظات حسب الحاجة -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <label class="field-label">رقم الهاتف (سيكون اسم المستخدم) <span class="text-rose-500">*</span></label>
+                    <input type="tel" id="regPhone" required placeholder="01xxxxxxxxx" pattern="01[0-9]{9}" maxlength="11" class="input-base text-left font-black tracking-widest" dir="ltr" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+
+                    <label class="field-label">كلمة المرور (4 أرقام فقط) <span class="text-rose-500">*</span></label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="regPassword" required placeholder="****" pattern="[0-9]{4}" maxlength="4" class="input-base text-left font-black tracking-widest mb-3" dir="ltr" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <span class="password-toggle" onclick="togglePassword('regPassword')" style="top: 35%;">👁️</span>
+                    </div>
+
+                    <label class="field-label">تأكيد كلمة المرور <span class="text-rose-500">*</span></label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="regPasswordConfirm" required placeholder="****" pattern="[0-9]{4}" maxlength="4" class="input-base text-left font-black tracking-widest" dir="ltr" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <span class="password-toggle" onclick="togglePassword('regPasswordConfirm')">👁️</span>
+                    </div>
+
+                    <button type="submit" class="btn-primary mt-4">إنشاء الحساب 🚀</button>
+                </form>
+            </div>
         </div>
 
         <div id="teacherStagesProfileView" class="fade-enter">
-            <button onclick="navigateToStep('teacherBasicProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                تعديل البيانات الأساسية
+            <button onclick="logout()" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2 text-rose-600 border-rose-200 hover:bg-rose-50">
+                تسجيل الخروج
             </button>
             <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">اختيار المراحل والصفوف والمواد 📚 (2/4)</h2>
             
@@ -573,7 +601,7 @@ select.input-base{ font-size: 19px !important; }
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 flex items-start gap-2">
                     <span class="text-lg">💡</span>
                     <p class="text-[12px] text-amber-900 font-bold leading-relaxed">
-                        اضغط على المرحلة لتفتح، ثم اختر <b class="text-amber-700">صف واحد فقط</b> + <b class="text-amber-700">مادة واحدة على الأقل</b>.
+                        اضغط على المرحلة لتفتح، ثم اختر <b class="text-amber-700">صف واحد فقط</b> + <b class="text-amber-700">مادة واحدة على الأقل</b> لتهيئة حسابك.
                     </p>
                 </div>
                 
@@ -826,7 +854,8 @@ select.input-base{ font-size: 19px !important; }
         </div>
 
         <div id="teacherDashboardView" class="fade-enter">
-            <button onclick="navigateToStep('teacherBasicProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">⚙️ تعديل بياناتي الأساسية</button>
+            <button onclick="navigateToStep('teacherStagesProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">⚙️ تعديل التخصص والمواد</button>
+            <button onclick="logout()" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2 text-rose-600 border-rose-200 hover:bg-rose-50 mr-2">خروج</button>
             
             <div class="teacher-info-card">
                 <h2 id="dashTeacherName" class="text-[18px] font-black">مرحباً، --</h2>
@@ -834,7 +863,7 @@ select.input-base{ font-size: 19px !important; }
                 <p id="dashTeacherSubject" class="text-sm font-bold mt-1">📍 محافظة: --</p>
                 <div class="contact-info-box">
                     <span class="icon">💬</span>
-                    <span>رقم الواتساب:</span>
+                    <span>رقم الواتساب / المعرف:</span>
                     <span class="num" id="dashTeacherPhone">--</span>
                 </div>
                 <div id="dashGradesTags" class="flex flex-wrap gap-1 mt-2"></div>
@@ -1007,29 +1036,32 @@ select.input-base{ font-size: 19px !important; }
     ];
 
     let selectedDays = [];
-
-    // ====== التعديل الجديد للـ Firebase ======
-    let classesDB = []; // المصفوفة الآن فارغة في البداية
+    let classesDB = []; 
+    let allTeachersDB = {}; // لتخزين حسابات المعلمين من Firebase
     let isFirebaseLoaded = false;
+    let currentTeacherProfile = null;
 
-    // دالة لجلب المجموعات من Firebase عند فتح التطبيق
+    // دالة لجلب المجموعات وحسابات المعلمين من Firebase
     function fetchClassesFromFirebase() {
+        // جلب المجموعات
         db.ref('classes').on('value', (snapshot) => {
             const data = snapshot.val();
             classesDB = data ? data : [];
             isFirebaseLoaded = true;
-            
-            // تحديث واجهة المجموعات إذا كان المعلم بداخلها
             if(document.getElementById('teacherDashboardView').classList.contains('fade-enter-active')) {
                 renderTeacherDashboard();
             }
-            // تحديث واجهة تفاصيل المجموعة المفتوحة (إن وجدت)
             if(document.getElementById('groupDetailsView').classList.contains('fade-enter-active') && currentOpenedGroupId) {
                 openGroupDetails(currentOpenedGroupId);
             }
         });
+
+        // جلب حسابات المعلمين
+        db.ref('teachers').on('value', (snapshot) => {
+            const data = snapshot.val();
+            allTeachersDB = data ? data : {};
+        });
     }
-    // ==========================================
 
     function renderDaysSelector() {
         const container = document.getElementById('daysSelector');
@@ -1339,14 +1371,118 @@ select.input-base{ font-size: 19px !important; }
         }
     }
 
-    function navigateToStep(viewId) {
-        if (viewId === 'teacherStagesProfileView') {
-            const name = document.getElementById('basicTeacherName').value.trim();
-            if (!name) { alert('⚠️ يرجى إدخال اسم المعلم أولاً للانتقال لخطوة التخصص.'); return; }
+    // ====== دوال تسجيل الدخول وإنشاء الحساب الجديدة ======
+    function switchAuthTab(tab) {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.auth-form-container').forEach(c => c.classList.remove('active'));
+        
+        if(tab === 'login') {
+            document.querySelector('.auth-tab:nth-child(1)').classList.add('active');
+            document.getElementById('loginFormContainer').classList.add('active');
+        } else {
+            document.querySelector('.auth-tab:nth-child(2)').classList.add('active');
+            document.getElementById('registerFormContainer').classList.add('active');
         }
+    }
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+        } else {
+            input.type = "password";
+        }
+    }
+
+    function handleRegister(e) {
+        e.preventDefault();
+        const phone = document.getElementById('regPhone').value;
+        const pass1 = document.getElementById('regPassword').value;
+        const pass2 = document.getElementById('regPasswordConfirm').value;
+        const title = document.querySelector('input[name="regTeacherTitle"]:checked').value;
+        const name = document.getElementById('regName').value;
+        const age = document.getElementById('regAge').value;
+        const gov = document.getElementById('regGov').value;
+
+        if (pass1 !== pass2) {
+            alert('⚠️ كلمتا المرور غير متطابقتين.');
+            return;
+        }
+
+        // فحص ما إذا كان الرقم مسجل مسبقاً
+        if (allTeachersDB[phone]) {
+            alert('⚠️ هذا الرقم مسجل به حساب معلم بالفعل! برجاء تسجيل الدخول.');
+            switchAuthTab('login');
+            return;
+        }
+
+        // إنشاء الحساب الجديد في Firebase
+        currentTeacherProfile = {
+            teacherTitle: title,
+            teacherName: name,
+            teacherAge: age,
+            phone: phone,
+            password: pass1, // ملاحظة: في التطبيقات الحقيقية يتم تشفير كلمة المرور، لكننا نحفظها كما هي للتبسيط
+            gov: gov,
+            grades: [],
+            subjects: [],
+            stages: []
+        };
+
+        allTeachersDB[phone] = currentTeacherProfile;
+        db.ref('teachers/' + phone).set(currentTeacherProfile);
+        
+        // حفظ جلسة الدخول في الهاتف
+        localStorage.setItem('logged_in_teacher_phone', phone);
+        
+        alert('🎉 تم إنشاء حسابك بنجاح!');
+        applyTheme(title);
+        showView('teacherStagesProfileView'); // التوجيه لصفحة اختيار المواد (التخصص)
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const phone = document.getElementById('loginPhone').value;
+        const pass = document.getElementById('loginPassword').value;
+
+        if (!allTeachersDB[phone]) {
+            alert('⚠️ هذا الرقم غير مسجل لدينا. برجاء إنشاء حساب جديد.');
+            return;
+        }
+
+        if (allTeachersDB[phone].password !== pass) {
+            alert('⚠️ كلمة المرور غير صحيحة.');
+            return;
+        }
+
+        // تسجيل الدخول ناجح
+        currentTeacherProfile = allTeachersDB[phone];
+        localStorage.setItem('logged_in_teacher_phone', phone);
+        applyTheme(currentTeacherProfile.teacherTitle);
+        
+        // إذا لم يكن المعلم قد اختار مواده بعد
+        if (!currentTeacherProfile.subjects || currentTeacherProfile.subjects.length === 0) {
+            showView('teacherStagesProfileView');
+        } else {
+            showView('teacherDashboardView');
+        }
+    }
+
+    function logout() {
+        if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+            currentTeacherProfile = null;
+            localStorage.removeItem('logged_in_teacher_phone');
+            document.getElementById('loginFormContainer').reset?.();
+            document.getElementById('registerFormContainer').reset?.();
+            showView('authView');
+        }
+    }
+    // =====================================================
+
+    function navigateToStep(viewId) {
         if (['teacherClassDetailsView', 'teacherDashboardView', 'groupDetailsView'].includes(viewId)) {
-            if (!currentTeacherProfile || !currentTeacherProfile.teacherName) {
-                alert('⚠️ يرجى استكمال بياناتك وحفظها أولاً للوصول للخطوة التالية.');
+            if (!currentTeacherProfile || !currentTeacherProfile.subjects || currentTeacherProfile.subjects.length === 0) {
+                alert('⚠️ يرجى اختيار التخصص (الصفوف والمواد) وحفظها أولاً.');
                 return;
             }
         }
@@ -1357,7 +1493,9 @@ select.input-base{ font-size: 19px !important; }
         const container = document.getElementById('liveJourneyTrackerContainer');
         if(!container) return;
 
-        const hasPublishedClasses = classesDB && classesDB.length > 0;
+        // حساب عدد المجموعات الخاصة بهذا المعلم فقط
+        const teacherClasses = classesDB.filter(c => c.phone === (currentTeacherProfile?.phone || ''));
+        const hasPublishedClasses = teacherClasses.length > 0;
         const isAppView = ['teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(viewId);
         
         let html = '';
@@ -1376,25 +1514,22 @@ select.input-base{ font-size: 19px !important; }
         }
 
         let steps = [
-            { id: 'teacherBasicProfileView', label: '1. البيانات' },
-            { id: 'teacherStagesProfileView', label: '2. التخصص' },
-            { id: 'teacherClassDetailsView', label: '3. إضافة مجموعة' },
-            { id: 'teacherDashboardView', label: '4. مجموعاتي' }
+            { id: 'teacherStagesProfileView', label: '1. التخصص' },
+            { id: 'teacherClassDetailsView', label: '2. إضافة مجموعة' },
+            { id: 'teacherDashboardView', label: '3. مجموعاتي' }
         ];
 
-        if (viewId === 'groupDetailsView') steps[3] = { id: 'groupDetailsView', label: '4. إدارة المجموعة' };
-        if (viewId === 'roleView') steps = [{ id: 'roleView', label: 'اختيار الدور' }];
+        if (viewId === 'groupDetailsView') steps[2] = { id: 'groupDetailsView', label: '3. إدارة المجموعة' };
+        if (viewId === 'roleView' || viewId === 'authView') return container.innerHTML = ''; // إخفاء الشريط في البداية
 
         const separator = `<span class="text-white/30 text-[10px] px-1">➔</span>`;
 
-        const hasBasicData = (currentTeacherProfile && currentTeacherProfile.teacherName) || (tempBasicData && tempBasicData.teacherName) ? true : false;
         const hasSpecialization = currentTeacherProfile && currentTeacherProfile.subjects && currentTeacherProfile.subjects.length > 0 ? true : false;
 
         html += steps.map((step) => {
             const isActive = step.id === viewId;
             let isCompleted = false;
 
-            if (step.id === 'teacherBasicProfileView' && hasBasicData) isCompleted = true;
             if (step.id === 'teacherStagesProfileView' && hasSpecialization) isCompleted = true;
             if (step.id === 'teacherClassDetailsView' && hasPublishedClasses) isCompleted = true;
             if ((step.id === 'teacherDashboardView' || step.id === 'groupDetailsView') && hasPublishedClasses) isCompleted = true;
@@ -1424,7 +1559,7 @@ select.input-base{ font-size: 19px !important; }
 
     function showView(viewId) {
         document.querySelectorAll('.fade-enter-active, .fade-enter').forEach(el => {
-            if (['roleView', 'teacherBasicProfileView', 'teacherStagesProfileView', 'teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(el.id)) {
+            if (['roleView', 'authView', 'teacherStagesProfileView', 'teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(el.id)) {
                 el.classList.remove('fade-enter-active'); el.classList.add('fade-enter');
             }
         });
@@ -1465,6 +1600,12 @@ select.input-base{ font-size: 19px !important; }
     function renderUnifiedSelection() {
         const container = document.getElementById('unifiedEducationSelector');
         if(!container) return;
+
+        // تحديث الاختيارات من البروفايل إذا كانت موجودة
+        if (currentTeacherProfile && selectedGrades.length === 0 && selectedSubjects.length === 0) {
+            if (currentTeacherProfile.grades) selectedGrades = [...currentTeacherProfile.grades];
+            if (currentTeacherProfile.subjects) selectedSubjects = [...currentTeacherProfile.subjects];
+        }
 
         let html = '';
         const stagesList = ['kg', 'primary', 'prep', 'secondary'];
@@ -1620,30 +1761,6 @@ select.input-base{ font-size: 19px !important; }
         renderUnifiedSelection();
     }
 
-    function checkTeacherProfile() {
-        if (currentTeacherProfile && currentTeacherProfile.teacherName) showView('teacherDashboardView');
-        else showView('teacherBasicProfileView');
-    }
-
-    let tempBasicData = {};
-
-    function handleBasicProfileSubmit(e) {
-        e.preventDefault();
-        const title = document.querySelector('input[name="teacherTitle"]:checked').value;
-        const name = document.getElementById('basicTeacherName').value.trim();
-        const age = document.getElementById('basicTeacherAge').value.trim();
-        const phone = document.getElementById('basicTeacherPhone').value.trim();
-        const gov = document.getElementById('basicGovName').value;
-
-        if(!phone || !/^01[0-9]{9}$/.test(phone)) {
-            alert('⚠️ رقم الهاتف غير صحيح\nيجب أن يبدأ بـ 01 ويتكون من 11 رقم');
-            return;
-        }
-
-        tempBasicData = { teacherTitle: title, teacherName: name, teacherAge: age, phone: phone, gov: gov };
-        showView('teacherStagesProfileView');
-    }
-
     function handleStagesProfileSubmit(e) {
         e.preventDefault();
         if(selectedGrades.length === 0) { alert('⚠️ يرجى فتح أحد المراحل واختيار صف دراسي واحد'); return; }
@@ -1656,59 +1773,67 @@ select.input-base{ font-size: 19px !important; }
             if(hasG || hasS) calcStages.push(st);
         });
 
-        currentTeacherProfile = { ...tempBasicData, stages: calcStages, grades: [...selectedGrades], subjects: [...selectedSubjects] };
+        // تحديث بيانات المعلم في Firebase
+        currentTeacherProfile.stages = calcStages;
+        currentTeacherProfile.grades = [...selectedGrades];
+        currentTeacherProfile.subjects = [...selectedSubjects];
 
-        localStorage.setItem('draft_teacher_profile', JSON.stringify(currentTeacherProfile));
-        applyTheme(currentTeacherProfile.teacherTitle);
+        db.ref('teachers/' + currentTeacherProfile.phone).set(currentTeacherProfile);
         
-        alert('✅ تم حفظ بياناتك بنجاح!');
+        alert('✅ تم حفظ التخصصات بنجاح!');
         showView('teacherClassDetailsView');
     }
 
-    window.onload = function() {
-        // الاتصال بقاعدة البيانات عند تحميل الصفحة
-        fetchClassesFromFirebase();
-
-        if(currentTeacherProfile && currentTeacherProfile.teacherName) {
-            document.getElementById('basicTeacherName').value = currentTeacherProfile.teacherName || '';
-            document.getElementById('basicTeacherAge').value = currentTeacherProfile.teacherAge || '';
-            if(currentTeacherProfile.phone) document.getElementById('basicTeacherPhone').value = currentTeacherProfile.phone;
-            if(currentTeacherProfile.gov) document.getElementById('basicGovName').value = currentTeacherProfile.gov;
-            if(currentTeacherProfile.teacherTitle) {
-                document.querySelector(`input[name="teacherTitle"][value="${currentTeacherProfile.teacherTitle}"]`).checked = true;
-                applyTheme(currentTeacherProfile.teacherTitle);
-            }
+    function checkTeacherProfile() {
+        const savedPhone = localStorage.getItem('logged_in_teacher_phone');
+        if (savedPhone && allTeachersDB[savedPhone]) {
+            currentTeacherProfile = allTeachersDB[savedPhone];
+            applyTheme(currentTeacherProfile.teacherTitle);
             
-            if(currentTeacherProfile.grades && Array.isArray(currentTeacherProfile.grades)) {
-                selectedGrades = currentTeacherProfile.grades.length > 0 ? [currentTeacherProfile.grades[0]] : [];
-                if (currentTeacherProfile.grades.length > 1) {
-                    currentTeacherProfile.grades = [...selectedGrades];
-                    localStorage.setItem('draft_teacher_profile', JSON.stringify(currentTeacherProfile));
-                }
+            if (!currentTeacherProfile.subjects || currentTeacherProfile.subjects.length === 0) {
+                showView('teacherStagesProfileView');
+            } else {
+                showView('teacherDashboardView');
             }
-            if(currentTeacherProfile.subjects && Array.isArray(currentTeacherProfile.subjects)) {
-                selectedSubjects = [...currentTeacherProfile.subjects];
-            }
-            tempBasicData = {
-                teacherTitle: currentTeacherProfile.teacherTitle,
-                teacherName: currentTeacherProfile.teacherName,
-                teacherAge: currentTeacherProfile.teacherAge,
-                phone: currentTeacherProfile.phone,
-                gov: currentTeacherProfile.gov
-            };
         } else {
-            applyTheme('مستر');
+            showView('authView');
         }
+    }
+
+    window.onload = function() {
+        // الاتصال بقاعدة البيانات عند تحميل الصفحة وجلب البيانات ثم فحص التسجيل
+        db.ref('teachers').once('value').then((snapshot) => {
+            const data = snapshot.val();
+            allTeachersDB = data ? data : {};
+            
+            db.ref('classes').on('value', (snap) => {
+                const cData = snap.val();
+                classesDB = cData ? cData : [];
+                isFirebaseLoaded = true;
+                
+                if(document.getElementById('teacherDashboardView').classList.contains('fade-enter-active')) {
+                    renderTeacherDashboard();
+                }
+                if(document.getElementById('groupDetailsView').classList.contains('fade-enter-active') && currentOpenedGroupId) {
+                    openGroupDetails(currentOpenedGroupId);
+                }
+            });
+
+            // بعد تحميل بيانات المعلمين من الفايربيز، تحقق هل هو مسجل دخول أم لا
+            const savedPhone = localStorage.getItem('logged_in_teacher_phone');
+            if (savedPhone && allTeachersDB[savedPhone]) {
+                currentTeacherProfile = allTeachersDB[savedPhone];
+                applyTheme(currentTeacherProfile.teacherTitle);
+                showView('teacherDashboardView');
+            }
+        });
         
-        renderUnifiedSelection(); 
         renderDaysSelector();
         
         document.getElementById('startTime')?.addEventListener('change', updateSchedulePreview);
         document.getElementById('endTime')?.addEventListener('change', updateSchedulePreview);
         document.getElementById('startTime')?.addEventListener('input', updateScheduleConflictWarning);
         document.getElementById('endTime')?.addEventListener('input', updateScheduleConflictWarning);
-        
-        updateLiveJourneyTracker('roleView');
     };
 
     let selectedClassStage = null;
@@ -1834,7 +1959,8 @@ select.input-base{ font-size: 19px !important; }
         }
         
         const gradesHtml = grades.map(grade => {
-            const isSel = selectedGrades.includes(grade);
+            // نختار أول صف كقيمة افتراضية إذا لم يتم الاختيار
+            let isSel = false;
             return `
                 <label>
                     <input type="radio" name="classGrade" value="${grade}" class="hidden" ${isSel ? 'checked' : ''}>
@@ -1947,7 +2073,10 @@ select.input-base{ font-size: 19px !important; }
         if (!days || days.length === 0 || !startTime || !endTime) return [];
         const conflicts = [];
         
-        classesDB.forEach(cls => {
+        // نتحقق من مجموعات المعلم الحالي فقط
+        const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
+
+        teacherClasses.forEach(cls => {
             if (excludeClassId && cls.id === excludeClassId) return;
             if (!cls.days || !cls.startTime || !cls.endTime) return;
             if (!cls.daysNames || cls.daysNames.length === 0) return;
@@ -2034,8 +2163,11 @@ select.input-base{ font-size: 19px !important; }
     function renderSmartCalendar() {
         const grid = document.getElementById('calendarGrid');
         const label = document.getElementById('calendarMonthLabel');
-        if (!grid || !label) return;
+        if (!grid || !label || !currentTeacherProfile) return;
         
+        // عرض مجموعات هذا المعلم فقط في النتيجة
+        const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
+
         const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
         const year = currentCalendarDate.getFullYear();
         const month = currentCalendarDate.getMonth();
@@ -2058,7 +2190,7 @@ select.input-base{ font-size: 19px !important; }
         for (let d = 1; d <= daysInMonth; d++) {
             const dateObj = new Date(year, month, d);
             const dayKey = getWeekdayKeyFromDate(dateObj);
-            const bookings = (classesDB || []).filter(c => c.days && c.days.includes(dayKey));
+            const bookings = teacherClasses.filter(c => c.days && c.days.includes(dayKey));
             const todayFlag = isSameDay(dateObj, today);
             const selectedFlag = selectedDays.includes(dayKey);
             const isActiveDay = selectedCalendarDay === d;
@@ -2110,7 +2242,7 @@ select.input-base{ font-size: 19px !important; }
         const headerEl = document.getElementById('calendarBannerHeader');
         const bodyEl = document.getElementById('calendarBannerBody');
         
-        if (!banner || !emptyEl || !contentEl || !headerEl || !bodyEl) return;
+        if (!banner || !emptyEl || !contentEl || !headerEl || !bodyEl || !currentTeacherProfile) return;
         
         if (selectedCalendarDay === null) {
             banner.classList.remove('has-content');
@@ -2131,7 +2263,8 @@ select.input-base{ font-size: 19px !important; }
         const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
         const monthName = arabicMonths[month];
         
-        const bookings = (classesDB || []).filter(c => c.days && c.days.includes(dayKey));
+        const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
+        const bookings = teacherClasses.filter(c => c.days && c.days.includes(dayKey));
         
         headerEl.innerHTML = `
             <div class="day-info">
@@ -2223,10 +2356,10 @@ select.input-base{ font-size: 19px !important; }
         const radius = type === 'student_home' ? parseFloat(document.getElementById('teacherRadius').value || 2000) : null;
 
         const newClass = {
-            id: Date.now().toString(),
+            id: Date.now().toString() + '_' + currentTeacherProfile.phone, // جعل الـ ID فريد
             teacherTitle: currentTeacherProfile.teacherTitle,
             teacherName: currentTeacherProfile.teacherName,
-            phone: currentTeacherProfile.phone,
+            phone: currentTeacherProfile.phone, // ربط المجموعة برقم المعلم
             subjects: currentTeacherProfile.subjects || [],
             grades: currentTeacherProfile.grades || [],
             subject: selectedSubjectEl.value,
@@ -2297,7 +2430,6 @@ select.input-base{ font-size: 19px !important; }
         showView('teacherDashboardView'); 
     }
 
-    let currentTeacherProfile = JSON.parse(localStorage.getItem('draft_teacher_profile')) || null;
     let currentOpenedGroupId = null;
 
     function renderTeacherDashboard() {
@@ -2341,12 +2473,15 @@ select.input-base{ font-size: 19px !important; }
         const container = document.getElementById('teacherClassesList');
         container.innerHTML = '';
 
-        if (classesDB.length === 0) {
+        // استخراج المجموعات الخاصة بهذا المعلم فقط بناءً على رقم الهاتف
+        const myClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
+
+        if (myClasses.length === 0) {
             container.innerHTML = '<div class="text-center py-10 text-slate-400 font-black bg-slate-50 rounded-2xl border-2 border-slate-200 border-dashed">لا توجد لديك مجموعات حتى الآن.<br>أضف مجموعاتك من الزر في شريط التتبع بالأعلى.</div>';
             return;
         }
 
-        const reversedDB = [...classesDB].reverse();
+        const reversedDB = [...myClasses].reverse();
 
         reversedDB.forEach(cls => {
             const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
