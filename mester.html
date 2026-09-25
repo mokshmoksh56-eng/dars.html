@@ -18,6 +18,29 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!-- مكتبات Firebase (الإصدار المتوافق مع HTML مباشرة) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+  // إعدادات الربط الخاصة بمشروعك (tagroba-fbe9b)
+  const firebaseConfig = {
+    apiKey: "AIzaSyC9EXJnOL6ReTB41Kc8SXMcnK657_h2Mwc",
+    authDomain: "tagroba-fbe9b.firebaseapp.com",
+    projectId: "tagroba-fbe9b",
+    storageBucket: "tagroba-fbe9b.firebasestorage.app",
+    messagingSenderId: "238106301728",
+    appId: "1:238106301728:web:549602e55f7fe8a7b0b345",
+    measurementId: "G-CRVE7VMZMS"
+  };
+
+  // تهيئة Firebase
+  if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.database();
+</script>
+
 <!-- PWA -->
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0A1E3F">
@@ -985,6 +1008,29 @@ select.input-base{ font-size: 19px !important; }
 
     let selectedDays = [];
 
+    // ====== التعديل الجديد للـ Firebase ======
+    let classesDB = []; // المصفوفة الآن فارغة في البداية
+    let isFirebaseLoaded = false;
+
+    // دالة لجلب المجموعات من Firebase عند فتح التطبيق
+    function fetchClassesFromFirebase() {
+        db.ref('classes').on('value', (snapshot) => {
+            const data = snapshot.val();
+            classesDB = data ? data : [];
+            isFirebaseLoaded = true;
+            
+            // تحديث واجهة المجموعات إذا كان المعلم بداخلها
+            if(document.getElementById('teacherDashboardView').classList.contains('fade-enter-active')) {
+                renderTeacherDashboard();
+            }
+            // تحديث واجهة تفاصيل المجموعة المفتوحة (إن وجدت)
+            if(document.getElementById('groupDetailsView').classList.contains('fade-enter-active') && currentOpenedGroupId) {
+                openGroupDetails(currentOpenedGroupId);
+            }
+        });
+    }
+    // ==========================================
+
     function renderDaysSelector() {
         const container = document.getElementById('daysSelector');
         if(!container) return;
@@ -1620,6 +1666,9 @@ select.input-base{ font-size: 19px !important; }
     }
 
     window.onload = function() {
+        // الاتصال بقاعدة البيانات عند تحميل الصفحة
+        fetchClassesFromFirebase();
+
         if(currentTeacherProfile && currentTeacherProfile.teacherName) {
             document.getElementById('basicTeacherName').value = currentTeacherProfile.teacherName || '';
             document.getElementById('basicTeacherAge').value = currentTeacherProfile.teacherAge || '';
@@ -2203,7 +2252,9 @@ select.input-base{ font-size: 19px !important; }
         };
 
         classesDB.push(newClass);
-        localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
+        
+        // حفظ المجموعة الجديدة في Firebase
+        db.ref('classes').set(classesDB);
         
         alert('✅ تم إضافة ونشر المجموعة بنجاح!');
         document.getElementById('addClassForm').reset();
@@ -2246,7 +2297,6 @@ select.input-base{ font-size: 19px !important; }
         showView('teacherDashboardView'); 
     }
 
-    let classesDB = JSON.parse(localStorage.getItem('tutoring_classes_v15')) || [];
     let currentTeacherProfile = JSON.parse(localStorage.getItem('draft_teacher_profile')) || null;
     let currentOpenedGroupId = null;
 
@@ -2420,10 +2470,13 @@ select.input-base{ font-size: 19px !important; }
     function deleteGroup(classId) {
         if(confirm("⚠️ تحذير: هل أنت متأكد أنك تريد إلغاء هذه المجموعة نهائياً؟\n\nسيتم حذف بيانات المجموعة وجميع الطلاب المحجوزين بداخلها ولن تتمكن من استعادتها.")) {
             classesDB = classesDB.filter(c => c.id !== classId);
-            localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
+            
+            // رفع التحديث للحذف على Firebase
+            db.ref('classes').set(classesDB);
+            
             alert('تم إلغاء المجموعة بنجاح.');
             updateLiveJourneyTracker('teacherDashboardView');
-            renderTeacherDashboard();
+            // الواجهة سيتم تحديثها تلقائياً من خلال مستمع Firebase
         }
     }
 
@@ -2438,8 +2491,9 @@ select.input-base{ font-size: 19px !important; }
             }
             
             classesDB[clsIndex].isActive = newStatus;
-            localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
-            renderTeacherDashboard();
+            
+            // تحديث حالة المجموعة على Firebase
+            db.ref('classes').set(classesDB);
         }
     }
 
@@ -2577,10 +2631,12 @@ select.input-base{ font-size: 19px !important; }
             if (gender === 'boy') cls.bookedBoys = (cls.bookedBoys || 0) + 1;
             else if (gender === 'girl') cls.bookedGirls = (cls.bookedGirls || 0) + 1;
 
-            localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
+            // تحديث بيانات المجموعة وإضافة الطالب الجديد على Firebase
+            db.ref('classes').set(classesDB);
+            
             alert('✅ تم إضافة الطالب وتحديث العداد بنجاح!');
             closeManualAddModal();
-            openGroupDetails(classId); 
+            // الواجهة سيتم تحديثها تلقائياً بفضل مستمع Firebase
         }
     }
 
@@ -2670,7 +2726,8 @@ select.input-base{ font-size: 19px !important; }
             notes: notes
         });
 
-        localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
+        // حفظ الدفعة الجديدة على Firebase
+        db.ref('classes').set(classesDB);
         
         e.target.reset();
         handlePayTypeChange();
@@ -2708,7 +2765,9 @@ select.input-base{ font-size: 19px !important; }
         const student = cls.students.find(s => s.id === currentPayStudentId);
         
         student.paymentArchive = student.paymentArchive.filter(p => p.id !== recordId);
-        localStorage.setItem('tutoring_classes_v15', JSON.stringify(classesDB));
+        
+        // مسح الدفعة من Firebase
+        db.ref('classes').set(classesDB);
         
         renderPaymentArchive(student);
     }
