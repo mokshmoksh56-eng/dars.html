@@ -977,6 +977,45 @@ select.input-base{ font-size: 19px !important; }
     </div>
 </div>
 
+<!-- Modal تعديل المجموعة -->
+<div id="editGroupModal" class="modal-overlay">
+    <div class="modal-content !h-auto">
+        <h3 class="text-center font-black mb-4 text-[var(--primary-900)] text-lg">✏️ تعديل بيانات المجموعة</h3>
+        <form onsubmit="handleEditGroupSubmit(event)">
+            <input type="hidden" id="editClassId">
+            
+            <label class="field-label">اسم المجموعة</label>
+            <input type="text" id="editGroupName" required class="input-base">
+
+            <label class="field-label">أيام الأسبوع</label>
+            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 mb-4">
+                <div class="days-selector" id="editDaysSelector"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="field-label !text-xs">وقت البداية</label>
+                    <input type="time" id="editStartTime" required class="input-base !mb-0 text-center">
+                </div>
+                <div>
+                    <label class="field-label !text-xs">وقت النهاية</label>
+                    <input type="time" id="editEndTime" required class="input-base !mb-0 text-center">
+                </div>
+            </div>
+
+            <div id="editCapacityContainer" class="mb-4">
+                <label class="field-label">العدد المطلوب (الحد الأقصى للطلاب)</label>
+                <input type="number" id="editMaxCapacity" required min="1" class="input-base text-center">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mt-4">
+                <button type="button" onclick="closeEditGroupModal()" class="btn-ghost !mb-0 py-3 bg-slate-100">إلغاء</button>
+                <button type="submit" class="btn-primary !mb-0 py-3 border-none shadow-md">حفظ التعديلات ✔️</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Modal المدفوعات والأرشيف -->
 <div id="paymentModal" class="modal-overlay">
     <div class="modal-content !max-w-2xl !h-[90vh] flex flex-col">
@@ -2628,13 +2667,18 @@ select.input-base{ font-size: 19px !important; }
                         </div>
                     </div>
                 </div>
-                <div class="px-5 pb-5 grid grid-cols-2 gap-2 relative z-10">
-                    <button onclick="toggleGroupStatus('${cls.id}'); event.stopPropagation();" class="w-full ${isActive ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'} border shadow-sm font-black py-3 rounded-xl text-[13px] active:scale-95 transition-all">
-                        ${isActive ? '⏸️ قفل الحجز' : '▶️ فتح الحجز'}
+                <div class="px-5 pb-5 flex flex-col gap-2 relative z-10">
+                    <button onclick="openEditGroupModal('${cls.id}'); event.stopPropagation();" class="w-full bg-blue-50 text-blue-700 border border-blue-200 shadow-sm font-black py-3 rounded-xl text-[13px] hover:bg-blue-100 active:scale-95 transition-all">
+                        ✏️ تعديل بيانات المجموعة (الاسم، المواعيد، العدد)
                     </button>
-                    <button onclick="deleteGroup('${cls.id}'); event.stopPropagation();" class="w-full bg-white text-rose-600 border border-rose-200 shadow-sm font-black py-3 rounded-xl text-[13px] hover:bg-rose-50 active:scale-95 transition-all">
-                        🗑️ إلغاء نهائي
-                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="toggleGroupStatus('${cls.id}'); event.stopPropagation();" class="w-full ${isActive ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'} border shadow-sm font-black py-3 rounded-xl text-[13px] active:scale-95 transition-all">
+                            ${isActive ? '⏸️ قفل الحجز' : '▶️ فتح الحجز'}
+                        </button>
+                        <button onclick="deleteGroup('${cls.id}'); event.stopPropagation();" class="w-full bg-white text-rose-600 border border-rose-200 shadow-sm font-black py-3 rounded-xl text-[13px] hover:bg-rose-50 active:scale-95 transition-all">
+                            🗑️ إلغاء نهائي
+                        </button>
+                    </div>
                 </div>
             `;
             container.appendChild(card);
@@ -2958,6 +3002,105 @@ select.input-base{ font-size: 19px !important; }
                 .then((registration) => console.log('SW registered'))
                 .catch((error) => console.log('SW failed:', error));
         });
+    }
+    let editSelectedDays = [];
+
+    function renderEditDaysSelector() {
+        const container = document.getElementById('editDaysSelector');
+        if(!container) return;
+        container.innerHTML = WEEK_DAYS.map(day => {
+            const isActive = editSelectedDays.includes(day.key);
+            return `<div class="day-chip ${isActive ? 'active' : ''}" onclick="toggleEditDay('${day.key}')" style="padding: 8px 4px;">
+                <span class="day-emoji text-[16px]">${day.emoji}</span>
+                <span class="text-[11px] font-black mt-1">${day.name}</span>
+            </div>`;
+        }).join('');
+    }
+
+    function toggleEditDay(dayKey) {
+        const idx = editSelectedDays.indexOf(dayKey);
+        if(idx > -1) editSelectedDays.splice(idx, 1);
+        else editSelectedDays.push(dayKey);
+        renderEditDaysSelector();
+    }
+
+    function openEditGroupModal(classId) {
+        const cls = classesDB.find(c => c.id === classId);
+        if(!cls) return;
+
+        document.getElementById('editClassId').value = cls.id;
+        document.getElementById('editGroupName').value = cls.groupName;
+        document.getElementById('editStartTime').value = cls.startTime;
+        document.getElementById('editEndTime').value = cls.endTime;
+        
+        editSelectedDays = [...(cls.days || [])];
+        renderEditDaysSelector();
+
+        const capacityContainer = document.getElementById('editCapacityContainer');
+        const maxCapacityInput = document.getElementById('editMaxCapacity');
+
+        if (cls.type === 'student_home') {
+            capacityContainer.style.display = 'none';
+            maxCapacityInput.removeAttribute('required');
+            maxCapacityInput.value = cls.maxCapacity || 1;
+        } else {
+            capacityContainer.style.display = 'block';
+            maxCapacityInput.setAttribute('required', 'true');
+            maxCapacityInput.value = cls.maxCapacity || '';
+        }
+
+        document.getElementById('editGroupModal').style.display = 'flex';
+    }
+
+    function closeEditGroupModal() {
+        document.getElementById('editGroupModal').style.display = 'none';
+    }
+
+    function handleEditGroupSubmit(e) {
+        e.preventDefault();
+        const classId = document.getElementById('editClassId').value;
+        const clsIndex = classesDB.findIndex(c => c.id === classId);
+        if(clsIndex === -1) return;
+
+        if(editSelectedDays.length === 0) {
+            alert("يرجى اختيار يوم واحد على الأقل");
+            return;
+        }
+
+        const startTime = document.getElementById('editStartTime').value;
+        const endTime = document.getElementById('editEndTime').value;
+        const [sh, sm] = startTime.split(':').map(Number);
+        const [eh, em] = endTime.split(':').map(Number);
+        if((eh * 60 + em) <= (sh * 60 + sm)) {
+            alert("⚠️ وقت النهاية يجب أن يكون بعد وقت البداية");
+            return;
+        }
+
+        const conflicts = checkScheduleConflicts(editSelectedDays, startTime, endTime, classId);
+        if (conflicts.length > 0) {
+            const conflictText = conflicts.map(c => `• ${c.groupName}\n  📅 ${c.daysText}\n  ⏰ ${c.time}`).join('\n\n');
+            alert(`⚠️ تعارض في المواعيد!\n\nالتعديل الجديد يتعارض مع:\n\n${conflictText}`);
+            return;
+        }
+
+        const cls = classesDB[clsIndex];
+        
+        cls.groupName = document.getElementById('editGroupName').value;
+        cls.startTime = startTime;
+        cls.endTime = endTime;
+        cls.days = [...editSelectedDays];
+        cls.daysNames = WEEK_DAYS.filter(d => editSelectedDays.includes(d.key)).map(d => d.name);
+        
+        if (cls.type !== 'student_home') {
+            cls.maxCapacity = parseInt(document.getElementById('editMaxCapacity').value);
+        } else {
+            cls.maxCapacity = 1;
+        }
+
+        db.ref('classes').set(classesDB);
+        
+        alert('✅ تم حفظ التعديلات بنجاح!');
+        closeEditGroupModal();
     }
 </script>
 </body>
