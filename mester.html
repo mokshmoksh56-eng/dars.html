@@ -1024,6 +1024,55 @@ select.input-base{ font-size: 19px !important; }
                 <input type="number" id="editMaxCapacity" required min="1" class="input-base text-center">
             </div>
 
+            <!-- ========== قسم تعديل الموقع GPS الجديد ========== -->
+            <div class="mb-4 bg-gradient-to-br from-amber-50 to-orange-50/50 p-4 rounded-2xl border-2 border-amber-300 shadow-sm">
+                <div class="flex items-start gap-2 mb-3 bg-white/70 border border-amber-200 rounded-xl p-3">
+                    <span class="text-xl">⚠️</span>
+                    <div class="flex-1">
+                        <p class="text-[12px] text-amber-900 font-black leading-relaxed mb-1">
+                            تنبيه: تغيير مكان الدرس
+                        </p>
+                        <p class="text-[11px] text-amber-800 font-bold leading-relaxed">
+                            عند حفظ الموقع الجديد، سيتم تحديث عنوان الدرس تلقائياً في المنصة، وسيظهر للطلاب الجدد بالموقع الجديد. تأكد من صحة الموقع قبل الحفظ.
+                        </p>
+                    </div>
+                </div>
+
+                <label class="field-label !text-sm">📍 اسم السنتر / المستر</label>
+                <input type="text" id="editCenterName" placeholder="مثال: سنتر الأوائل / مستر أحمد" class="input-base !text-[15px]">
+
+                <div class="relative mb-3">
+                    <input type="text" 
+                           id="editCenterAddress" 
+                           readonly 
+                           placeholder="📍 اضغط على الزر بالأسفل لتحديد الموقع" 
+                           class="w-full p-3 pl-10 bg-white border-2 border-emerald-200 rounded-xl font-bold text-[13px] text-slate-700 cursor-not-allowed outline-none"
+                           style="direction: rtl;">
+                    <span class="absolute top-1/2 -translate-y-1/2 left-3 text-lg">🔒</span>
+                </div>
+
+                <button type="button" onclick="openEditMapModal()" class="w-full !bg-emerald-600 !text-white !border-none font-black py-3 px-3 text-sm rounded-xl shadow-md hover:!bg-emerald-700 active:scale-95 transition-all flex items-center justify-center gap-2">
+                    <span>🗺️</span>
+                    <span>تحديد / تغيير الموقع على الخريطة</span>
+                </button>
+
+                <div id="editGpsCoordsDisplay" class="hidden mt-3 bg-white/80 border border-emerald-200 rounded-lg p-2.5 flex items-center gap-2 text-[11px] font-black text-emerald-800">
+                    <span>📌</span>
+                    <span>الإحداثيات الجديدة:</span>
+                    <span id="editGpsCoordsText" dir="ltr" class="tracking-wider">--</span>
+                </div>
+
+                <p id="editTeacherLocationStatus" class="text-xs text-rose-600 font-bold text-center mt-3 flex items-center justify-center gap-1">
+                    <span>❌</span>
+                    <span>لم يتم تحديد الموقع بعد</span>
+                </p>
+
+                <input type="hidden" id="editTeacherLat">
+                <input type="hidden" id="editTeacherLng">
+                <input type="hidden" id="editTeacherRadius">
+            </div>
+            <!-- ========== نهاية قسم تعديل الموقع ========== -->
+
             <div class="grid grid-cols-2 gap-2 mt-4">
                 <button type="button" onclick="closeEditGroupModal()" class="btn-ghost !mb-0 py-3 bg-slate-100">إلغاء</button>
                 <button type="submit" class="btn-primary !mb-0 py-3 border-none shadow-md">حفظ التعديلات ✔️</button>
@@ -1287,17 +1336,70 @@ select.input-base{ font-size: 19px !important; }
 
     let mapInstance = null, mapMarker = null, mapCircle = null;
     let tempLat = null, tempLng = null, tempRadius = 2000; 
+    let mapMode = 'add';              // وضع الخريطة: 'add' أو 'edit'
+    let editingClassType = 'center';  // نوع الدرس أثناء التعديل
 
+    // ===== فتح الخريطة في وضع الإضافة (السلوك الأصلي) =====
     function openMapModal() {
+        mapMode = 'add';
+        editingClassType = document.querySelector('input[name="classType"]:checked')?.value || 'center';
+        // نبدأ من الإحداثيات المحفوظة في وضع الإضافة أو من الافتراضي
+        const existLat = document.getElementById('teacherLat').value;
+        const existLng = document.getElementById('teacherLng').value;
+        if (existLat && existLng) {
+            tempLat = parseFloat(existLat);
+            tempLng = parseFloat(existLng);
+        } else {
+            tempLat = null;
+            tempLng = null;
+        }
+        const existRad = document.getElementById('teacherRadius').value;
+        tempRadius = existRad ? parseFloat(existRad) : 2000;
+        document.getElementById('radiusSlider').value = tempRadius / 1000;
+        document.getElementById('radiusValueDisplay').innerText = (tempRadius / 1000) + ' كم';
+        _showMapWithType();
+    }
+
+    // ===== فتح الخريطة في وضع التعديل (الجديد) =====
+    function openEditMapModal() {
+        mapMode = 'edit';
+        // نستخدم نوع المجموعة الحالي (center / teacher_home / student_home)
+        editingClassType = (currentEditingClass && currentEditingClass.type) ? currentEditingClass.type : 'center';
+
+        // تحميل إحداثيات المجموعة الحالية إن وجدت
+        const editLat = document.getElementById('editTeacherLat').value;
+        const editLng = document.getElementById('editTeacherLng').value;
+        const editRad = document.getElementById('editTeacherRadius').value;
+
+        if (editLat && editLng) {
+            tempLat = parseFloat(editLat);
+            tempLng = parseFloat(editLng);
+            tempRadius = parseFloat(editRad) || 2000;
+            document.getElementById('radiusSlider').value = tempRadius / 1000;
+            document.getElementById('radiusValueDisplay').innerText = (tempRadius / 1000) + ' كم';
+        } else {
+            tempLat = null;
+            tempLng = null;
+            tempRadius = 2000;
+            document.getElementById('radiusSlider').value = 2;
+            document.getElementById('radiusValueDisplay').innerText = '2 كم';
+        }
+
+        _showMapWithType();
+    }
+
+    // ===== دالة مشتركة لعرض الخريطة =====
+    function _showMapWithType() {
         document.getElementById('mapModal').style.display = 'flex';
-        const type = document.querySelector('input[name="classType"]:checked').value;
+        const type = editingClassType;
         const radiusControl = document.getElementById('radiusControl');
         
         if (type === 'student_home') radiusControl.classList.remove('hidden');
         else radiusControl.classList.add('hidden');
 
         if (!mapInstance) {
-            let initLat = 31.0409, initLng = 31.3785;
+            let initLat = tempLat || 31.0409;
+            let initLng = tempLng || 31.3785;
             mapInstance = L.map('leafletMap').setView([initLat, initLng], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(mapInstance);
             mapMarker = L.marker([initLat, initLng], { draggable: true }).addTo(mapInstance);
@@ -1306,16 +1408,17 @@ select.input-base{ font-size: 19px !important; }
             mapInstance.on('click', e => { 
                 mapMarker.setLatLng(e.latlng); 
                 tempLat = e.latlng.lat; tempLng = e.latlng.lng; 
-                if (type === 'student_home') mapCircle.setLatLng(e.latlng);
+                if (editingClassType === 'student_home') mapCircle.setLatLng(e.latlng);
             });
             
             mapMarker.on('dragend', () => { 
                 let pos = mapMarker.getLatLng(); 
                 tempLat = pos.lat; tempLng = pos.lng; 
-                if (type === 'student_home') mapCircle.setLatLng(pos);
+                if (editingClassType === 'student_home') mapCircle.setLatLng(pos);
             });
             
-            if (navigator.geolocation) {
+            // جلب الموقع الحقيقي فقط إذا لم يكن هناك إحداثيات محفوظة
+            if (!tempLat && navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
                     let lat = pos.coords.latitude, lng = pos.coords.longitude;
                     mapInstance.setView([lat, lng], 14); 
@@ -1323,6 +1426,13 @@ select.input-base{ font-size: 19px !important; }
                     mapCircle.setLatLng([lat, lng]);
                     tempLat = lat; tempLng = lng;
                 }, () => {}, { enableHighAccuracy: true });
+            }
+        } else {
+            // تحديث الخريطة عند إعادة الفتح
+            if (tempLat && tempLng) {
+                mapInstance.setView([tempLat, tempLng], 14);
+                mapMarker.setLatLng([tempLat, tempLng]);
+                mapCircle.setLatLng([tempLat, tempLng]);
             }
         }
         
@@ -1351,6 +1461,59 @@ select.input-base{ font-size: 19px !important; }
             let pos = mapMarker.getLatLng(); 
             tempLat = pos.lat; tempLng = pos.lng; 
         }
+
+        // ============ وضع التعديل ============
+        if (mapMode === 'edit') {
+            document.getElementById('editTeacherLat').value = tempLat; 
+            document.getElementById('editTeacherLng').value = tempLng;
+            document.getElementById('editTeacherRadius').value = tempRadius;
+            
+            const coordsDisplay = document.getElementById('editGpsCoordsDisplay');
+            const coordsText = document.getElementById('editGpsCoordsText');
+            if (coordsDisplay && coordsText) {
+                coordsDisplay.classList.remove('hidden');
+                coordsText.innerText = `${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
+            }
+            
+            const status = document.getElementById('editTeacherLocationStatus');
+            status.innerHTML = '<span>⏳</span><span>جاري جلب العنوان من الـ GPS...</span>'; 
+            status.className = "text-xs text-[var(--primary-500)] font-bold text-center mt-3 flex items-center justify-center gap-1";
+            
+            closeMapModal();
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${tempLat}&lon=${tempLng}&accept-language=ar`)
+                .then(res => res.json())
+                .then(data => {
+                    const addressInput = document.getElementById('editCenterAddress');
+                    
+                    if (data && data.display_name) {
+                        let addressName = data.display_name;
+                        if(data.address) {
+                            let parts = [];
+                            if(data.address.road) parts.push(data.address.road);
+                            if(data.address.neighbourhood) parts.push(data.address.neighbourhood);
+                            if(data.address.suburb) parts.push(data.address.suburb);
+                            if(data.address.city || data.address.town || data.address.village) parts.push(data.address.city || data.address.town || data.address.village);
+                            if(parts.length > 0) addressName = parts.join('، '); 
+                        }
+                        addressInput.value = addressName;
+                    } else {
+                        addressInput.value = `📍 ${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
+                    }
+                    
+                    status.innerHTML = '<span>✅</span><span>تم تحديد الموقع الجديد والعنوان بنجاح</span>'; 
+                    status.className = "text-xs text-emerald-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+                })
+                .catch(err => {
+                    const addressInput = document.getElementById('editCenterAddress');
+                    addressInput.value = `📍 ${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
+                    status.innerHTML = '<span>✅</span><span>تم تحديد الموقع (تعذر جلب اسم الشارع)</span>'; 
+                    status.className = "text-xs text-orange-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+                });
+            return;
+        }
+
+        // ============ وضع الإضافة (الأصلي) ============
         document.getElementById('teacherLat').value = tempLat; 
         document.getElementById('teacherLng').value = tempLng;
         document.getElementById('teacherRadius').value = tempRadius; 
@@ -1381,9 +1544,7 @@ select.input-base{ font-size: 19px !important; }
                         if(data.address.neighbourhood) parts.push(data.address.neighbourhood);
                         if(data.address.suburb) parts.push(data.address.suburb);
                         if(data.address.city || data.address.town || data.address.village) parts.push(data.address.city || data.address.town || data.address.village);
-                        if(parts.length > 0) {
-                            addressName = parts.join('، '); 
-                        }
+                        if(parts.length > 0) addressName = parts.join('، '); 
                     }
                     addressInput.value = addressName;
                 } else {
@@ -1396,7 +1557,6 @@ select.input-base{ font-size: 19px !important; }
             .catch(err => {
                 const addressInput = document.getElementById('centerAddress');
                 addressInput.value = `📍 ${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
-                
                 status.innerHTML = '<span>✅</span><span>تم تحديد الموقع (تعذر جلب اسم الشارع)</span>'; 
                 status.className = "text-xs text-orange-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
             });
@@ -3061,6 +3221,7 @@ select.input-base{ font-size: 19px !important; }
         });
     }
     let editSelectedDays = [];
+    let currentEditingClass = null; // متغير جديد لتخزين المجموعة الجاري تعديلها
 
     function renderEditDaysSelector() {
         const container = document.getElementById('editDaysSelector');
@@ -3084,6 +3245,8 @@ select.input-base{ font-size: 19px !important; }
     function openEditGroupModal(classId) {
         const cls = classesDB.find(c => c.id === classId);
         if(!cls) return;
+
+        currentEditingClass = cls; // نحفظ المرجع للاستخدام في الخريطة
 
         document.getElementById('editClassId').value = cls.id;
         document.getElementById('editGroupName').value = cls.groupName;
@@ -3110,11 +3273,40 @@ select.input-base{ font-size: 19px !important; }
             maxCapacityInput.value = cls.maxCapacity || '';
         }
 
+        // ========== تحميل بيانات الموقع الحالية ==========
+        document.getElementById('editCenterName').value = cls.location || '';
+        document.getElementById('editCenterAddress').value = cls.address || '';
+        document.getElementById('editTeacherLat').value = cls.lat || '';
+        document.getElementById('editTeacherLng').value = cls.lng || '';
+        document.getElementById('editTeacherRadius').value = cls.radius || '';
+
+        const coordsDisplay = document.getElementById('editGpsCoordsDisplay');
+        const coordsText = document.getElementById('editGpsCoordsText');
+        const status = document.getElementById('editTeacherLocationStatus');
+
+        if (cls.lat && cls.lng) {
+            coordsDisplay.classList.remove('hidden');
+            coordsText.innerText = `${parseFloat(cls.lat).toFixed(5)}, ${parseFloat(cls.lng).toFixed(5)}`;
+            status.innerHTML = '<span>✅</span><span>الموقع الحالي محدد مسبقاً</span>';
+            status.className = "text-xs text-emerald-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+        } else {
+            coordsDisplay.classList.add('hidden');
+            coordsText.innerText = '--';
+            status.innerHTML = '<span>❌</span><span>لم يتم تحديد الموقع بعد (مطلوب)</span>';
+            status.className = "text-xs text-rose-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+        }
+
+        // تحديث المتغيرات المؤقتة للخريطة
+        tempLat = cls.lat ? parseFloat(cls.lat) : null;
+        tempLng = cls.lng ? parseFloat(cls.lng) : null;
+        tempRadius = cls.radius ? parseFloat(cls.radius) : 2000;
+
         document.getElementById('editGroupModal').style.display = 'flex';
     }
 
     function closeEditGroupModal() {
         document.getElementById('editGroupModal').style.display = 'none';
+        currentEditingClass = null;
     }
 
     function handleEditGroupSubmit(e) {
@@ -3144,13 +3336,58 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
+        // ========== التحقق من بيانات الموقع ==========
+        const newLocationName = document.getElementById('editCenterName').value.trim();
+        const newAddress = document.getElementById('editCenterAddress').value.trim();
+        const newLat = document.getElementById('editTeacherLat').value;
+        const newLng = document.getElementById('editTeacherLng').value;
+        const newRadius = document.getElementById('editTeacherRadius').value;
+
+        if (!newLocationName) {
+            alert("⚠️ يرجى إدخال اسم السنتر / المستر");
+            return;
+        }
+
+        if (!newLat || !newLng) {
+            alert("⚠️ يرجى تحديد موقع الدرس على الخريطة أولاً");
+            return;
+        }
+
         const cls = classesDB[clsIndex];
-        
+        const oldLat = parseFloat(cls.lat || 0);
+        const oldLng = parseFloat(cls.lng || 0);
+        const oldAddress = cls.address || '';
+
+        // التحقق هل تغير الموقع؟
+        const latChanged = Math.abs(oldLat - parseFloat(newLat)) > 0.00001;
+        const lngChanged = Math.abs(oldLng - parseFloat(newLng)) > 0.00001;
+        const addressChanged = oldAddress !== newAddress;
+        const locationChanged = latChanged || lngChanged || addressChanged;
+
+        // ========== رسالة تأكيد تغيير المكان ==========
+        if (locationChanged) {
+            const confirmMsg = 
+                '⚠️ تنبيه مهم: تغيير مكان الدرس\n\n' +
+                '📍 الموقع القديم:\n' +
+                `   ${cls.location || '—'}\n` +
+                `   ${oldAddress || '—'}\n\n` +
+                '📍 الموقع الجديد:\n' +
+                `   ${newLocationName}\n` +
+                `   ${newAddress || '—'}\n\n` +
+                'سيتم تحديث الموقع لجميع الطلاب الجدد.\n' +
+                'هل أنت متأكد من حفظ التغيير؟';
+
+            if (!confirm(confirmMsg)) return;
+        }
+
+        // ========== حفظ كل البيانات ==========
         cls.groupName = document.getElementById('editGroupName').value;
         cls.startTime = startTime;
         cls.endTime = endTime;
+        
         const selectedGender = document.querySelector('input[name="editTargetGender"]:checked');
         if (selectedGender) cls.gender = selectedGender.value;
+        
         cls.days = [...editSelectedDays];
         cls.daysNames = WEEK_DAYS.filter(d => editSelectedDays.includes(d.key)).map(d => d.name);
         
@@ -3160,9 +3397,20 @@ select.input-base{ font-size: 19px !important; }
             cls.maxCapacity = 1;
         }
 
+        // حفظ بيانات الموقع الجديدة
+        cls.location = newLocationName;
+        cls.address = newAddress;
+        cls.lat = parseFloat(newLat);
+        cls.lng = parseFloat(newLng);
+        if (cls.type === 'student_home') {
+            cls.radius = parseFloat(newRadius || 2000);
+        } else {
+            cls.radius = null;
+        }
+
         db.ref('classes').set(classesDB);
         
-        alert('✅ تم حفظ التعديلات بنجاح!');
+        alert('✅ تم حفظ التعديلات بنجاح!' + (locationChanged ? '\n\n📍 تم تحديث موقع الدرس.' : ''));
         closeEditGroupModal();
     }
 </script>
