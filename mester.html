@@ -987,6 +987,20 @@ select.input-base{ font-size: 19px !important; }
             <label class="field-label">اسم المجموعة</label>
             <input type="text" id="editGroupName" required class="input-base">
 
+            <label class="field-label">اسم السنتر / المستر</label>
+            <input type="text" id="editCenterName" required class="input-base">
+
+            <div class="mb-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="field-label !mb-0 !text-xs">📍 العنوان والـ GPS</label>
+                    <button type="button" onclick="promptEditMap()" class="bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-lg text-[11px] font-black hover:bg-blue-200 active:scale-95 transition-all">تغيير الموقع 🗺️</button>
+                </div>
+                <input type="text" id="editCenterAddress" readonly class="w-full p-2.5 bg-white border border-slate-200 rounded-lg font-bold text-xs text-slate-700 outline-none" placeholder="اضغط على زر تغيير الموقع..." style="direction: rtl;">
+                <input type="hidden" id="editTeacherLat">
+                <input type="hidden" id="editTeacherLng">
+                <input type="hidden" id="editTeacherRadius">
+            </div>
+
             <label class="field-label">الفئة المسموح بها</label>
             <div class="grid grid-cols-3 gap-2 mb-4">
                 <label>
@@ -1287,13 +1301,37 @@ select.input-base{ font-size: 19px !important; }
 
     let mapInstance = null, mapMarker = null, mapCircle = null;
     let tempLat = null, tempLng = null, tempRadius = 2000; 
+    let currentMapMode = 'add';
+    let currentMapClassType = 'center';
 
-    function openMapModal() {
+    function promptEditMap() {
+        if(confirm("⚠️ هل أنت متأكد من رغبتك في تغيير موقع الدرس أو السنتر؟
+
+تغيير الموقع بعد نشره قد يسبب ارتباكاً للطلاب الذين قاموا بالحجز.")) {
+            openMapModal('edit');
+        }
+    }
+
+    function openMapModal(mode = 'add') {
+        currentMapMode = mode;
         document.getElementById('mapModal').style.display = 'flex';
-        const type = document.querySelector('input[name="classType"]:checked').value;
-        const radiusControl = document.getElementById('radiusControl');
         
-        if (type === 'student_home') radiusControl.classList.remove('hidden');
+        const radiusControl = document.getElementById('radiusControl');
+
+        if (mode === 'add') {
+            currentMapClassType = document.querySelector('input[name="classType"]:checked').value;
+        } else {
+            const classId = document.getElementById('editClassId').value;
+            const cls = classesDB.find(c => c.id === classId);
+            currentMapClassType = cls.type || 'center';
+            tempLat = parseFloat(document.getElementById('editTeacherLat').value) || null;
+            tempLng = parseFloat(document.getElementById('editTeacherLng').value) || null;
+            tempRadius = parseFloat(document.getElementById('editTeacherRadius').value) || 2000;
+            document.getElementById('radiusSlider').value = tempRadius / 1000;
+            document.getElementById('radiusValueDisplay').innerText = (tempRadius / 1000) + ' كم';
+        }
+        
+        if (currentMapClassType === 'student_home') radiusControl.classList.remove('hidden');
         else radiusControl.classList.add('hidden');
 
         if (!mapInstance) {
@@ -1306,16 +1344,16 @@ select.input-base{ font-size: 19px !important; }
             mapInstance.on('click', e => { 
                 mapMarker.setLatLng(e.latlng); 
                 tempLat = e.latlng.lat; tempLng = e.latlng.lng; 
-                if (type === 'student_home') mapCircle.setLatLng(e.latlng);
+                if (currentMapClassType === 'student_home') mapCircle.setLatLng(e.latlng);
             });
             
             mapMarker.on('dragend', () => { 
                 let pos = mapMarker.getLatLng(); 
                 tempLat = pos.lat; tempLng = pos.lng; 
-                if (type === 'student_home') mapCircle.setLatLng(pos);
+                if (currentMapClassType === 'student_home') mapCircle.setLatLng(pos);
             });
             
-            if (navigator.geolocation) {
+            if (navigator.geolocation && !tempLat) {
                 navigator.geolocation.getCurrentPosition(pos => {
                     let lat = pos.coords.latitude, lng = pos.coords.longitude;
                     mapInstance.setView([lat, lng], 14); 
@@ -1326,7 +1364,13 @@ select.input-base{ font-size: 19px !important; }
             }
         }
         
-        if (type === 'student_home') {
+        if (tempLat && tempLng) {
+            mapInstance.setView([tempLat, tempLng], 14);
+            mapMarker.setLatLng([tempLat, tempLng]);
+            if (currentMapClassType === 'student_home') mapCircle.setLatLng([tempLat, tempLng]);
+        }
+
+        if (currentMapClassType === 'student_home') {
             if (!mapInstance.hasLayer(mapCircle)) mapInstance.addLayer(mapCircle);
             if (tempLat && tempLng) mapCircle.setLatLng([tempLat, tempLng]);
             mapCircle.setRadius(tempRadius);
@@ -1351,27 +1395,38 @@ select.input-base{ font-size: 19px !important; }
             let pos = mapMarker.getLatLng(); 
             tempLat = pos.lat; tempLng = pos.lng; 
         }
-        document.getElementById('teacherLat').value = tempLat; 
-        document.getElementById('teacherLng').value = tempLng;
-        document.getElementById('teacherRadius').value = tempRadius; 
+
+        const latInputId = currentMapMode === 'add' ? 'teacherLat' : 'editTeacherLat';
+        const lngInputId = currentMapMode === 'add' ? 'teacherLng' : 'editTeacherLng';
+        const radiusInputId = currentMapMode === 'add' ? 'teacherRadius' : 'editTeacherRadius';
+        const addressInputId = currentMapMode === 'add' ? 'centerAddress' : 'editCenterAddress';
         
-        const coordsDisplay = document.getElementById('gpsCoordsDisplay');
-        const coordsText = document.getElementById('gpsCoordsText');
-        if (coordsDisplay && coordsText) {
-            coordsDisplay.classList.remove('hidden');
-            coordsText.innerText = `${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
+        document.getElementById(latInputId).value = tempLat; 
+        document.getElementById(lngInputId).value = tempLng;
+        document.getElementById(radiusInputId).value = tempRadius; 
+        
+        if (currentMapMode === 'add') {
+            const coordsDisplay = document.getElementById('gpsCoordsDisplay');
+            const coordsText = document.getElementById('gpsCoordsText');
+            if (coordsDisplay && coordsText) {
+                coordsDisplay.classList.remove('hidden');
+                coordsText.innerText = `${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
+            }
+            
+            const status = document.getElementById('teacherLocationStatus');
+            status.innerHTML = '<span>⏳</span><span>جاري جلب العنوان من الـ GPS...</span>'; 
+            status.className = "text-xs text-[var(--primary-500)] font-bold text-center mt-3 flex items-center justify-center gap-1";
+        } else {
+            const addressInput = document.getElementById(addressInputId);
+            addressInput.value = 'جاري التحديث...';
         }
-        
-        const status = document.getElementById('teacherLocationStatus');
-        status.innerHTML = '<span>⏳</span><span>جاري جلب العنوان من الـ GPS...</span>'; 
-        status.className = "text-xs text-[var(--primary-500)] font-bold text-center mt-3 flex items-center justify-center gap-1";
         
         closeMapModal();
 
         fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${tempLat}&lon=${tempLng}&accept-language=ar`)
             .then(res => res.json())
             .then(data => {
-                const addressInput = document.getElementById('centerAddress');
+                const addressInput = document.getElementById(addressInputId);
                 
                 if (data && data.display_name) {
                     let addressName = data.display_name;
@@ -1390,15 +1445,21 @@ select.input-base{ font-size: 19px !important; }
                     addressInput.value = `📍 ${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
                 }
                 
-                status.innerHTML = '<span>✅</span><span>تم تحديد الموقع والعنوان بنجاح</span>'; 
-                status.className = "text-xs text-emerald-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+                if (currentMapMode === 'add') {
+                    const status = document.getElementById('teacherLocationStatus');
+                    status.innerHTML = '<span>✅</span><span>تم تحديد الموقع والعنوان بنجاح</span>'; 
+                    status.className = "text-xs text-emerald-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+                }
             })
             .catch(err => {
-                const addressInput = document.getElementById('centerAddress');
+                const addressInput = document.getElementById(addressInputId);
                 addressInput.value = `📍 ${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
                 
-                status.innerHTML = '<span>✅</span><span>تم تحديد الموقع (تعذر جلب اسم الشارع)</span>'; 
-                status.className = "text-xs text-orange-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+                if (currentMapMode === 'add') {
+                    const status = document.getElementById('teacherLocationStatus');
+                    status.innerHTML = '<span>✅</span><span>تم تحديد الموقع (تعذر جلب اسم الشارع)</span>'; 
+                    status.className = "text-xs text-orange-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
+                }
             });
     }
 
@@ -3060,6 +3121,11 @@ select.input-base{ font-size: 19px !important; }
 
         document.getElementById('editClassId').value = cls.id;
         document.getElementById('editGroupName').value = cls.groupName;
+        document.getElementById('editCenterName').value = cls.location || '';
+        document.getElementById('editCenterAddress').value = cls.address || '';
+        document.getElementById('editTeacherLat').value = cls.lat || '';
+        document.getElementById('editTeacherLng').value = cls.lng || '';
+        document.getElementById('editTeacherRadius').value = cls.radius || '';
         document.getElementById('editStartTime').value = cls.startTime;
         document.getElementById('editEndTime').value = cls.endTime;
         
@@ -3120,6 +3186,18 @@ select.input-base{ font-size: 19px !important; }
         const cls = classesDB[clsIndex];
         
         cls.groupName = document.getElementById('editGroupName').value;
+        cls.location = document.getElementById('editCenterName').value;
+        cls.address = document.getElementById('editCenterAddress').value;
+        
+        const newLat = parseFloat(document.getElementById('editTeacherLat').value);
+        if (!isNaN(newLat)) cls.lat = newLat;
+        
+        const newLng = parseFloat(document.getElementById('editTeacherLng').value);
+        if (!isNaN(newLng)) cls.lng = newLng;
+        
+        const newRad = parseFloat(document.getElementById('editTeacherRadius').value);
+        if (!isNaN(newRad)) cls.radius = newRad;
+
         cls.startTime = startTime;
         cls.endTime = endTime;
         const selectedGender = document.querySelector('input[name="editTargetGender"]:checked');
