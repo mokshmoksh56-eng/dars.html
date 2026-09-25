@@ -987,6 +987,22 @@ select.input-base{ font-size: 19px !important; }
             <label class="field-label">اسم المجموعة</label>
             <input type="text" id="editGroupName" required class="input-base">
 
+            <label class="field-label">الفئة المسموح بها</label>
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <label>
+                    <input type="radio" name="editTargetGender" value="both" checked class="hidden">
+                    <div class="option-btn">👫 ولاد وبنات</div>
+                </label>
+                <label>
+                    <input type="radio" name="editTargetGender" value="boys" class="hidden">
+                    <div class="option-btn">👦 ولاد فقط</div>
+                </label>
+                <label>
+                    <input type="radio" name="editTargetGender" value="girls" class="hidden">
+                    <div class="option-btn">👧 بنات فقط</div>
+                </label>
+            </div>
+
             <label class="field-label">أيام الأسبوع</label>
             <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 mb-4">
                 <div class="days-selector" id="editDaysSelector"></div>
@@ -3033,6 +3049,10 @@ select.input-base{ font-size: 19px !important; }
         document.getElementById('editStartTime').value = cls.startTime;
         document.getElementById('editEndTime').value = cls.endTime;
         
+        const gender = cls.gender || 'both';
+        const genderInput = document.querySelector(`input[name="editTargetGender"][value="${gender}"]`);
+        if (genderInput) genderInput.checked = true;
+        
         editSelectedDays = [...(cls.days || [])];
         renderEditDaysSelector();
 
@@ -3088,6 +3108,8 @@ select.input-base{ font-size: 19px !important; }
         cls.groupName = document.getElementById('editGroupName').value;
         cls.startTime = startTime;
         cls.endTime = endTime;
+        const selectedGender = document.querySelector('input[name="editTargetGender"]:checked');
+        if (selectedGender) cls.gender = selectedGender.value;
         cls.days = [...editSelectedDays];
         cls.daysNames = WEEK_DAYS.filter(d => editSelectedDays.includes(d.key)).map(d => d.name);
         
