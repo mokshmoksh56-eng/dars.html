@@ -1360,8 +1360,20 @@ select.input-base{ font-size: 19px !important; }
         _showMapWithType();
     }
 
-    // ===== فتح الخريطة في وضع التعديل (الجديد) =====
+    // ===== فتح الخريطة في وضع التعديل (مع رسالة التحذير أولاً) =====
     function openEditMapModal() {
+        // ⚠️ رسالة التحذير تظهر هنا قبل فتح الخريطة
+        const confirmMsg = 
+            '⚠️ تنبيه مهم: تغيير مكان الدرس\n\n' +
+            'أنت على وشك تغيير موقع هذه المجموعة.\n\n' +
+            '📌 ما سيحدث عند حفظ التغيير:\n' +
+            '• سيتم تحديث موقع الدرس في المنصة\n' +
+            '• سيظهر الموقع الجديد للطلاب الجدد\n' +
+            '• الطلاب الحاليون لن يتأثروا بحجوزاتهم\n\n' +
+            'هل تريد المتابعة لتحديد الموقع الجديد؟';
+
+        if (!confirm(confirmMsg)) return;
+
         mapMode = 'edit';
         // نستخدم نوع المجموعة الحالي (center / teacher_home / student_home)
         editingClassType = (currentEditingClass && currentEditingClass.type) ? currentEditingClass.type : 'center';
@@ -3356,29 +3368,7 @@ select.input-base{ font-size: 19px !important; }
         const cls = classesDB[clsIndex];
         const oldLat = parseFloat(cls.lat || 0);
         const oldLng = parseFloat(cls.lng || 0);
-        const oldAddress = cls.address || '';
-
-        // التحقق هل تغير الموقع؟
-        const latChanged = Math.abs(oldLat - parseFloat(newLat)) > 0.00001;
-        const lngChanged = Math.abs(oldLng - parseFloat(newLng)) > 0.00001;
-        const addressChanged = oldAddress !== newAddress;
-        const locationChanged = latChanged || lngChanged || addressChanged;
-
-        // ========== رسالة تأكيد تغيير المكان ==========
-        if (locationChanged) {
-            const confirmMsg = 
-                '⚠️ تنبيه مهم: تغيير مكان الدرس\n\n' +
-                '📍 الموقع القديم:\n' +
-                `   ${cls.location || '—'}\n` +
-                `   ${oldAddress || '—'}\n\n` +
-                '📍 الموقع الجديد:\n' +
-                `   ${newLocationName}\n` +
-                `   ${newAddress || '—'}\n\n` +
-                'سيتم تحديث الموقع لجميع الطلاب الجدد.\n' +
-                'هل أنت متأكد من حفظ التغيير؟';
-
-            if (!confirm(confirmMsg)) return;
-        }
+        const locationChanged = Math.abs(oldLat - parseFloat(newLat)) > 0.00001 || Math.abs(oldLng - parseFloat(newLng)) > 0.00001;
 
         // ========== حفظ كل البيانات ==========
         cls.groupName = document.getElementById('editGroupName').value;
