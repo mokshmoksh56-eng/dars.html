@@ -1510,6 +1510,11 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
+        // تنظيف المتغيرات القديمة إن وجدت
+        selectedGrades = [];
+        selectedSubjects = [];
+        selectedClassStage = null;
+        
         // إنشاء الحساب الجديد في Firebase
         currentTeacherProfile = {
             teacherTitle: title,
@@ -1565,6 +1570,11 @@ select.input-base{ font-size: 19px !important; }
     function logout() {
         if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
             currentTeacherProfile = null;
+            selectedGrades = [];
+            selectedSubjects = [];
+            selectedClassStage = null;
+            selectedDays = [];
+            openAccordionStage = null;
             localStorage.removeItem('logged_in_teacher_phone');
             document.getElementById('loginFormContainer').reset?.();
             document.getElementById('registerFormContainer').reset?.();
@@ -1663,7 +1673,17 @@ select.input-base{ font-size: 19px !important; }
         updateLiveJourneyTracker(viewId);
 
         if(viewId === 'teacherDashboardView') renderTeacherDashboard();
-        if(viewId === 'teacherStagesProfileView') renderUnifiedSelection();
+        if(viewId === 'teacherStagesProfileView') {
+            // تصفير وضبط المتغيرات بناءً على الحساب الحالي لمنع تداخل البيانات بين الحسابات
+            if (currentTeacherProfile) {
+                selectedGrades = currentTeacherProfile.grades ? [...currentTeacherProfile.grades] : [];
+                selectedSubjects = currentTeacherProfile.subjects ? [...currentTeacherProfile.subjects] : [];
+            } else {
+                selectedGrades = [];
+                selectedSubjects = [];
+            }
+            renderUnifiedSelection();
+        }
     }
 
     let selectedGrades = [];
@@ -1694,12 +1714,6 @@ select.input-base{ font-size: 19px !important; }
     function renderUnifiedSelection() {
         const container = document.getElementById('unifiedEducationSelector');
         if(!container) return;
-
-        // تحديث الاختيارات من البروفايل إذا كانت موجودة
-        if (currentTeacherProfile && selectedGrades.length === 0 && selectedSubjects.length === 0) {
-            if (currentTeacherProfile.grades) selectedGrades = [...currentTeacherProfile.grades];
-            if (currentTeacherProfile.subjects) selectedSubjects = [...currentTeacherProfile.subjects];
-        }
 
         let html = '';
         const stagesList = ['kg', 'primary', 'prep', 'secondary'];
