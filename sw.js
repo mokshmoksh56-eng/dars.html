@@ -1,4 +1,4 @@
-const CACHE_NAME = 'manasa-pwa-v3'; // تم تحديث الإصدار
+const CACHE_NAME = 'manasa-pwa-v4'; // تم تحديث الإصدار لإجبار المتصفح على تحميل الأكواد الجديدة
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -36,8 +36,14 @@ self.addEventListener('activate', (event) => {
 
 // 3. استراتيجية Stale-While-Revalidate
 self.addEventListener('fetch', (event) => {
-  // استثناء طلبات الخرائط (Leaflet) من الكاش لأنها ديناميكية
-  if (event.request.url.includes('openstreetmap') || event.request.url.includes('nominatim')) {
+  // استثناء طلبات الخرائط (Leaflet) وقواعد بيانات Firebase من الكاش لأنها ديناميكية
+  if (
+    event.request.url.includes('openstreetmap') || 
+    event.request.url.includes('nominatim') ||
+    event.request.url.includes('firebaseio.com') ||
+    event.request.url.includes('googleapis.com') ||
+    event.request.url.includes('gstatic.com')
+  ) {
     return;
   }
 
