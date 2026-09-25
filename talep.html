@@ -75,15 +75,6 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 .fade-enter{ opacity:0; transform:translateY(15px); transition:all .3s ease-out; pointer-events:none; position:absolute; width:100%; visibility:hidden; display:none;}
 .fade-enter-active{ opacity:1; transform:translateY(0); pointer-events:auto; position:relative; visibility:visible; display:block;}
 
-.result-card { background: #fff; border: 2px solid var(--primary-100); border-radius: 18px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 15px -5px rgba(0,0,0,0.05); transition: all 0.2s; position: relative; overflow: hidden; }
-.result-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px -8px rgba(6,78,59,0.15); border-color: var(--primary-300); }
-.result-card::before { content: ''; position: absolute; top: 0; right: 0; width: 6px; height: 100%; background: var(--primary-500); }
-
-.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: 900; background: var(--surface-2); border: 1px solid var(--line); }
-.badge-subject { background: #EEF2FF; color: #4F46E5; border-color: #C7D2FE; }
-.badge-grade { background: #FFFBEB; color: #D97706; border-color: #FDE68A; }
-.badge-full { background: #FEF2F2; color: #DC2626; border-color: #FECACA; }
-
 .empty-state { text-align: center; padding: 40px 20px; background: #F8FAFC; border: 2px dashed #CBD5E1; border-radius: 16px; color: #64748B; }
 .empty-state span { font-size: 40px; display: block; margin-bottom: 10px; }
 
@@ -98,6 +89,15 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 .map-marker-student { display: flex; align-items: center; justify-content: center; background: #3B82F6; border-radius: 50%; box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.35); border: 2px solid white; width: 24px !important; height: 24px !important; margin-left: -12px !important; margin-top: -12px !important;}
 .leaflet-popup-content-wrapper { border-radius: 14px; font-family: 'Cairo'; font-weight: bold; text-align: right; direction: rtl;}
 .map-popup-btn { background: linear-gradient(135deg,#25D366 0%, #128C7E 100%); color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900; width: 100%; margin-top: 8px; font-size: 13px; display: flex; justify-content: center; gap: 5px; align-items: center;}
+
+/* Card Animations */
+@keyframes slideUpCard {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.class-result-card {
+    animation: slideUpCard 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
 </style>
 </head>
 <body>
@@ -205,7 +205,7 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
                         <span>مسافة البحث:</span>
                         <span id="searchRadiusDisplay" class="text-emerald-600 font-black">5 كم</span>
                     </div>
-                    <!-- تعديل شريط السحب ليقبل كسور (0.5 كم) -->
+                    <!-- شريط السحب يقبل كسور (0.5 كم) -->
                     <input type="range" id="searchRadiusSlider" min="0.5" max="50" step="0.5" value="5" class="w-full accent-emerald-500" oninput="updateSearchRadius(this.value)">
                     
                     <div class="grid grid-cols-2 gap-2 mt-2">
@@ -251,13 +251,14 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
     let studentLat = null;
     let studentLng = null;
     let isGpsActive = false;
-    let studentSearchRadiusKm = 5.0; // التعديل هنا ليدعم الكسور
+    let studentSearchRadiusKm = 5.0;
 
     // متغيرات الخريطة
     let map = null;
     let studentSearchMarker = null;
     let studentSearchCircle = null;
     let teacherMarkersLayer = null;
+    let mapMarkersList = []; // لحفظ مرجع الماركرز لفتحها لاحقاً
 
     window.onload = function() {
         if (studentProfile) {
@@ -277,7 +278,7 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         map = L.map('studentMap').setView([defaultLat, defaultLng], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
 
-        // طبقة خاصة لماركرز المدرسين عشان يسهل مسحها بدون التأثير على علامة الطالب
+        // طبقة خاصة لماركرز المدرسين
         teacherMarkersLayer = L.layerGroup().addTo(map);
 
         // إضافة علامة الطالب التفاعلية والدائرة
@@ -297,11 +298,9 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
             radius: studentSearchRadiusKm * 1000
         }).addTo(map);
 
-        // إحداثيات البحث الحالية (بشكل مبدئي)
         studentLat = defaultLat;
         studentLng = defaultLng;
 
-        // تحديث الدائرة عند سحب العلامة
         studentSearchMarker.on('dragend', function(e) {
             const pos = e.target.getLatLng();
             studentLat = pos.lat;
@@ -309,7 +308,6 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
             studentSearchCircle.setLatLng(pos);
         });
 
-        // نقل العلامة عند الضغط على أي مكان في الخريطة
         map.on('click', function(e) {
             studentLat = e.latlng.lat;
             studentLng = e.latlng.lng;
@@ -319,7 +317,7 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
     }
 
     function updateSearchRadius(km) {
-        studentSearchRadiusKm = parseFloat(km); // استخدام parseFloat بدل parseInt لدعم الكسور
+        studentSearchRadiusKm = parseFloat(km);
         document.getElementById('searchRadiusDisplay').innerText = studentSearchRadiusKm + ' كم';
         if (studentSearchCircle) {
             studentSearchCircle.setRadius(studentSearchRadiusKm * 1000);
@@ -352,7 +350,6 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
     function applyMapSearch() {
         isGpsActive = true; 
         renderClasses();
-        // التمرير السلس إلى الأسفل لرؤية النتائج
         document.getElementById('classesContainer').scrollIntoView({behavior: 'smooth', block: 'start'});
     }
 
@@ -445,13 +442,12 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
     function updateMapMarkers(filteredClasses) {
         if (!map || !teacherMarkersLayer) return;
 
-        // مسح ماركرز المدرسين القديمة فقط
         teacherMarkersLayer.clearLayers();
+        mapMarkersList = [];
 
         let bounds = L.latLngBounds();
         let hasValidMarkers = false;
 
-        // إضافة موقع بحث الطالب إلى حدود الخريطة
         if (studentSearchMarker) {
             bounds.extend(studentSearchMarker.getLatLng());
         }
@@ -487,8 +483,9 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
                 `;
                 marker.bindPopup(popupHtml);
                 teacherMarkersLayer.addLayer(marker);
+                
+                mapMarkersList.push({ id: cls.id, marker: marker });
 
-                // رسم دائرة التغطية الخاصة بالمعلم
                 if (cls.type === 'student_home' && cls.radius) {
                     const circle = L.circle([cls.lat, cls.lng], {
                         color: borderColor,
@@ -506,9 +503,20 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
             }
         });
 
-        // ضبط زووم الخريطة ليحتوي جميع الماركرز إذا كانت موجودة
         if (hasValidMarkers) {
             map.fitBounds(bounds, {padding: [30, 30], maxZoom: 14});
+        }
+    }
+
+    // دالة التركيز على الخريطة عند الضغط من البطاقة
+    window.focusOnMap = function(classId, lat, lng) {
+        document.getElementById('studentMap').scrollIntoView({behavior: 'smooth', block: 'center'});
+        if (map) {
+            map.setView([lat, lng], 16);
+            const targetMarker = mapMarkersList.find(m => m.id === classId);
+            if (targetMarker) {
+                targetMarker.marker.openPopup();
+            }
         }
     }
 
@@ -530,7 +538,6 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         });
 
         if (isGpsActive && studentLat && studentLng) {
-            // 1. حساب المسافة لجميع المجموعات
             filteredClasses.forEach(c => {
                 if (c.lat && c.lng) { 
                     c.calculatedDistance = getDistanceFromLatLonInKm(studentLat, studentLng, c.lat, c.lng); 
@@ -539,10 +546,8 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
                 }
             });
 
-            // 2. فلترة المجموعات بناءً على نطاق دائرة بحث الطالب
             filteredClasses = filteredClasses.filter(c => c.calculatedDistance <= studentSearchRadiusKm);
 
-            // 3. تطبيق شرط نطاق التغطية الخاص بالمعلم للمجموعات اللي بتيجي البيت
             filteredClasses = filteredClasses.filter(c => {
                 if (c.type === 'student_home' && c.radius) {
                     const radiusKm = c.radius / 1000;
@@ -558,7 +563,6 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 
         document.getElementById('resultCount').innerText = filteredClasses.length;
 
-        // تحديث الماركرز على الخريطة بشكل دائم
         updateMapMarkers(filteredClasses);
 
         if (filteredClasses.length === 0) {
@@ -566,35 +570,80 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
             return;
         }
 
-        // عرض بطاقات المجموعات (الجدول/القائمة) تحت الخريطة
-        filteredClasses.forEach(cls => {
+        // بناء البطاقات الجديدة بتصميم مبتكر
+        filteredClasses.forEach((cls, index) => {
             const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
             const isFull = totalBooked >= cls.maxCapacity;
-            let typeIcon = '🏫'; let typeText = 'سنتر';
-            if(cls.type === 'teacher_home') { typeIcon = '🏡'; typeText = 'بيت المستر'; }
-            if(cls.type === 'student_home') { typeIcon = '🚗'; typeText = 'في منزلك'; }
+            
+            // تخصيص نوع المكان
+            let typeIcon = '🏫'; let typeText = 'سنتر'; let typeBg = 'bg-blue-50 text-blue-700 border-blue-200';
+            if(cls.type === 'teacher_home') { typeIcon = '🏡'; typeText = 'بيت المستر'; typeBg = 'bg-amber-50 text-amber-700 border-amber-200'; }
+            if(cls.type === 'student_home') { typeIcon = '🚗'; typeText = 'في منزلك'; typeBg = 'bg-emerald-50 text-emerald-700 border-emerald-200'; }
+            
+            // تخصيص فئة الطلاب
+            let genderIcon = '👫'; let genderText = 'ولاد وبنات'; let genderBg = 'bg-slate-50 text-slate-700 border-slate-200';
+            if(cls.gender === 'boys') { genderIcon = '👦'; genderText = 'ولاد فقط'; genderBg = 'bg-sky-50 text-sky-700 border-sky-200'; }
+            if(cls.gender === 'girls') { genderIcon = '👧'; genderText = 'بنات فقط'; genderBg = 'bg-pink-50 text-pink-700 border-pink-200'; }
+
             let scheduleText = '';
-            if(cls.daysNames && cls.daysNames.length > 0) { scheduleText = `${cls.daysNames.join(' - ')} | ${formatTime(cls.startTime)}`; }
+            if(cls.daysNames && cls.daysNames.length > 0) { scheduleText = `${cls.daysNames.join(' - ')}`; }
+            
             let distanceHtml = '';
             if (isGpsActive && cls.calculatedDistance !== 99999) {
-                distanceHtml = `<div class="bg-indigo-50 border border-indigo-200 text-indigo-700 text-[12px] font-black px-3 py-1.5 rounded-lg w-fit mb-3">📍 على بُعد ${cls.calculatedDistance.toFixed(1)} كم</div>`;
+                distanceHtml = `<div class="absolute -top-3 left-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[11px] font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1 border-2 border-white z-10"><span>📍</span> <span>يبعد ${cls.calculatedDistance.toFixed(2)} كم</span></div>`;
             }
+
+            let mapFocusBtn = '';
+            if (cls.lat && cls.lng) {
+                mapFocusBtn = `<button onclick="window.focusOnMap('${cls.id}', ${cls.lat}, ${cls.lng})" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-xl transition-colors shadow-sm border border-slate-200 flex items-center justify-center h-full aspect-square" title="عرض على الخريطة"><span class="text-lg leading-none">🗺️</span></button>`;
+            }
+
             const card = document.createElement('div');
-            card.className = 'result-card';
+            card.className = 'class-result-card bg-white border-2 border-slate-100 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all relative mt-4';
+            card.style.animationDelay = `${index * 0.05}s`; // تأثير دخول متتابع للبطاقات
+            
             card.innerHTML = `
-                <div class="flex justify-between items-start mb-3">
-                    <div><h4 class="text-[18px] font-black text-slate-800">${cls.teacherTitle} ${cls.teacherName}</h4><p class="text-[13px] font-bold text-slate-500 mt-1 flex items-center gap-1"><span>👥</span> المجموعة: ${cls.groupName}</p></div>
-                    <span class="badge badge-subject">📚 ${cls.subject}</span>
-                </div>
                 ${distanceHtml}
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 mb-4">
-                    <div class="flex items-center gap-2 text-[14px] font-bold text-slate-700"><span class="text-lg w-6 text-center">${typeIcon}</span> <span>المكان: ${cls.location} (${typeText})</span></div>
-                    <div class="flex items-center gap-2 text-[14px] font-bold text-slate-700"><span class="text-lg w-6 text-center">⏰</span> <span>الموعد: <span dir="ltr">${scheduleText}</span></span></div>
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex-1 pr-2">
+                        <h4 class="text-[19px] font-black text-slate-800 leading-tight mb-1">${cls.teacherTitle} ${cls.teacherName}</h4>
+                        <p class="text-[13px] font-bold text-slate-500 flex items-center gap-1"><span>👥</span> مجموعة: ${cls.groupName}</p>
+                    </div>
+                    <div class="flex items-stretch gap-2 h-10">
+                        <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[12px] font-black px-3 rounded-xl flex items-center justify-center whitespace-nowrap shadow-sm">📚 ${cls.subject}</span>
+                        ${mapFocusBtn}
+                    </div>
                 </div>
-                <div class="flex items-center gap-2 mb-4">
-                    ${isFull ? `<span class="badge badge-full w-full justify-center py-2">⚠️ المجموعة مكتملة العدد</span>` : `<span class="badge bg-emerald-50 text-emerald-700 border-emerald-200 flex-1 justify-center py-2">✅ متاح ${cls.maxCapacity - totalBooked} مكان</span>`}
+
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <div class="flex items-center gap-2 ${typeBg} border px-3 py-2 rounded-xl text-[12px] font-black shadow-sm">
+                        <span class="text-lg leading-none">${typeIcon}</span>
+                        <span>${typeText}</span>
+                    </div>
+                    <div class="flex items-center gap-2 ${genderBg} border px-3 py-2 rounded-xl text-[12px] font-black shadow-sm">
+                        <span class="text-lg leading-none">${genderIcon}</span>
+                        <span>${genderText}</span>
+                    </div>
                 </div>
-                <button onclick="window.bookClass('${cls.id}')" class="btn-primary btn-whatsapp !mb-0 ${isFull ? 'opacity-50 grayscale cursor-not-allowed' : ''}" ${isFull ? 'disabled' : ''}><span class="text-2xl leading-none">💬</span> تواصل مع المستر للحجز</button>
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4 space-y-3 shadow-inner">
+                    <div class="flex items-start gap-2 text-[13px] font-bold text-slate-700">
+                        <span class="text-base leading-none pt-0.5">📍</span> 
+                        <span class="leading-relaxed">${cls.location} ${cls.address ? `<br><span class="text-[11px] text-slate-400 font-black">${cls.address}</span>` : ''}</span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[13px] font-bold text-slate-700">
+                        <span class="text-base leading-none pt-0.5">⏰</span> 
+                        <span>المواعيد: <span class="text-indigo-700 font-black" dir="ltr">${scheduleText}</span> | ${formatTime(cls.startTime)}</span>
+                    </div>
+                </div>
+
+                <div class="flex items-stretch gap-2">
+                    <button onclick="window.bookClass('${cls.id}')" class="flex-1 btn-primary btn-whatsapp !mb-0 !rounded-2xl shadow-md ${isFull ? 'opacity-50 grayscale cursor-not-allowed' : ''}" ${isFull ? 'disabled' : ''}>
+                        <span class="text-2xl leading-none">💬</span> 
+                        <span class="text-[15px]">${isFull ? 'المجموعة مكتملة' : 'احجز عبر واتساب'}</span>
+                    </button>
+                    ${!isFull ? `<div class="bg-emerald-50 text-emerald-700 border border-emerald-200 font-black px-4 rounded-2xl flex flex-col items-center justify-center leading-tight min-w-[70px] text-center shadow-sm"><span class="text-[10px]">متاح</span><span class="text-[16px]">${cls.maxCapacity - totalBooked}</span></div>` : ''}
+                </div>
             `;
             container.appendChild(card);
         });
@@ -604,7 +653,7 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         const cls = classesDB.find(c => c.id === classId);
         if(!cls) return;
         let distanceMsg = '';
-        if (isGpsActive && cls.calculatedDistance && cls.calculatedDistance !== 99999) { distanceMsg = `📍 ملحوظة: أنا موجود على بُعد (${cls.calculatedDistance.toFixed(1)} كم) من موقع الدرس.\n`; }
+        if (isGpsActive && cls.calculatedDistance && cls.calculatedDistance !== 99999) { distanceMsg = `📍 ملحوظة: أنا موجود على بُعد (${cls.calculatedDistance.toFixed(2)} كم) من موقع الدرس.\n`; }
         const msg = `السلام عليكم ${cls.teacherTitle} ${cls.teacherName}،\nأنا الطالب: ${studentProfile.name}\nالصف: ${studentProfile.grade}\n\nحابب احجز معاك في مجموعة ( ${cls.groupName} ) لمادة ${cls.subject}.\n${distanceMsg}\nهل يوجد مكان متاح لتأكيد الحجز؟`;
         let phone = cls.phone;
         if(phone.startsWith('0')) phone = '2' + phone;
