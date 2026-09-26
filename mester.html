@@ -169,6 +169,24 @@ input[type=range] { accent-color: var(--primary-600); }
 .day-chip .day-emoji { font-size:18px; }
 .day-chip.active { background:linear-gradient(135deg,var(--primary-600),var(--primary-900)); color:#fff; border-color:var(--primary-900); box-shadow:0 4px 12px rgba(30,58,138,.35); }
 .day-chip:active { transform:scale(0.95); }
+
+/* ✅ يوم متعارض - تحذير أحمر */
+.day-chip.conflict {
+    background: linear-gradient(135deg, #EF4444, #991B1B) !important;
+    color: #fff !important;
+    border-color: #991B1B !important;
+    box-shadow: 0 4px 12px rgba(239,68,68,0.5) !important;
+    animation: conflictShake 1.2s ease-in-out infinite;
+}
+.day-chip.conflict .day-emoji {
+    filter: brightness(1.3) drop-shadow(0 0 4px rgba(255,255,255,0.6));
+}
+@keyframes conflictShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+}
+
 .time-inputs-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .time-input { width:100%; padding:12px; background:#fff; border:1.5px solid var(--line-2); border-radius:12px; font-weight:800; font-size:16px; outline:none; transition:all .18s ease; text-align:center;}
 .time-input:focus { border-color:var(--primary-600); box-shadow:0 0 0 4px rgba(37,99,235,.15); }
@@ -513,7 +531,6 @@ select.input-base{ font-size: 19px !important; }
 
 <div class="main-card relative">
     <header class="app-header">
-        <!-- ✅ صورة المعلم المتحركة -->
         <img src="teacher.png" alt="بوابة المعلم" class="w-28 h-28 mx-auto mb-4 rounded-full border-4 border-white shadow-lg object-cover bg-white animate-float">
 
         <h1 class="app-title">منصة <span class="accent">احجزلى</span></h1>
@@ -691,7 +708,6 @@ select.input-base{ font-size: 19px !important; }
             <form id="addClassForm" onsubmit="handleAddClass(event)">
                 
                 <div class="bg-gradient-to-br from-slate-50 to-blue-50/40 p-4 rounded-2xl border-2 border-[var(--primary-200)] mb-4 shadow-sm">
-                    
                     <div id="classStageSelector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                     <p class="text-[11px] text-slate-500 font-bold mt-3 text-center">💡 اختر المرحلة لعرض الصفوف والمواد الخاصة بها فقط</p>
                 </div>
@@ -1247,6 +1263,42 @@ select.input-base{ font-size: 19px !important; }
 </div>
 
 <script>
+    // ✅ نظام صوت الضغط - يعمل على جميع الأزرار والروابط
+    let clickAudioCtx = null;
+    function playClickSound() {
+        try {
+            if (!clickAudioCtx) {
+                clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (clickAudioCtx.state === 'suspended') {
+                clickAudioCtx.resume();
+            }
+            const osc = clickAudioCtx.createOscillator();
+            const gain = clickAudioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(clickAudioCtx.destination);
+            
+            // صوت نقرة قصير وحاد
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(800, clickAudioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(400, clickAudioCtx.currentTime + 0.08);
+            
+            gain.gain.setValueAtTime(0.15, clickAudioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, clickAudioCtx.currentTime + 0.08);
+            
+            osc.start(clickAudioCtx.currentTime);
+            osc.stop(clickAudioCtx.currentTime + 0.08);
+        } catch(e) { /* تجاهل الأخطاء */ }
+    }
+
+    // ✅ تفعيل الصوت على أي عنصر قابل للضغط
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('button, a, .day-chip, .acc-chip, .stage-card, .option-btn, .type-btn, .filter-chip, .role-card, .calendar-cell, .calendar-nav-btn, .add-class-subject-chip, .quick-radius-btn, .filter-chip, input[type="radio"], input[type="checkbox"], input[type="range"], .banner-group-item, .payment-item-delete');
+        if (target) {
+            playClickSound();
+        }
+    }, true);
+
     const WEEK_DAYS = [
         { key: 'sat', name: 'السبت', emoji: '🌙' },
         { key: 'sun', name: 'الأحد', emoji: '☀️' },
@@ -1257,7 +1309,6 @@ select.input-base{ font-size: 19px !important; }
         { key: 'fri', name: 'الجمعة', emoji: '🌟' }
     ];
 
-    // ✅ Mapbox Access Token
     mapboxgl.accessToken = 'pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A';
 
     let selectedDays = [];
@@ -1287,15 +1338,30 @@ select.input-base{ font-size: 19px !important; }
         });
     }
 
+    // ✅ دالة رسم أيام الأسبوع مع تلوين المتعارض
     function renderDaysSelector() {
         const container = document.getElementById('daysSelector');
         if(!container) return;
+
+        const startTime = document.getElementById('startTime')?.value;
+        const endTime = document.getElementById('endTime')?.value;
+        let conflictDays = [];
+        
+        if (selectedDays.length > 0 && startTime && endTime 
+            && timeToMinutes(endTime) > timeToMinutes(startTime)
+            && currentTeacherProfile) {
+            selectedDays.forEach(dayKey => {
+                const dayConflicts = checkScheduleConflicts([dayKey], startTime, endTime);
+                if (dayConflicts.length > 0) conflictDays.push(dayKey);
+            });
+        }
         
         container.innerHTML = WEEK_DAYS.map(day => {
             const isActive = selectedDays.includes(day.key);
-            return `<div class="day-chip ${isActive ? 'active' : ''}" onclick="toggleDay('${day.key}')">
+            const hasConflict = conflictDays.includes(day.key);
+            return `<div class="day-chip ${isActive ? 'active' : ''} ${hasConflict ? 'conflict' : ''}" onclick="toggleDay('${day.key}')">
                 <span class="day-emoji">${day.emoji}</span>
-                <span>${day.name}</span>
+                <span>${day.name}${hasConflict ? ' ⚠️' : ''}</span>
             </div>`;
         }).join('');
     }
@@ -1307,6 +1373,7 @@ select.input-base{ font-size: 19px !important; }
         renderDaysSelector();
         updateSchedulePreview();
         renderSmartCalendar();
+        updateScheduleConflictWarning();
     }
 
     function updateSchedulePreview() {
@@ -2396,10 +2463,10 @@ select.input-base{ font-size: 19px !important; }
         
         renderDaysSelector();
         
-        document.getElementById('startTime')?.addEventListener('change', updateSchedulePreview);
-        document.getElementById('endTime')?.addEventListener('change', updateSchedulePreview);
-        document.getElementById('startTime')?.addEventListener('input', updateScheduleConflictWarning);
-        document.getElementById('endTime')?.addEventListener('input', updateScheduleConflictWarning);
+        document.getElementById('startTime')?.addEventListener('change', () => { updateSchedulePreview(); renderDaysSelector(); });
+        document.getElementById('endTime')?.addEventListener('change', () => { updateSchedulePreview(); renderDaysSelector(); });
+        document.getElementById('startTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); });
+        document.getElementById('endTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); });
     };
 
     let selectedClassStage = null;
@@ -3374,10 +3441,6 @@ select.input-base{ font-size: 19px !important; }
         }
     }
 
-    // ==========================================================
-    // 🚀 نظام الحساب المالي للطالب
-    // ==========================================================
-
     function openStudentAccountModal(classId, studentId) {
         currentOpenedGroupId = classId;
         currentAccountStudentId = studentId;
@@ -3572,14 +3635,31 @@ select.input-base{ font-size: 19px !important; }
     let editSelectedDays = [];
     let currentEditingClass = null;
 
+    // ✅ دالة رسم أيام التعديل مع تلوين المتعارض
     function renderEditDaysSelector() {
         const container = document.getElementById('editDaysSelector');
         if(!container) return;
+        
+        const startTime = document.getElementById('editStartTime')?.value;
+        const endTime = document.getElementById('editEndTime')?.value;
+        const currentClassId = document.getElementById('editClassId')?.value;
+        let conflictDays = [];
+        
+        if (editSelectedDays.length > 0 && startTime && endTime 
+            && timeToMinutes(endTime) > timeToMinutes(startTime)
+            && currentTeacherProfile) {
+            editSelectedDays.forEach(dayKey => {
+                const dayConflicts = checkScheduleConflicts([dayKey], startTime, endTime, currentClassId);
+                if (dayConflicts.length > 0) conflictDays.push(dayKey);
+            });
+        }
+        
         container.innerHTML = WEEK_DAYS.map(day => {
             const isActive = editSelectedDays.includes(day.key);
-            return `<div class="day-chip ${isActive ? 'active' : ''}" onclick="toggleEditDay('${day.key}')" style="padding: 8px 4px;">
+            const hasConflict = conflictDays.includes(day.key);
+            return `<div class="day-chip ${isActive ? 'active' : ''} ${hasConflict ? 'conflict' : ''}" onclick="toggleEditDay('${day.key}')" style="padding: 8px 4px;">
                 <span class="day-emoji text-[16px]">${day.emoji}</span>
-                <span class="text-[11px] font-black mt-1">${day.name}</span>
+                <span class="text-[11px] font-black mt-1">${day.name}${hasConflict ? ' ⚠️' : ''}</span>
             </div>`;
         }).join('');
     }
@@ -3632,6 +3712,20 @@ select.input-base{ font-size: 19px !important; }
         updateEditLocationPlaceholder();
 
         document.getElementById('editGroupModal').style.display = 'flex';
+
+        // ✅ تفعيل مراقبة التغيير في الأيام والوقت لتحديث الألوان
+        setTimeout(() => {
+            const startEl = document.getElementById('editStartTime');
+            const endEl = document.getElementById('editEndTime');
+            if (startEl) {
+                startEl.oninput = renderEditDaysSelector;
+                startEl.onchange = renderEditDaysSelector;
+            }
+            if (endEl) {
+                endEl.oninput = renderEditDaysSelector;
+                endEl.onchange = renderEditDaysSelector;
+            }
+        }, 100);
     }
 
     function closeEditGroupModal() {
