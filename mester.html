@@ -571,15 +571,6 @@ select.input-base{ font-size: 19px !important; }
     cursor: pointer;
     padding: 5px;
 }
-
-/* ====== تنسيقات زر الظهور (Visibility Toggle) ====== */
-.toggle-on #visibilityToggleSwitch { background-color: #10B981; /* emerald-500 */ }
-.toggle-on #visibilityToggleKnob { transform: translateX(-20px); }
-.toggle-on #visibilityStatusDot { background-color: #34D399; /* emerald-400 */ box-shadow: 0 0 8px rgba(52,211,153,0.8); }
-
-.toggle-off #visibilityToggleSwitch { background-color: #F43F5E; /* rose-500 */ }
-.toggle-off #visibilityToggleKnob { transform: translateX(0); }
-.toggle-off #visibilityStatusDot { background-color: #FB7185; /* rose-400 */ box-shadow: none; }
 </style>
 </head>
 <body>
@@ -589,18 +580,7 @@ select.input-base{ font-size: 19px !important; }
         <h1 class="app-title">منصة <span class="accent">احجزلى</span></h1>
         <p class="app-subtitle">بوابة المعلم - إدارة المجموعات والدروس</p>
         
-        <!-- ✅ زر الظهور للآخرين (Visibility Toggle) -->
-        <div id="teacherVisibilityWrapper" class="mt-3 hidden justify-center w-full">
-            <div id="visibilityToggleBtn" onclick="toggleTeacherVisibility()" class="toggle-off inline-flex items-center justify-between bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-rose-400/50 gap-3 shadow-md cursor-pointer transition-all hover:bg-black/30 active:scale-95">
-                <span class="text-[13px] font-black text-white flex items-center gap-2">
-                    <span id="visibilityStatusDot" class="w-2.5 h-2.5 rounded-full bg-rose-400 transition-colors"></span>
-                    <span id="visibilityStatusText">أنت الآن غير ظاهر</span>
-                </span>
-                <div id="visibilityToggleSwitch" class="w-10 h-5 bg-rose-500 rounded-full relative transition-colors duration-300 flex items-center px-0.5">
-                    <div id="visibilityToggleKnob" class="w-4 h-4 bg-white rounded-full transition-all duration-300 shadow-sm transform translate-x-0"></div>
-                </div>
-            </div>
-        </div>
+        <!-- تم إلغاء زر الظهور العام من هنا بناءً على طلبك -->
 
         <div class="mt-4 w-full overflow-x-auto no-scrollbar flex justify-start sm:justify-center pb-2 px-2">
             <div id="liveJourneyTrackerContainer" class="inline-flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-xl border border-white/20 text-[12px] font-black text-white shadow-sm whitespace-nowrap min-w-max mx-auto"></div>
@@ -1196,10 +1176,9 @@ select.input-base{ font-size: 19px !important; }
     </div>
 </div>
 
-<!-- ✅ Modal كارت الحساب المالي للطالب (مبتكر ومطابق للصورة) -->
+<!-- ✅ Modal كارت الحساب المالي للطالب -->
 <div id="studentAccountModal" class="modal-overlay">
     <div class="modal-content !max-w-lg !h-[95vh] flex flex-col p-0 overflow-hidden">
-        <!-- الترويسة (مثل الصورة) -->
         <div class="account-card-header">
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl font-black">
@@ -1216,7 +1195,6 @@ select.input-base{ font-size: 19px !important; }
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50">
-            <!-- الإجمالي -->
             <div class="account-total-box">
                 <span class="account-row-label">المبلغ الإجمالي المتفق عليه</span>
                 <div class="flex items-center gap-2">
@@ -1225,17 +1203,14 @@ select.input-base{ font-size: 19px !important; }
                 </div>
             </div>
 
-            <!-- قائمة الدفعات -->
             <div class="mb-4">
                 <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1">
                     <span>📋</span> سجل الدفعات (الأقساط)
                 </h4>
                 <div id="accPaymentsList" class="space-y-2">
-                    <!-- سيتم تعبئتها ديناميكياً -->
                 </div>
             </div>
 
-            <!-- إضافة دفعة جديدة -->
             <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm mb-4">
                 <h4 class="font-black text-[var(--primary-800)] mb-2 text-xs">➕ إضافة دفعة جديدة</h4>
                 <div class="grid grid-cols-2 gap-2 mb-2">
@@ -1257,14 +1232,12 @@ select.input-base{ font-size: 19px !important; }
                 </button>
             </div>
 
-            <!-- المتبقي (مثل الصورة) -->
             <div class="account-remaining-box">
                 <p>المتبقي</p>
                 <h3 id="accRemainingAmount">0 ج.م</h3>
             </div>
         </div>
 
-        <!-- أزرار التحكم السفلية (مثل الصورة) -->
         <div class="p-4 bg-white border-t border-slate-200 flex gap-2">
             <button onclick="saveStudentAccount()" class="flex-1 bg-[#0F2D5C] text-white font-black py-3 rounded-xl shadow-md text-sm hover:bg-[#1E3A8A] transition-colors flex items-center justify-center gap-2">
                 <span>💾</span> حفظ الحساب
@@ -1295,7 +1268,6 @@ select.input-base{ font-size: 19px !important; }
     let currentOpenedGroupId = null;
     let currentAccountStudentId = null;
 
-    // دالة لجلب المجموعات وحسابات المعلمين من Firebase
     function fetchClassesFromFirebase() {
         db.ref('classes').on('value', (snapshot) => {
             const data = snapshot.val();
@@ -1808,8 +1780,7 @@ select.input-base{ font-size: 19px !important; }
             gov: gov,
             grades: [],
             subjects: [],
-            stages: [],
-            isVisible: false // القيمة الافتراضية: غير ظاهر
+            stages: []
         };
 
         allTeachersDB[phone] = currentTeacherProfile;
@@ -1838,10 +1809,6 @@ select.input-base{ font-size: 19px !important; }
         }
 
         currentTeacherProfile = allTeachersDB[phone];
-        if (currentTeacherProfile.isVisible === undefined) {
-            currentTeacherProfile.isVisible = false; // لحسابات المعلمين القدامى
-        }
-        
         localStorage.setItem('logged_in_teacher_phone', phone);
         applyTheme(currentTeacherProfile.teacherTitle);
         
@@ -1875,52 +1842,6 @@ select.input-base{ font-size: 19px !important; }
             }
         }
         showView(viewId);
-    }
-
-    // ✅ دالة تحديث زر الظهور (Visibility Toggle)
-    function updateVisibilityUI(isVisible) {
-        const wrapper = document.getElementById('teacherVisibilityWrapper');
-        const toggleBtn = document.getElementById('visibilityToggleBtn');
-        const text = document.getElementById('visibilityStatusText');
-        
-        if (!wrapper) return;
-        
-        wrapper.classList.remove('hidden');
-        wrapper.classList.add('flex');
-        
-        if (isVisible) {
-            toggleBtn.className = 'toggle-on inline-flex items-center justify-between bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-emerald-400/50 gap-3 shadow-md cursor-pointer transition-all hover:bg-black/30 active:scale-95';
-            text.innerText = 'أنت الآن ظاهر للآخرين';
-        } else {
-            toggleBtn.className = 'toggle-off inline-flex items-center justify-between bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-rose-400/50 gap-3 shadow-md cursor-pointer transition-all hover:bg-black/30 active:scale-95';
-            text.innerText = 'أنت الآن غير ظاهر';
-        }
-    }
-
-    // ✅ دالة تبديل حالة الظهور
-    function toggleTeacherVisibility() {
-        if (!currentTeacherProfile) return;
-        
-        const newState = !currentTeacherProfile.isVisible;
-        
-        // تحديث البيانات محلياً
-        currentTeacherProfile.isVisible = newState;
-        if (allTeachersDB[currentTeacherProfile.phone]) {
-            allTeachersDB[currentTeacherProfile.phone].isVisible = newState;
-        }
-        
-        // تحديث في Firebase
-        db.ref('teachers/' + currentTeacherProfile.phone).update({ isVisible: newState });
-        
-        // تحديث الواجهة
-        updateVisibilityUI(newState);
-        
-        // إشعار
-        if (newState) {
-            alert('✅ أنت الآن ظاهر للطلاب. يمكنهم رؤية مجموعاتك والحجز فيها.');
-        } else {
-            alert('👻 أنت الآن غير ظاهر. تم إخفاء مجموعاتك عن الطلاب مؤقتاً.');
-        }
     }
 
     function updateLiveJourneyTracker(viewId) {
@@ -2000,19 +1921,6 @@ select.input-base{ font-size: 19px !important; }
         target.classList.remove('fade-enter'); target.classList.add('fade-enter-active');
         
         updateLiveJourneyTracker(viewId);
-
-        // ✅ إظهار/إخفاء زر الظهور بناءً على الصفحة الحالية
-        const visibilityWrapper = document.getElementById('teacherVisibilityWrapper');
-        if (visibilityWrapper) {
-            if (viewId === 'teacherDashboardView') {
-                visibilityWrapper.classList.remove('hidden');
-                visibilityWrapper.classList.add('flex');
-                updateVisibilityUI(currentTeacherProfile ? currentTeacherProfile.isVisible : false);
-            } else {
-                visibilityWrapper.classList.add('hidden');
-                visibilityWrapper.classList.remove('flex');
-            }
-        }
 
         if(viewId === 'teacherDashboardView') renderTeacherDashboard();
         if(viewId === 'teacherStagesProfileView') {
@@ -2236,7 +2144,6 @@ select.input-base{ font-size: 19px !important; }
         const savedPhone = localStorage.getItem('logged_in_teacher_phone');
         if (savedPhone && allTeachersDB[savedPhone]) {
             currentTeacherProfile = allTeachersDB[savedPhone];
-            if (currentTeacherProfile.isVisible === undefined) currentTeacherProfile.isVisible = false;
             applyTheme(currentTeacherProfile.teacherTitle);
             
             if (!currentTeacherProfile.subjects || currentTeacherProfile.subjects.length === 0) {
@@ -2270,7 +2177,6 @@ select.input-base{ font-size: 19px !important; }
             const savedPhone = localStorage.getItem('logged_in_teacher_phone');
             if (savedPhone && allTeachersDB[savedPhone]) {
                 currentTeacherProfile = allTeachersDB[savedPhone];
-                if (currentTeacherProfile.isVisible === undefined) currentTeacherProfile.isVisible = false;
                 applyTheme(currentTeacherProfile.teacherTitle);
                 showView('teacherDashboardView');
             }
@@ -2995,14 +2901,18 @@ select.input-base{ font-size: 19px !important; }
             card.className = 'class-card cursor-default p-0 flex flex-col justify-between';
             card.setAttribute('data-stage', stageKey);
             
+            // ✅ تم إضافة زر الظهور / الإخفاء داخل هيدر المجموعة هنا
             card.innerHTML = `
                 <div class="cursor-pointer flex flex-col" onclick="openGroupDetails('${cls.id}')">
-                    <div style="background: ${headerBg};" class="px-5 py-4 flex justify-between items-center text-white shadow-sm ${!isActive ? 'opacity-80 grayscale-[30%]' : ''}">
-                        <h4 class="text-[17px] font-black text-white flex items-center gap-2">
+                    <div style="background: ${headerBg};" class="px-4 py-3 flex justify-between items-center text-white shadow-sm ${!isActive ? 'opacity-80 grayscale-[30%]' : ''}">
+                        <h4 class="text-[16px] font-black text-white flex items-center gap-2">
                             👥 ${cls.groupName} 
-                            ${!isActive ? '<span class="bg-rose-600 border border-white/30 text-white text-[10px] px-2 py-0.5 rounded-md leading-none shadow-sm">مغلق</span>' : ''}
                         </h4>
-                        <div class="text-white opacity-90 text-xl font-bold">➔</div>
+                        <!-- زر التحكم في الظهور -->
+                        <div onclick="toggleGroupStatus('${cls.id}'); event.stopPropagation();" class="flex items-center gap-1 bg-black/20 p-1 rounded-full border border-white/20 cursor-pointer hover:bg-black/30 transition-all">
+                            <div class="px-2 py-0.5 rounded-full text-[10px] font-black ${isActive ? 'bg-emerald-500 text-white shadow-sm' : 'text-white/60'}">ظاهر</div>
+                            <div class="px-2 py-0.5 rounded-full text-[10px] font-black ${!isActive ? 'bg-rose-500 text-white shadow-sm' : 'text-white/60'}">مخفي</div>
+                        </div>
                     </div>
                     
                     <div class="p-5 pb-0 ${!isActive ? 'opacity-80' : ''}">
@@ -3034,10 +2944,8 @@ select.input-base{ font-size: 19px !important; }
                     <button onclick="openEditGroupModal('${cls.id}'); event.stopPropagation();" class="w-full bg-blue-50 text-blue-700 border border-blue-200 shadow-sm font-black py-3 rounded-xl text-[13px] hover:bg-blue-100 active:scale-95 transition-all">
                         ✏️ تعديل بيانات المجموعة (الاسم، المواعيد، العدد)
                     </button>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="toggleGroupStatus('${cls.id}'); event.stopPropagation();" class="w-full ${isActive ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'} border shadow-sm font-black py-3 rounded-xl text-[13px] active:scale-95 transition-all">
-                            ${isActive ? '⏸️ قفل الحجز' : '▶️ فتح الحجز'}
-                        </button>
+                    <div class="grid grid-cols-1 gap-2">
+                        <!-- تم إلغاء زر قفل الحجز من هنا ونقله للأعلى -->
                         <button onclick="deleteGroup('${cls.id}'); event.stopPropagation();" class="w-full bg-white text-rose-600 border border-rose-200 shadow-sm font-black py-3 rounded-xl text-[13px] hover:bg-rose-50 active:scale-95 transition-all">
                             🗑️ إلغاء نهائي
                         </button>
@@ -3057,18 +2965,18 @@ select.input-base{ font-size: 19px !important; }
         }
     }
 
+    // ✅ دالة تحديث حالة المجموعة (ظاهر / مخفي)
     function toggleGroupStatus(classId) {
         const clsIndex = classesDB.findIndex(c => c.id === classId);
         if (clsIndex > -1) {
             const currentStatus = classesDB[clsIndex].isActive !== false;
             const newStatus = !currentStatus;
             
-            if (!newStatus) { 
-                if(!confirm("هل أنت متأكد أنك تريد قفل الحجز لهذه المجموعة؟\nلن يتمكن الطلاب الجدد من رؤيتها أو الحجز بها عبر المنصة.")) return;
-            }
-            
             classesDB[clsIndex].isActive = newStatus;
             db.ref('classes').set(classesDB);
+            
+            // تحديث الواجهة فوراً
+            renderTeacherDashboard();
         }
     }
 
@@ -3261,7 +3169,7 @@ select.input-base{ font-size: 19px !important; }
     }
 
     // ==========================================================
-    // 🚀 نظام "الكروت" (الحساب المالي للطالب) - مبتكر ومطابق للصورة
+    // 🚀 نظام "الكروت" (الحساب المالي للطالب)
     // ==========================================================
 
     function openStudentAccountModal(classId, studentId) {
