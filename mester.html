@@ -81,6 +81,17 @@ body{
 .app-title{ font-size:27px; font-weight:900; }
 .app-title .accent{ color:var(--gold-400); }
 .app-subtitle{ font-size:12px; font-weight:700; color:rgba(255,255,255,.85); margin-top:5px; }
+
+/* ✅ تحريك صورة المعلم */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0px); }
+}
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
 .role-card{ display:flex; align-items:center; gap:15px; width:100%; padding:17px; background:#fff; border:1.5px solid var(--line); border-radius:18px; text-align:right; cursor:pointer; transition:all .22s ease; margin-bottom:15px;}
 .role-card:hover{ border-color:var(--primary-700); transform:translateY(-2px); box-shadow:0 14px 28px -18px rgba(30,58,138,.7);}
 .role-icon{ width:56px; height:56px; border-radius:16px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:27px; background:linear-gradient(150deg,var(--primary-50),var(--primary-100)); border:1px solid var(--primary-200); }
@@ -502,6 +513,9 @@ select.input-base{ font-size: 19px !important; }
 
 <div class="main-card relative">
     <header class="app-header">
+        <!-- ✅ صورة المعلم المتحركة -->
+        <img src="teacher.png" alt="بوابة المعلم" class="w-28 h-28 mx-auto mb-4 rounded-full border-4 border-white shadow-lg object-cover bg-white animate-float">
+
         <h1 class="app-title">منصة <span class="accent">احجزلى</span></h1>
         <p class="app-subtitle">بوابة المعلم - إدارة المجموعات والدروس</p>
         
@@ -537,7 +551,6 @@ select.input-base{ font-size: 19px !important; }
                     <button type="submit" class="btn-primary mt-4">دخول ➔</button>
                 </form>
 
-                <!-- ✅ معلومات التواصل للشكاوى والاقتراحات -->
                 <div class="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-4 shadow-sm">
                     <div class="flex items-start gap-3">
                         <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-2xl flex-shrink-0 shadow-md">
@@ -941,7 +954,6 @@ select.input-base{ font-size: 19px !important; }
                 <div id="dashSubjectsTags" class="flex flex-wrap gap-1 mt-2"></div>
             </div>
 
-            <!-- ✅ معلومات التواصل للشكاوى والاقتراحات -->
             <div class="mt-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-4 shadow-sm">
                 <div class="flex items-start gap-3">
                     <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-xl flex-shrink-0 shadow-md">
@@ -1121,8 +1133,6 @@ select.input-base{ font-size: 19px !important; }
                 <label class="field-label !mb-0" id="editLocationLabel">اسم السنتر / المستر <span class="text-rose-500">*</span></label>
             </div>
             <input type="text" id="editCenterName" required placeholder="مثال: سنتر الأوائل / مستر أحمد" class="input-base">
-
-            <!-- ✅ تم إزالة جدول GPS بالكامل من هنا -->
 
             <label class="field-label">أيام الأسبوع</label>
             <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 mb-4">
@@ -1807,7 +1817,6 @@ select.input-base{ font-size: 19px !important; }
         }
     }
 
-    // ✅ دالة تحديث Label نوع الدرس في نافذة التعديل (بدون GPS)
     function updateEditLocationPlaceholder() {
         const type = document.querySelector('input[name="editClassType"]:checked')?.value || 'center';
         const label = document.getElementById('editLocationLabel');
@@ -1954,7 +1963,6 @@ select.input-base{ font-size: 19px !important; }
         }
     }
 
-    // ✅ دالة حذف الحساب نهائياً
     function deleteMyAccount() {
         if (!currentTeacherProfile || !currentTeacherProfile.phone) {
             alert('⚠️ لا يوجد حساب مسجل لحذفه.');
@@ -1964,11 +1972,9 @@ select.input-base{ font-size: 19px !important; }
         const teacherPhone = currentTeacherProfile.phone;
         const teacherName = `${currentTeacherProfile.teacherTitle} ${currentTeacherProfile.teacherName}`;
 
-        // فحص عدد المجموعات التابعة للمعلم
         const teacherClasses = classesDB.filter(c => c.phone === teacherPhone);
         const classesCount = teacherClasses.length;
 
-        // حساب إجمالي الطلاب في كل المجموعات
         let totalStudents = 0;
         teacherClasses.forEach(c => {
             if (c.students && c.students.length > 0) {
@@ -1976,7 +1982,6 @@ select.input-base{ font-size: 19px !important; }
             }
         });
 
-        // ✅ تحذير قوي ومفصل
         let warningMsg = '⚠️ تحذير خطير جداً ⚠️\n\n';
         warningMsg += `أنت على وشك حذف حسابك نهائياً:\n\n`;
         warningMsg += `👤 المعلم: ${teacherName}\n`;
@@ -1993,7 +1998,6 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
-        // ✅ تأكيد ثاني بكتابة كلمة "حذف"
         const confirmWord = prompt(
             '🔒 للتأكيد النهائي، اكتب كلمة "حذف" بالإنجليزي أو العربي:\n\n' +
             '(اكتب: DELETE أو حذف)'
@@ -2010,19 +2014,14 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
-        // ✅ تنفيذ عملية الحذف
         try {
-            // 1. حذف كل مجموعات المعلم من قاعدة البيانات
             const remainingClasses = classesDB.filter(c => c.phone !== teacherPhone);
             db.ref('classes').set(remainingClasses);
 
-            // 2. حذف حساب المعلم نفسه
             db.ref('teachers/' + teacherPhone).remove();
 
-            // 3. حذف الجلسة من localStorage
             localStorage.removeItem('logged_in_teacher_phone');
 
-            // 4. تنظيف المتغيرات
             currentTeacherProfile = null;
             selectedGrades = [];
             selectedSubjects = [];
@@ -2032,7 +2031,6 @@ select.input-base{ font-size: 19px !important; }
             currentOpenedGroupId = null;
             currentAccountStudentId = null;
 
-            // ✅ رسالة نجاح
             alert(
                 '✅ تم حذف حسابك بنجاح\n\n' +
                 'شكراً لك على استخدام منصة احجزلى.\n' +
@@ -2040,7 +2038,6 @@ select.input-base{ font-size: 19px !important; }
                 '📧 للتواصل: mmoksh162@gmail.com'
             );
 
-            // ✅ الرجوع لصفحة تسجيل الدخول
             showView('authView');
 
         } catch (error) {
@@ -3609,22 +3606,16 @@ select.input-base{ font-size: 19px !important; }
         const genderInput = document.querySelector(`input[name="editTargetGender"][value="${gender}"]`);
         if (genderInput) genderInput.checked = true;
 
-        // ✅ نوع الدرس
         const type = cls.type || 'center';
         editingClassType = type;
         const typeInput = document.querySelector(`input[name="editClassType"][value="${type}"]`);
         if (typeInput) typeInput.checked = true;
 
-        // اسم السنتر
         document.getElementById('editCenterName').value = cls.location || '';
 
-        // ✅ تم حذف كل الكود الخاص بـ GPS
-
-        // الأيام
         editSelectedDays = [...(cls.days || [])];
         renderEditDaysSelector();
 
-        // العدد
         const capacityContainer = document.getElementById('editCapacityContainer');
         const maxCapacityInput = document.getElementById('editMaxCapacity');
 
@@ -3638,7 +3629,6 @@ select.input-base{ font-size: 19px !important; }
             maxCapacityInput.value = cls.maxCapacity || '';
         }
 
-        // تحديث label حسب النوع
         updateEditLocationPlaceholder();
 
         document.getElementById('editGroupModal').style.display = 'flex';
@@ -3669,7 +3659,6 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
-        // فحص التعارضات
         const conflicts = checkScheduleConflicts(editSelectedDays, startTime, endTime, classId);
         if (conflicts.length > 0) {
             const conflictText = conflicts.map(c => `• ${c.groupName}\n  📅 ${c.daysText}\n  ⏰ ${c.time}`).join('\n\n');
@@ -3685,11 +3674,8 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
-        // ✅ تم حذف التحقق من الموقع
-
         const cls = classesDB[clsIndex];
 
-        // ✅ تعديل البيانات الأساسية (بدون الصف والمادة وبدون الموقع)
         cls.groupName = document.getElementById('editGroupName').value;
         cls.startTime = startTime;
         cls.endTime = endTime;
@@ -3700,19 +3686,15 @@ select.input-base{ font-size: 19px !important; }
         cls.days = [...editSelectedDays];
         cls.daysNames = WEEK_DAYS.filter(d => editSelectedDays.includes(d.key)).map(d => d.name);
         
-        // نوع الدرس
         cls.type = newType;
 
-        // العدد
         if (newType !== 'student_home') {
             cls.maxCapacity = parseInt(document.getElementById('editMaxCapacity').value);
         } else {
             cls.maxCapacity = 1;
         }
 
-        // ✅ الموقع والعنوان — لا يتم تغييرهما
         cls.location = newLocationName;
-        // cls.address, cls.lat, cls.lng, cls.radius — يظلوا كما هم
 
         db.ref('classes').set(classesDB);
         
