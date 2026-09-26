@@ -259,7 +259,7 @@ input[type=range] { accent-color: var(--primary-600); }
 .acc-chip.secondary.selected::after { color: #5B21B6; }
 .acc-chip.custom.selected::after { color: #991B1B; }
 
-/* ✅ إخفاء علامة ✓ في المواد المخصصة فقط (لأن فيها زر حذف) */
+/* ✅ إخفاء علامة ✓ في المواد المخصصة فقط */
 .acc-chip.custom.selected::after { display: none; }
 
 /* ✅ زر حذف المادة المخصصة */
@@ -397,30 +397,291 @@ input[type=range] { accent-color: var(--primary-600); }
 .calendar-cell.has-bookings { background: #F8FAFC; border-color: #CBD5E1; }
 .calendar-cell.has-bookings:hover { background: #F1F5F9; border-color: var(--primary-400); }
 
-.calendar-day-banner { margin-top: 12px; border-radius: 14px; overflow: hidden; border: 2px solid transparent; transition: all 0.3s ease; min-height: 80px; }
-.calendar-day-banner.has-content { border-color: var(--primary-300); background: linear-gradient(135deg, #FFFFFF, #F8FAFC); box-shadow: 0 6px 18px -8px rgba(30,58,138,0.25); }
-.banner-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: #F8FAFC; border: 2px dashed #CBD5E1; border-radius: 14px; color: #94A3B8; font-size: 12px; font-weight: 900; text-align: center; gap: 6px; }
-.banner-content { animation: bannerSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
-@keyframes bannerSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.banner-header { padding: 10px 14px; background: linear-gradient(135deg, var(--primary-600), var(--primary-900)); color: #fff; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 900; }
-.banner-header .day-info { display: flex; align-items: center; gap: 6px; }
-.banner-header .day-badge { background: rgba(255,255,255,0.25); padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; }
-.banner-body { padding: 10px; display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto; }
-.banner-empty-day { padding: 16px; text-align: center; color: #64748B; font-size: 12px; font-weight: 800; background: #F8FAFC; border-radius: 10px; border: 1.5px dashed #CBD5E1; }
-.banner-group-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: #FFFFFF; border: 1.5px solid #E2E8F0; border-right: 4px solid; font-size: 11.5px; font-weight: 800; transition: all 0.2s ease; animation: itemSlideIn 0.3s ease-out backwards; }
-.banner-group-item:nth-child(1) { animation-delay: 0.05s; }
-.banner-group-item:nth-child(2) { animation-delay: 0.1s; }
-.banner-group-item:nth-child(3) { animation-delay: 0.15s; }
-.banner-group-item:nth-child(4) { animation-delay: 0.2s; }
-.banner-group-item:nth-child(5) { animation-delay: 0.25s; }
-@keyframes itemSlideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-.banner-group-item:hover { transform: translateX(-3px); box-shadow: 0 4px 10px -4px rgba(0,0,0,0.15); }
-.banner-group-time { background: #F1F5F9; color: #334155; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 900; direction: ltr; flex-shrink: 0; white-space: nowrap; }
-.banner-group-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.banner-group-name { font-size: 12px; font-weight: 900; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.banner-group-meta { font-size: 9.5px; font-weight: 800; color: #64748B; display: flex; gap: 6px; flex-wrap: wrap; }
-.banner-group-badge { padding: 1px 6px; border-radius: 4px; background: #F1F5F9; font-size: 9px; }
-.banner-group-icon { font-size: 18px; flex-shrink: 0; }
+/* ═══════════ Side Drawer للتقويم ═══════════ */
+.calendar-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 30, 63, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+.calendar-drawer-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.calendar-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 480px;
+    background: #F8FAFC;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -20px 0 60px rgba(10, 30, 63, 0.4);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
+}
+.calendar-drawer.open {
+    transform: translateX(0);
+}
+
+.calendar-drawer-header {
+    padding: 18px 16px;
+    padding-top: max(18px, env(safe-area-inset-top));
+    background: radial-gradient(130% 150% at 50% -30%, var(--primary-600) 0%, var(--primary-800) 45%, var(--primary-950) 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(10, 30, 63, 0.3);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.calendar-drawer-header::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-600), var(--gold-400), var(--gold-600));
+}
+.calendar-drawer-header h3 {
+    font-size: 17px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.4;
+}
+.calendar-drawer-header h3 .sub {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0.85;
+    margin-top: 3px;
+}
+.calendar-drawer-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.calendar-drawer-close:hover {
+    background: rgba(255,255,255,0.25);
+    transform: rotate(90deg);
+}
+.calendar-drawer-close:active {
+    transform: scale(0.9) rotate(90deg);
+}
+
+.calendar-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.calendar-drawer-body::-webkit-scrollbar { width: 5px; }
+.calendar-drawer-body::-webkit-scrollbar-track { background: transparent; }
+.calendar-drawer-body::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 999px; }
+.calendar-drawer-body::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+.week-day-block {
+    border-radius: 14px;
+    background: #fff;
+    border: 2px solid #E2E8F0;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    animation: drawerItemIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    box-shadow: 0 2px 8px -4px rgba(15, 23, 42, 0.1);
+}
+.week-day-block:nth-child(1) { animation-delay: 0.04s; }
+.week-day-block:nth-child(2) { animation-delay: 0.08s; }
+.week-day-block:nth-child(3) { animation-delay: 0.12s; }
+.week-day-block:nth-child(4) { animation-delay: 0.16s; }
+.week-day-block:nth-child(5) { animation-delay: 0.20s; }
+.week-day-block:nth-child(6) { animation-delay: 0.24s; }
+.week-day-block:nth-child(7) { animation-delay: 0.28s; }
+
+@keyframes drawerItemIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.week-day-block.selected-day-highlight {
+    border-color: var(--gold-500);
+    background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+    box-shadow: 0 6px 18px -6px rgba(201, 162, 39, 0.5);
+}
+.week-day-block.empty-day { opacity: 0.75; }
+
+.week-day-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 13px;
+    background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
+    border-bottom: 1px dashed #E2E8F0;
+    font-size: 14.5px;
+    color: #1E293B;
+    font-weight: 900;
+}
+.week-day-block.selected-day-highlight .week-day-header {
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    color: #92400E;
+    border-bottom-color: #FCD34D;
+}
+.week-day-block.empty-day .week-day-header {
+    background: #F8FAFC;
+    color: #94A3B8;
+}
+
+.count-pill {
+    margin-right: auto;
+    background: var(--primary-600);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: 999px;
+    min-width: 26px;
+    text-align: center;
+    box-shadow: 0 2px 6px -2px rgba(37, 99, 235, 0.5);
+}
+.week-day-block.selected-day-highlight .count-pill {
+    background: #D97706;
+    box-shadow: 0 2px 6px -2px rgba(217, 119, 6, 0.6);
+}
+.week-day-block.empty-day .count-pill {
+    background: #CBD5E1;
+    color: #fff;
+    box-shadow: none;
+}
+
+.week-day-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.week-slot {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 11px;
+    border-radius: 11px;
+    border-right: 4px solid;
+    background: #F8FAFC;
+    animation: slotIn 0.35s ease-out backwards;
+    transition: all 0.2s ease;
+}
+.week-slot:hover {
+    transform: translateX(-4px);
+    box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.2);
+}
+@keyframes slotIn {
+    from { opacity: 0; transform: translateX(15px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.week-slot .time-badge {
+    font-size: 12px;
+    font-weight: 900;
+    padding: 6px 11px;
+    border-radius: 9px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.2px;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.3);
+}
+
+.week-no-lessons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px;
+    color: #94A3B8;
+    font-size: 13px;
+    font-weight: 800;
+    background: #F8FAFC;
+    border-radius: 10px;
+    border: 1.5px dashed #CBD5E1;
+}
+
+.drawer-summary {
+    background: #fff;
+    border: 2px solid var(--primary-200);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    box-shadow: 0 4px 12px -6px rgba(30, 58, 138, 0.2);
+    animation: drawerItemIn 0.4s ease-out;
+}
+.drawer-summary .summary-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px -3px rgba(37, 99, 235, 0.5);
+}
+.drawer-summary .summary-text { flex: 1; }
+.drawer-summary .summary-text .t1 {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--primary-900);
+}
+.drawer-summary .summary-text .t2 {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--primary-700);
+    margin-top: 2px;
+}
+.drawer-summary .summary-num {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--primary-950);
+    min-width: 50px;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .calendar-drawer { max-width: 92%; }
+    .week-slot .time-badge { font-size: 11px; padding: 5px 9px; }
+    .week-day-header { font-size: 13.5px; padding: 10px 11px; }
+    .calendar-drawer-header h3 { font-size: 15.5px; }
+}
 
 *{ font-weight: 800 !important; }
 body{ font-size: 17px; }
@@ -519,23 +780,6 @@ select.input-base{ font-size: 19px !important; }
 .calendar-count-mini{ font-size: 11.5px !important; min-width: 21px !important; height: 21px !important; padding: 0 5px !important; top: 4px !important; left: 4px !important; border-width: 2px !important; }
 .calendar-cell.active-selected .calendar-day-num{ font-size: 21px !important; }
 
-.calendar-day-banner{ min-height: 96px !important; }
-.banner-empty{ font-size: 15px !important; padding: 28px !important; }
-.banner-empty .text-2xl{ font-size: 34px !important; }
-.banner-header{ font-size: 16.5px !important; padding: 14px 16px !important; }
-.banner-header .day-badge{ font-size: 14px !important; padding: 4px 14px !important; }
-.banner-body{ padding: 12px !important; gap: 9px !important; max-height: 340px !important; }
-.banner-empty-day{ font-size: 15px !important; padding: 22px !important; }
-.banner-group-item{ padding: 12px 13px !important; border-radius: 12px !important; }
-.banner-group-icon{ font-size: 23px !important; }
-.banner-group-name{ font-size: 16px !important; font-weight: 900 !important; }
-.banner-group-meta{ font-size: 12.5px !important; gap: 7px !important; }
-.banner-group-badge{ font-size: 11.5px !important; padding: 3px 9px !important; }
-.banner-group-time{ font-size: 13.5px !important; padding: 5px 11px !important; }
-
-.smart-calendar-card .flex.items-center.justify-center.gap-2.mt-3{ font-size: 12px !important; gap: 10px !important; }
-.smart-calendar-card .flex.items-center.justify-center.gap-2.mt-3 .w-3{ width: 16px !important; height: 5px !important; }
-
 @media (max-width: 640px){
   .app-title{ font-size: 30px !important; }
   .calendar-cell{ min-height: 74px !important; border-radius: 10px !important; }
@@ -545,7 +789,6 @@ select.input-base{ font-size: 19px !important; }
   .calendar-dot{ width: 7px !important; height: 7px !important; }
   .calendar-nav-btn{ width: 40px !important; height: 40px !important; font-size: 17px !important; }
   .calendar-month-label{ font-size: 18px !important; }
-  .banner-group-name{ font-size: 14.5px !important; }
   #groupDetailTotal{ font-size: 36px !important; }
 }
 
@@ -958,7 +1201,7 @@ select.input-base{ font-size: 19px !important; }
                         <span class="single-badge !bg-sky-100 !text-sky-800 !border-sky-300">المواعيد ظاهرة</span>
                     </label>
                     <p class="text-[11px] text-slate-500 font-bold mb-2 leading-relaxed">
-                        💡 الأيام الملونة = فيها حجوزات. اضغط على أي يوم لعرض كل المواعيد بالتفصيل.
+                        💡 اضغط على أي يوم لعرض جدول الأسبوع كامل بالمواعيد.
                     </p>
                     <div class="smart-calendar-card">
                         <div class="calendar-header">
@@ -973,17 +1216,6 @@ select.input-base{ font-size: 19px !important; }
                         </div>
 
                         <div class="calendar-grid" id="calendarGrid"></div>
-
-                        <div class="calendar-day-banner" id="calendarDayBanner">
-                            <div class="banner-empty" id="calendarBannerEmpty">
-                                <span class="text-2xl">👆</span>
-                                <p>اضغط على أي يوم لعرض المواعيد</p>
-                            </div>
-                            <div class="banner-content" id="calendarBannerContent" style="display: none;">
-                                <div class="banner-header" id="calendarBannerHeader"></div>
-                                <div class="banner-body" id="calendarBannerBody"></div>
-                            </div>
-                        </div>
 
                         <div class="flex items-center justify-center gap-2 mt-3 text-[9px] font-black flex-wrap">
                             <span class="flex items-center gap-1"><span class="w-3 h-1 rounded-full" style="background:#F59E0B"></span> KG</span>
@@ -1313,6 +1545,25 @@ select.input-base{ font-size: 19px !important; }
     </div>
 </div>
 
+<!-- ═══════════ Side Drawer للتقويم الأسبوعي ═══════════ -->
+<div id="calendarDrawerOverlay" class="calendar-drawer-overlay" onclick="closeCalendarDrawer()"></div>
+
+<div id="calendarDrawer" class="calendar-drawer">
+    <div class="calendar-drawer-header">
+        <h3>
+            <span>📅</span>
+            <div>
+                <span>جدول الأسبوع</span>
+                <span class="sub" id="calendarDrawerRange">--</span>
+            </div>
+        </h3>
+        <button type="button" class="calendar-drawer-close" onclick="closeCalendarDrawer()">✕</button>
+    </div>
+    <div class="calendar-drawer-body" id="calendarDrawerBody">
+        <!-- سيتم توليد المحتوى ديناميكياً -->
+    </div>
+</div>
+
 <script>
     // ✅ نظام صوت الضغط - يعمل على جميع الأزرار والروابط
     let clickAudioCtx = null;
@@ -1342,7 +1593,7 @@ select.input-base{ font-size: 19px !important; }
     }
 
     document.addEventListener('click', function(e) {
-        const target = e.target.closest('button, a, .day-chip, .acc-chip, .stage-card, .option-btn, .type-btn, .filter-chip, .role-card, .calendar-cell, .calendar-nav-btn, .add-class-subject-chip, .quick-radius-btn, .filter-chip, input[type="radio"], input[type="checkbox"], input[type="range"], .banner-group-item, .payment-item-delete');
+        const target = e.target.closest('button, a, .day-chip, .acc-chip, .stage-card, .option-btn, .type-btn, .filter-chip, .role-card, .calendar-cell, .calendar-nav-btn, .add-class-subject-chip, .quick-radius-btn, .filter-chip, input[type="radio"], input[type="checkbox"], input[type="range"], .banner-group-item, .payment-item-delete, .custom-subject-delete');
         if (target) {
             playClickSound();
         }
@@ -1483,6 +1734,17 @@ select.input-base{ font-size: 19px !important; }
             return `${startText}-${endText}${endPeriod}`;
         }
         return `${startText}${startPeriod}-${endText}${endPeriod}`;
+    }
+
+    // ✅ دالة مساعدة لعرض الساعة بصيغة 12 ساعة بشكل مختصر
+    function formatHour12(timeStr) {
+        if (!timeStr) return '';
+        const [h, m] = timeStr.split(':').map(Number);
+        const hour12 = h % 12 || 12;
+        const period = h >= 12 ? 'م' : 'ص';
+        return m > 0 
+            ? `${hour12}:${String(m).padStart(2, '0')} ${period}` 
+            : `${hour12} ${period}`;
     }
 
     function updateDuration() {
@@ -2467,18 +2729,15 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
         
-        // 1. حذفها من localStorage
         let savedCustom = JSON.parse(localStorage.getItem('custom_subjects') || '[]');
         savedCustom = savedCustom.filter(s => s !== subjectName);
         localStorage.setItem('custom_subjects', JSON.stringify(savedCustom));
         
-        // 2. حذفها من المواد المختارة (لو كانت مختارة)
         const idx = selectedSubjects.indexOf(subjectName);
         if (idx > -1) {
             selectedSubjects.splice(idx, 1);
         }
         
-        // 3. إعادة الرسم
         renderUnifiedSelection();
     }
 
@@ -2552,6 +2811,16 @@ select.input-base{ font-size: 19px !important; }
         document.getElementById('endTime')?.addEventListener('change', () => { updateSchedulePreview(); renderDaysSelector(); });
         document.getElementById('startTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); updateSchedulePreview(); });
         document.getElementById('endTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); updateSchedulePreview(); });
+
+        // ✅ إغلاق الـ Drawer بمفتاح Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const drawer = document.getElementById('calendarDrawer');
+                if (drawer && drawer.classList.contains('open')) {
+                    closeCalendarDrawer();
+                }
+            }
+        });
     };
 
     let selectedClassStage = null;
@@ -2768,7 +3037,6 @@ select.input-base{ font-size: 19px !important; }
             updateSchedulePreview();
             selectedCalendarDay = null;
             renderSmartCalendar();
-            renderDayBanner();
         }
     };
 
@@ -2861,7 +3129,6 @@ select.input-base{ font-size: 19px !important; }
         currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
         selectedCalendarDay = null;
         renderSmartCalendar();
-        renderDayBanner();
     }
 
     function getWeekdayKeyFromDate(date) {
@@ -2947,83 +3214,142 @@ select.input-base{ font-size: 19px !important; }
     function selectCalendarDay(day) {
         selectedCalendarDay = day;
         renderSmartCalendar();
-        renderDayBanner();
+        openCalendarDrawer(day);
     }
 
-    function renderDayBanner() {
-        const banner = document.getElementById('calendarDayBanner');
-        const emptyEl = document.getElementById('calendarBannerEmpty');
-        const contentEl = document.getElementById('calendarBannerContent');
-        const headerEl = document.getElementById('calendarBannerHeader');
-        const bodyEl = document.getElementById('calendarBannerBody');
+    // ═══════════ فتح/إغلاق الـ Drawer ═══════════
+    function openCalendarDrawer(day) {
+        if (!currentTeacherProfile) return;
         
-        if (!banner || !emptyEl || !contentEl || !headerEl || !bodyEl || !currentTeacherProfile) return;
+        const drawer = document.getElementById('calendarDrawer');
+        const overlay = document.getElementById('calendarDrawerOverlay');
+        const bodyEl = document.getElementById('calendarDrawerBody');
+        const rangeEl = document.getElementById('calendarDrawerRange');
         
-        if (selectedCalendarDay === null) {
-            banner.classList.remove('has-content');
-            emptyEl.style.display = 'flex';
-            contentEl.style.display = 'none';
-            return;
-        }
-        
-        banner.classList.add('has-content');
-        emptyEl.style.display = 'none';
-        contentEl.style.display = 'block';
+        if (!drawer || !overlay || !bodyEl) return;
         
         const year = currentCalendarDate.getFullYear();
         const month = currentCalendarDate.getMonth();
-        const dateObj = new Date(year, month, selectedCalendarDay);
-        const dayKey = getWeekdayKeyFromDate(dateObj);
-        const dayName = WEEK_DAYS.find(d => d.key === dayKey)?.name || '';
+        const selectedDate = new Date(year, month, day);
+        const dayOfWeek = selectedDate.getDay();
+        const selectedDayKey = getWeekdayKeyFromDate(selectedDate);
+        
+        // ✅ حساب بداية ونهاية الأسبوع (السبت → الجمعة)
+        const offsetFromSat = (dayOfWeek + 1) % 7;
+        const weekStartDate = new Date(year, month, day - offsetFromSat);
+        const weekEndDate = new Date(weekStartDate.getFullYear(), weekStartDate.getMonth(), weekStartDate.getDate() + 6);
+        
         const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-        const monthName = arabicMonths[month];
+        const startMonthName = arabicMonths[weekStartDate.getMonth()];
+        const endMonthName = arabicMonths[weekEndDate.getMonth()];
         
-        const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
-        const bookings = teacherClasses.filter(c => c.days && c.days.includes(dayKey));
-        
-        headerEl.innerHTML = `
-            <div class="day-info">
-                <span>📅</span>
-                <span>${dayName} ${selectedCalendarDay} ${monthName}</span>
-            </div>
-            <span class="day-badge">${bookings.length} ${bookings.length === 1 ? 'مجموعة' : 'مجموعات'}</span>
-        `;
-        
-        if (bookings.length === 0) {
-            bodyEl.innerHTML = `
-                <div class="banner-empty-day">
-                    🎉 لا توجد حجوزات في هذا اليوم - يوم فراغ
-                </div>
-            `;
-            return;
+        let rangeText = '';
+        if (weekStartDate.getMonth() === weekEndDate.getMonth()) {
+            rangeText = `من ${weekStartDate.getDate()} إلى ${weekEndDate.getDate()} ${startMonthName} ${weekEndDate.getFullYear()}`;
+        } else {
+            rangeText = `من ${weekStartDate.getDate()} ${startMonthName} إلى ${weekEndDate.getDate()} ${endMonthName} ${weekEndDate.getFullYear()}`;
         }
         
-        const sortedBookings = [...bookings].sort((a,b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+        if (rangeEl) rangeEl.textContent = rangeText;
         
-        bodyEl.innerHTML = sortedBookings.map(cls => {
-            const stageKey = getStageForGrade(cls.grade) !== 'custom' 
-                ? getStageForGrade(cls.grade) 
-                : getStageForSubject(cls.subject);
-            const colorInfo = STAGE_COLORS[stageKey] || STAGE_COLORS.custom;
+        // ✅ جلب كل مجموعات المدرس
+        const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
+        
+        // حساب إجمالي الدروس في الأسبوع
+        let totalWeekLessons = 0;
+        const weekOrder = ['sat','sun','mon','tue','wed','thu','fri'];
+        weekOrder.forEach(wk => {
+            totalWeekLessons += teacherClasses.filter(c => c.days && c.days.includes(wk)).length;
+        });
+        
+        // ✅ بطاقة الملخص
+        let html = `
+            <div class="drawer-summary">
+                <div class="summary-icon">📚</div>
+                <div class="summary-text">
+                    <div class="t1">إجمالي دروس الأسبوع</div>
+                    <div class="t2">موزعة على ${teacherClasses.length} مجموعة</div>
+                </div>
+                <div class="summary-num">${totalWeekLessons}</div>
+            </div>
+        `;
+        
+        // ✅ عرض أيام الأسبوع السبعة
+        weekOrder.forEach(wk => {
+            const wdInfo = WEEK_DAYS.find(d => d.key === wk);
+            if (!wdInfo) return;
             
-            let locationIcon = '🏫';
-            if (cls.type === 'teacher_home') locationIcon = '🏡';
-            else if (cls.type === 'student_home') locationIcon = '🚗';
+            const dayGroups = teacherClasses.filter(c => c.days && c.days.includes(wk));
+            const isSelectedDay = wk === selectedDayKey;
+            const isEmpty = dayGroups.length === 0;
             
-            return `
-                <div class="banner-group-item" style="border-right-color: ${colorInfo.solid};">
-                    <span class="banner-group-icon">${locationIcon}</span>
-                    <div class="banner-group-info">
-                        <div class="banner-group-name">${cls.groupName}</div>
-                        <div class="banner-group-meta">
-                            <span class="banner-group-badge">🎯 ${cls.grade || ''}</span>
-                            <span class="banner-group-badge" style="color:${colorInfo.text}; background:${colorInfo.bg};">📚 ${cls.subject || ''}</span>
+            let groupsHtml = '';
+            if (isEmpty) {
+                groupsHtml = `<div class="week-no-lessons">🎉 يوم فراغ - لا توجد دروس</div>`;
+            } else {
+                const sorted = [...dayGroups].sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+                groupsHtml = sorted.map((cls, idx) => {
+                    const stageKey = getStageForGrade(cls.grade) !== 'custom' 
+                        ? getStageForGrade(cls.grade) 
+                        : getStageForSubject(cls.subject);
+                    const colorInfo = STAGE_COLORS[stageKey] || STAGE_COLORS.custom;
+                    
+                    let locIcon = '🏫';
+                    if (cls.type === 'teacher_home') locIcon = '🏡';
+                    else if (cls.type === 'student_home') locIcon = '🚗';
+                    
+                    const startTxt = formatHour12(cls.startTime);
+                    const endTxt = formatHour12(cls.endTime);
+                    const timeText = `من ${startTxt} : ${endTxt}`;
+                    
+                    return `
+                        <div class="week-slot" style="border-right-color:${colorInfo.solid}; background:${colorInfo.bg}; animation-delay:${idx * 0.05}s;">
+                            <span class="text-base flex-shrink-0">${locIcon}</span>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-black text-[13px] truncate" style="color:${colorInfo.text};">${cls.groupName}</div>
+                                <div class="text-[11px] font-bold opacity-85 truncate mt-0.5" style="color:${colorInfo.text};">📚 ${cls.subject || ''}</div>
+                            </div>
+                            <span class="time-badge" style="background:${colorInfo.solid}; color:#fff;">${timeText}</span>
                         </div>
+                    `;
+                }).join('');
+            }
+            
+            html += `
+                <div class="week-day-block ${isSelectedDay ? 'selected-day-highlight' : ''} ${isEmpty ? 'empty-day' : ''}">
+                    <div class="week-day-header">
+                        <span class="text-lg">${wdInfo.emoji}</span>
+                        <span class="font-black">${wdInfo.name}</span>
+                        ${!isEmpty ? `<span class="count-pill">${dayGroups.length}</span>` : ''}
                     </div>
-                    <span class="banner-group-time">${formatTimeRangeShort(cls.startTime, cls.endTime)}</span>
+                    <div class="week-day-body">${groupsHtml}</div>
                 </div>
             `;
-        }).join('');
+        });
+        
+        bodyEl.innerHTML = html;
+        
+        // ✅ فتح الـ Drawer
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        
+        // ✅ إعادة تعيين موضع التمرير للأعلى
+        bodyEl.scrollTop = 0;
+    }
+
+    function closeCalendarDrawer() {
+        const drawer = document.getElementById('calendarDrawer');
+        const overlay = document.getElementById('calendarDrawerOverlay');
+        if (!drawer || !overlay) return;
+        
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+        
+        // إزالة التحديد من التقويم
+        selectedCalendarDay = null;
+        renderSmartCalendar();
     }
 
     function handleAddClass(e) {
