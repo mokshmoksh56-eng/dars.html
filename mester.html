@@ -699,17 +699,7 @@ select.input-base{ font-size: 19px !important; }
                     </div>
                 </div>
 
-                <div id="capacityContainer" class="mb-4">
-                    <label class="field-label">العدد المطلوب (الحد الأقصى للطلاب)</label>
-                    <input type="number" id="maxCapacity" required placeholder="مثال: 30" min="1" class="input-base text-center">
-                </div>
-
-                <div class="flex items-center gap-2 mb-2 mt-4">
-                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">1</div>
-                    <label class="field-label !mb-0">اسم المجموعة <span class="text-rose-500">*</span></label>
-                </div>
-                <input type="text" id="groupName" required placeholder="مثال: مجموعة السبت، المجموعة الأولى..." class="input-base">
-
+                <!-- 1. الفئة المسموح بها -->
                 <label class="field-label">الفئة المسموح بها</label>
                 <div class="grid grid-cols-3 gap-2 mb-4">
                     <label>
@@ -726,6 +716,7 @@ select.input-base{ font-size: 19px !important; }
                     </label>
                 </div>
 
+                <!-- 2. مكان ونوع الدرس -->
                 <label class="field-label">مكان ونوع الدرس</label>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                     <label>
@@ -775,9 +766,23 @@ select.input-base{ font-size: 19px !important; }
                         </div>
                     </div>
                 </div>
-                
+
+                <!-- 3. العدد المطلوب -->
+                <div id="capacityContainer" class="mb-4">
+                    <label class="field-label">العدد المطلوب (الحد الأقصى للطلاب)</label>
+                    <input type="number" id="maxCapacity" required placeholder="مثال: 30" min="1" class="input-base text-center">
+                </div>
+
+                <!-- 4. اسم المجموعة -->
                 <div class="flex items-center gap-2 mb-2 mt-4">
-                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">2</div>
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">4</div>
+                    <label class="field-label !mb-0">اسم المجموعة <span class="text-rose-500">*</span></label>
+                </div>
+                <input type="text" id="groupName" required placeholder="مثال: مجموعة السبت، المجموعة الأولى..." class="input-base">
+
+                <!-- 5. اسم السنتر -->
+                <div class="flex items-center gap-2 mb-2 mt-4">
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">5</div>
                     <label class="field-label !mb-0" id="locationLabel">اسم السنتر / المستر <span class="text-rose-500">*</span></label>
                 </div>
                 <input type="text" id="centerName" required placeholder="مثال: سنتر الأوائل / مستر أحمد" class="input-base">
@@ -821,16 +826,18 @@ select.input-base{ font-size: 19px !important; }
                     <input type="hidden" id="teacherRadius"> 
                 </div>
 
+                <!-- 6. أيام الأسبوع -->
                 <div class="flex items-center gap-2 mb-2 mt-4">
-                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">3</div>
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">6</div>
                     <label class="field-label !mb-0">أيام الأسبوع <span class="text-rose-500">*</span></label>
                 </div>
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
                     <div class="days-selector" id="daysSelector"></div>
                 </div>
 
+                <!-- 7. وقت الحصة -->
                 <div class="flex items-center gap-2 mb-2 mt-4">
-                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">4</div>
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">7</div>
                     <label class="field-label !mb-0">وقت الحصة <span class="text-rose-500">*</span></label>
                 </div>
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
@@ -862,7 +869,7 @@ select.input-base{ font-size: 19px !important; }
                     </div>
                 </div>
 
-                <!-- ✅ تم نقل تقويم الشهر الذكي هنا ليكون بعد أيام الأسبوع ووقت الحصة -->
+                <!-- 8. التقويم -->
                 <div class="mt-4 mb-4">
                     <label class="field-label flex items-center gap-2">
                         <span>📅</span>
@@ -907,6 +914,7 @@ select.input-base{ font-size: 19px !important; }
                     </div>
                 </div>
                 
+                <!-- 9. زر الحفظ -->
                 <button type="submit" class="btn-primary mt-2">حفظ ونشر المجموعة ✔️</button>
             </form>
         </div>
