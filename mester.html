@@ -163,9 +163,9 @@ input[type=range] { accent-color: var(--primary-600); }
 .contact-info-box { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--primary-200); padding:10px 12px; border-radius:10px; font-size:13px; color:var(--primary-800); margin-top:10px; }
 .contact-info-box .icon { font-size:18px; }
 .contact-info-box .num { direction:ltr; font-weight:900; letter-spacing:0.5px; }
-.days-selector { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.days-selector { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .day-chip { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:12px 4px; border-radius:12px; font-size:13px; font-weight:900; background:#F8FAFC; border:1.5px solid #CBD5E1; color:#475569; cursor:pointer; transition:all .2s ease; user-select:none; }
-.day-chip .day-emoji { font-size:18px; }
+.day-chip .day-emoji { font-size:22px; }
 .day-chip.active { background:linear-gradient(135deg,var(--primary-600),var(--primary-900)); color:#fff; border-color:var(--primary-900); box-shadow:0 4px 12px rgba(30,58,138,.35); }
 .day-chip:active { transform:scale(0.95); }
 
@@ -259,10 +259,8 @@ input[type=range] { accent-color: var(--primary-600); }
 .acc-chip.secondary.selected::after { color: #5B21B6; }
 .acc-chip.custom.selected::after { color: #991B1B; }
 
-/* ✅ إخفاء علامة ✓ في المواد المخصصة فقط */
 .acc-chip.custom.selected::after { display: none; }
 
-/* ✅ زر حذف المادة المخصصة */
 .custom-subject-delete {
     display: inline-flex;
     align-items: center;
@@ -397,6 +395,26 @@ input[type=range] { accent-color: var(--primary-600); }
 .calendar-cell.has-bookings { background: #F8FAFC; border-color: #CBD5E1; }
 .calendar-cell.has-bookings:hover { background: #F1F5F9; border-color: var(--primary-400); }
 
+/* ✅ عرض الأرصاد الجوية في خلايا التقويم */
+.calendar-weather {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 11px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.calendar-weather .weather-temp {
+    font-size: 9px;
+    font-weight: 900;
+    color: #64748B;
+}
+.calendar-cell.today .calendar-weather .weather-temp {
+    color: var(--primary-700);
+}
+
 /* ═══════════ Side Drawer للتقويم ═══════════ */
 .calendar-drawer-overlay {
     position: fixed;
@@ -487,10 +505,10 @@ input[type=range] { accent-color: var(--primary-600); }
 }
 .calendar-drawer-close:hover {
     background: rgba(255,255,255,0.25);
-    transform: rotate(90deg);
+    transform: scale(1.05);
 }
 .calendar-drawer-close:active {
-    transform: scale(0.9) rotate(90deg);
+    transform: scale(0.9);
 }
 
 .calendar-drawer-body {
@@ -522,7 +540,6 @@ input[type=range] { accent-color: var(--primary-600); }
 .week-day-block:nth-child(4) { animation-delay: 0.16s; }
 .week-day-block:nth-child(5) { animation-delay: 0.20s; }
 .week-day-block:nth-child(6) { animation-delay: 0.24s; }
-.week-day-block:nth-child(7) { animation-delay: 0.28s; }
 
 @keyframes drawerItemIn {
     from { opacity: 0; transform: translateX(30px); }
@@ -676,42 +693,59 @@ input[type=range] { accent-color: var(--primary-600); }
     text-align: center;
 }
 
-/* ✅ أزرار التنقل بين الأيام داخل الـ Drawer */
-.drawer-day-nav {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 4px;
-}
-.drawer-day-nav-btn {
-    flex: 1;
+/* ✅ بطاقة الأرصاد الجوية في الـ Drawer */
+.drawer-weather-card {
+    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+    border: 2px solid #93C5FD;
+    border-radius: 14px;
+    padding: 14px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: #fff;
-    border: 2px solid var(--primary-200);
-    color: var(--primary-800);
-    font-size: 13px;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 4px 12px -6px rgba(37, 99, 235, 0.3);
+    animation: drawerItemIn 0.4s ease-out backwards;
+    animation-delay: 0.02s;
+}
+.drawer-weather-card .weather-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.drawer-weather-card .weather-main .w-icon {
+    font-size: 38px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+.drawer-weather-card .weather-main .w-info .w-desc {
+    font-size: 14px;
     font-weight: 900;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px -4px rgba(30, 58, 138, 0.2);
+    color: #1E40AF;
 }
-.drawer-day-nav-btn:hover {
-    background: var(--primary-50);
-    border-color: var(--primary-400);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px -6px rgba(30, 58, 138, 0.4);
+.drawer-weather-card .weather-main .w-info .w-city {
+    font-size: 11px;
+    font-weight: 800;
+    color: #1D4ED8;
+    opacity: 0.85;
+    margin-top: 2px;
 }
-.drawer-day-nav-btn:active {
-    transform: scale(0.96);
+.drawer-weather-card .weather-temps {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
 }
-.drawer-day-nav-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    transform: none;
+.drawer-weather-card .weather-temps .t-max {
+    font-size: 20px;
+    font-weight: 900;
+    color: #DC2626;
+    line-height: 1;
+}
+.drawer-weather-card .weather-temps .t-min {
+    font-size: 14px;
+    font-weight: 900;
+    color: #2563EB;
+    line-height: 1;
 }
 
 @media (max-width: 640px) {
@@ -1195,6 +1229,10 @@ select.input-base{ font-size: 19px !important; }
                     <label class="field-label !mb-0">أيام الأسبوع <span class="text-rose-500">*</span></label>
                 </div>
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
+                    <p class="text-[12.5px] text-[var(--primary-800)] font-black mb-3 text-center flex items-center justify-center gap-1.5 bg-white py-2 rounded-lg border border-[var(--primary-200)]">
+                        <span>👆</span>
+                        <span>اختر مواعيد الدرس من الأيام التالية</span>
+                    </p>
                     <div class="days-selector" id="daysSelector"></div>
                 </div>
 
@@ -1239,7 +1277,7 @@ select.input-base{ font-size: 19px !important; }
                         <span class="single-badge !bg-sky-100 !text-sky-800 !border-sky-300">المواعيد ظاهرة</span>
                     </label>
                     <p class="text-[11px] text-slate-500 font-bold mb-2 leading-relaxed">
-                        💡 اضغط على أي يوم لعرض جدول اليوم فقط بالمواعيد.
+                        💡 اضغط على أي يوم لعرض جدول اليوم فقط بالمواعيد ودرجات الحرارة.
                     </p>
                     <div class="smart-calendar-card">
                         <div class="calendar-header">
@@ -1638,14 +1676,14 @@ select.input-base{ font-size: 19px !important; }
         }
     }, true);
 
+    // ✅ أيام الأسبوع: السبت إلى الخميس (بدون الجمعة)
     const WEEK_DAYS = [
         { key: 'sat', name: 'السبت', emoji: '🌙' },
         { key: 'sun', name: 'الأحد', emoji: '☀️' },
         { key: 'mon', name: 'الاثنين', emoji: '🌤️' },
         { key: 'tue', name: 'الثلاثاء', emoji: '⛅' },
         { key: 'wed', name: 'الأربعاء', emoji: '🌥️' },
-        { key: 'thu', name: 'الخميس', emoji: '🌦️' },
-        { key: 'fri', name: 'الجمعة', emoji: '🌟' }
+        { key: 'thu', name: 'الخميس', emoji: '🌦️' }
     ];
 
     mapboxgl.accessToken = 'pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A';
@@ -1657,6 +1695,7 @@ select.input-base{ font-size: 19px !important; }
     let currentTeacherProfile = null;
     let currentOpenedGroupId = null;
     let currentAccountStudentId = null;
+    let weatherData = null; // ✅ لتخزين بيانات الأرصاد
 
     function fetchClassesFromFirebase() {
         db.ref('classes').on('value', (snapshot) => {
@@ -1675,6 +1714,66 @@ select.input-base{ font-size: 19px !important; }
             const data = snapshot.val();
             allTeachersDB = data ? data : {};
         });
+    }
+
+    // ✅ دالة لجلب الأرصاد الجوية من Open-Meteo (مجاني بدون API key)
+    async function getWeatherForecast(lat, lng) {
+        try {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Africa/Cairo&forecast_days=16`;
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data && data.daily) {
+                return data.daily;
+            }
+            return null;
+        } catch (error) {
+            console.error('خطأ في جلب الأرصاد:', error);
+            return null;
+        }
+    }
+
+    // ✅ دالة لتحويل كود الطقس إلى أيقونة ووصف
+    function getWeatherInfo(code) {
+        const weatherCodes = {
+            0: { icon: '☀️', desc: 'صافي' },
+            1: { icon: '🌤️', desc: 'صافي جزئياً' },
+            2: { icon: '⛅', desc: 'غائم جزئياً' },
+            3: { icon: '☁️', desc: 'غائم' },
+            45: { icon: '🌫️', desc: 'ضباب' },
+            48: { icon: '🌫️', desc: 'ضباب متجمد' },
+            51: { icon: '🌦️', desc: 'رذاذ خفيف' },
+            53: { icon: '🌦️', desc: 'رذاذ' },
+            55: { icon: '🌧️', desc: 'رذاذ كثيف' },
+            61: { icon: '🌧️', desc: 'مطر خفيف' },
+            63: { icon: '🌧️', desc: 'مطر' },
+            65: { icon: '🌧️', desc: 'مطر غزير' },
+            71: { icon: '🌨️', desc: 'ثلج خفيف' },
+            73: { icon: '🌨️', desc: 'ثلج' },
+            75: { icon: '🌨️', desc: 'ثلج كثيف' },
+            95: { icon: '⛈️', desc: 'عاصفة رعدية' },
+            96: { icon: '⛈️', desc: 'عاصفة مع برد' },
+            99: { icon: '⛈️', desc: 'عاصفة شديدة' }
+        };
+        return weatherCodes[code] || { icon: '🌡️', desc: 'غير معروف' };
+    }
+
+    // ✅ الحصول على أرصاد يوم معين من البيانات المحفوظة
+    function getWeatherForDate(dateObj) {
+        if (!weatherData || !weatherData.time) return null;
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+        const idx = weatherData.time.indexOf(dateStr);
+        if (idx === -1) return null;
+        return {
+            code: weatherData.weather_code[idx],
+            max: Math.round(weatherData.temperature_2m_max[idx]),
+            min: Math.round(weatherData.temperature_2m_min[idx]),
+            info: getWeatherInfo(weatherData.weather_code[idx])
+        };
     }
 
     function renderDaysSelector() {
@@ -1753,26 +1852,6 @@ select.input-base{ font-size: 19px !important; }
         const ampm = hour >= 12 ? 'م' : 'ص';
         const hour12 = hour % 12 || 12;
         return `${hour12}:${m} ${ampm}`;
-    }
-
-    function formatTimeRangeShort(start, end) {
-        if (!start || !end) return '';
-        const [sh, sm] = start.split(':').map(Number);
-        const [eh, em] = end.split(':').map(Number);
-        
-        const startPeriod = sh >= 12 ? 'م' : 'ص';
-        const endPeriod = eh >= 12 ? 'م' : 'ص';
-        
-        const startH12 = sh % 12 || 12;
-        const endH12 = eh % 12 || 12;
-        
-        const startText = sm > 0 ? `${startH12}:${String(sm).padStart(2,'0')}` : `${startH12}`;
-        const endText = em > 0 ? `${endH12}:${String(em).padStart(2,'0')}` : `${endH12}`;
-        
-        if (startPeriod === endPeriod) {
-            return `${startText}-${endText}${endPeriod}`;
-        }
-        return `${startText}${startPeriod}-${endText}${endPeriod}`;
     }
 
     // ✅ دالة مساعدة لعرض الساعة بصيغة 12 ساعة بشكل مختصر
@@ -2762,7 +2841,6 @@ select.input-base{ font-size: 19px !important; }
         renderUnifiedSelection();
     }
 
-    // ✅ دالة حذف مادة مخصصة نهائياً
     function deleteCustomSubject(subjectName) {
         if (!confirm(`⚠️ هل أنت متأكد من حذف المادة:\n\n"${subjectName}"\n\nسيتم حذفها من القائمة نهائياً.`)) {
             return;
@@ -2851,7 +2929,11 @@ select.input-base{ font-size: 19px !important; }
         document.getElementById('startTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); updateSchedulePreview(); });
         document.getElementById('endTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); updateSchedulePreview(); });
 
-        // ✅ إغلاق الـ Drawer بمفتاح Escape
+        // ✅ تحميل الأرصاد الجوية مبدئياً
+        getWeatherForecast(30.0444, 31.2357).then(data => {
+            weatherData = data;
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const drawer = document.getElementById('calendarDrawer');
@@ -3217,6 +3299,9 @@ select.input-base{ font-size: 19px !important; }
             const isActiveDay = selectedCalendarDay === d;
             const hasBookings = bookings.length > 0;
             
+            // ✅ الأرصاد الجوية لهذا اليوم
+            const weather = getWeatherForDate(dateObj);
+            
             let cellClasses = 'calendar-cell';
             if (todayFlag) cellClasses += ' today';
             if (selectedFlag) cellClasses += ' selected-day';
@@ -3238,10 +3323,16 @@ select.input-base{ font-size: 19px !important; }
                 ? `<div class="calendar-count-mini">${bookings.length}</div>` 
                 : '';
             
+            // ✅ عرض الأرصاد
+            const weatherHtml = weather 
+                ? `<div class="calendar-weather" title="${weather.info.desc}">${weather.info.icon}<span class="weather-temp">${weather.max}°</span></div>` 
+                : '';
+            
             html += `
                 <div class="${cellClasses}" onclick="selectCalendarDay(${d})">
                     ${countMini}
                     <div class="calendar-day-num">${d}</div>
+                    ${weatherHtml}
                     <div class="calendar-day-dots">${dotsHtml}</div>
                 </div>
             `;
@@ -3256,7 +3347,7 @@ select.input-base{ font-size: 19px !important; }
         openCalendarDrawer(day);
     }
 
-    // ═══════════ فتح/إغلاق الـ Drawer - يعرض اليوم المختار فقط ═══════════
+    // ═══════════ فتح/إغلاق الـ Drawer - يعرض اليوم المختار فقط مع الأرصاد ═══════════
     function openCalendarDrawer(day) {
         if (!currentTeacherProfile) return;
         
@@ -3271,7 +3362,7 @@ select.input-base{ font-size: 19px !important; }
         const month = currentCalendarDate.getMonth();
         const selectedDate = new Date(year, month, day);
         const selectedDayKey = getWeekdayKeyFromDate(selectedDate);
-        const wdInfo = WEEK_DAYS.find(d => d.key === selectedDayKey);
+        const wdInfo = WEEK_DAYS.find(d => d.key === selectedDayKey) || WEEK_DAYS[0];
         
         const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
         
@@ -3284,6 +3375,9 @@ select.input-base{ font-size: 19px !important; }
         const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
         const dayGroups = teacherClasses.filter(c => c.days && c.days.includes(selectedDayKey));
         
+        // ✅ الأرصاد الجوية لليوم المختار
+        const weather = getWeatherForDate(selectedDate);
+        
         // ✅ بطاقة الملخص
         let html = `
             <div class="drawer-summary">
@@ -3295,6 +3389,25 @@ select.input-base{ font-size: 19px !important; }
                 <div class="summary-num">${dayGroups.length}</div>
             </div>
         `;
+        
+        // ✅ بطاقة الأرصاد الجوية
+        if (weather) {
+            html += `
+                <div class="drawer-weather-card">
+                    <div class="weather-main">
+                        <span class="w-icon">${weather.info.icon}</span>
+                        <div class="w-info">
+                            <div class="w-desc">${weather.info.desc}</div>
+                            <div class="w-city">🌍 الأرصاد الجوية اليوم</div>
+                        </div>
+                    </div>
+                    <div class="weather-temps">
+                        <div class="t-max">↑ ${weather.max}°</div>
+                        <div class="t-min">↓ ${weather.min}°</div>
+                    </div>
+                </div>
+            `;
+        }
         
         // ✅ عرض المجموعات أو رسالة فارغة
         if (dayGroups.length === 0) {
@@ -3346,7 +3459,6 @@ select.input-base{ font-size: 19px !important; }
         
         bodyEl.innerHTML = html;
         
-        // ✅ فتح الـ Drawer
         drawer.classList.add('open');
         overlay.classList.add('open');
         document.body.style.overflow = 'hidden';
@@ -3362,43 +3474,8 @@ select.input-base{ font-size: 19px !important; }
         overlay.classList.remove('open');
         document.body.style.overflow = '';
         
-        // إزالة التحديد من التقويم
         selectedCalendarDay = null;
         renderSmartCalendar();
-    }
-
-    // ✅ التنقل لليوم السابق
-    function goToPreviousDay() {
-        if (!selectedCalendarDay) return;
-        
-        const year = currentCalendarDate.getFullYear();
-        const month = currentCalendarDate.getMonth();
-        const prevDate = new Date(year, month, selectedCalendarDay - 1);
-        
-        if (prevDate.getMonth() !== month) {
-            currentCalendarDate.setMonth(month - 1);
-        }
-        
-        selectedCalendarDay = prevDate.getDate();
-        renderSmartCalendar();
-        openCalendarDrawer(selectedCalendarDay);
-    }
-
-    // ✅ التنقل لليوم التالي
-    function goToNextDay() {
-        if (!selectedCalendarDay) return;
-        
-        const year = currentCalendarDate.getFullYear();
-        const month = currentCalendarDate.getMonth();
-        const nextDate = new Date(year, month, selectedCalendarDay + 1);
-        
-        if (nextDate.getMonth() !== month) {
-            currentCalendarDate.setMonth(month + 1);
-        }
-        
-        selectedCalendarDay = nextDate.getDate();
-        renderSmartCalendar();
-        openCalendarDrawer(selectedCalendarDay);
     }
 
     function handleAddClass(e) {
