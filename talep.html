@@ -121,6 +121,104 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 .class-result-card {
     animation: slideUpCard 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
+
+/* ============================================ */
+/* ✅ نظام الألوان الصريحة لكل كارت حسب المادة */
+/* ============================================ */
+
+/* 🎨 ثيم 1: أزرق ملكي — للغة عربية / التاريخ / الدراسات */
+.theme-royal { --c-main:#1E40AF; --c-dark:#1E3A8A; --c-light:#DBEAFE; --c-lighter:#EFF6FF; --c-border:#93C5FD; --c-text:#1E3A8A; --c-header:#1E40AF; --c-header2:#3730A3; }
+
+/* 🎨 ثيم 2: بنفسجي ملكي — للغة إنجليزية / الفلسفة */
+.theme-purple { --c-main:#7C3AED; --c-dark:#5B21B6; --c-light:#EDE9FE; --c-lighter:#F5F3FF; --c-border:#C4B5FD; --c-text:#5B21B6; --c-header:#7C3AED; --c-header2:#5B21B6; }
+
+/* 🎨 ثيم 3: أخضر زمردي — للعلوم / الأحياء / العلوم المتكاملة */
+.theme-emerald { --c-main:#059669; --c-dark:#065F46; --c-light:#D1FAE5; --c-lighter:#ECFDF5; --c-border:#6EE7B7; --c-text:#065F46; --c-header:#059669; --c-header2:#047857; }
+
+/* 🎨 ثيم 4: برتقالي ذهبي — للرياضيات / الحساب */
+.theme-amber { --c-main:#D97706; --c-dark:#92400E; --c-light:#FEF3C7; --c-lighter:#FFFBEB; --c-border:#FCD34D; --c-text:#92400E; --c-header:#D97706; --c-header2:#B45309; }
+
+/* 🎨 ثيم 5: سماوي فيروزي — للغة فرنسية / الألمانية */
+.theme-cyan { --c-main:#0891B2; --c-dark:#155E75; --c-light:#CFFAFE; --c-lighter:#ECFEFF; --c-border:#67E8F9; --c-text:#155E75; --c-header:#0891B2; --c-header2:#0E7490; }
+
+/* 🎨 ثيم 6: وردي فوشيا — للتربية الفنية / الدينية */
+.theme-pink { --c-main:#DB2777; --c-dark:#9D174D; --c-light:#FCE7F3; --c-lighter:#FDF2F8; --c-border:#F9A8D4; --c-text:#9D174D; --c-header:#DB2777; --c-header2:#BE185D; }
+
+/* 🎨 ثيم 7: أحمر قرمزي — للفيزياء / الكيمياء */
+.theme-rose { --c-main:#E11D48; --c-dark:#9F1239; --c-light:#FFE4E6; --c-lighter:#FFF1F2; --c-border:#FDA4AF; --c-text:#9F1239; --c-header:#E11D48; --c-header2:#BE123C; }
+
+/* 🎨 ثيم 8: نيلي داكن — للجغرافيا / الجيولوجيا */
+.theme-indigo { --c-main:#4338CA; --c-dark:#312E81; --c-light:#E0E7FF; --c-lighter:#EEF2FF; --c-border:#A5B4FC; --c-text:#312E81; --c-header:#4338CA; --c-header2:#3730A3; }
+
+/* 🎨 ثيم 9: أخضر ليموني — للتربية الرياضية / حاسب آلي */
+.theme-lime { --c-main:#65A30D; --c-dark:#3F6212; --c-light:#ECFCCB; --c-lighter:#F7FEE7; --c-border:#BEF264; --c-text:#3F6212; --c-header:#65A30D; --c-header2:#4D7C0F; }
+
+/* 🎨 ثيم 10: رمادي فحمي — افتراضي للمواد المخصصة */
+.theme-slate { --c-main:#475569; --c-dark:#1E293B; --c-light:#E2E8F0; --c-lighter:#F1F5F9; --c-border:#94A3B8; --c-text:#334155; --c-header:#475569; --c-header2:#334155; }
+
+/* ============ تطبيق الثيم على الكارت ============ */
+.class-result-card.colored {
+    background: linear-gradient(160deg, var(--c-lighter) 0%, #FFFFFF 40%);
+    border: 3px solid var(--c-border) !important;
+    box-shadow: 0 8px 24px -10px var(--c-main);
+}
+.class-result-card.colored::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; left: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--c-header), var(--c-header2));
+    border-radius: 22px 22px 0 0;
+}
+.class-result-card.colored .card-teacher-name {
+    color: var(--c-dark);
+    font-size: 20px;
+    font-weight: 900;
+}
+.class-result-card.colored .card-subject-badge {
+    background: linear-gradient(135deg, var(--c-main), var(--c-dark));
+    color: #fff !important;
+    border-color: var(--c-dark) !important;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px -3px var(--c-main);
+}
+.class-result-card.colored .card-group-name {
+    background: var(--c-light);
+    color: var(--c-text);
+    border: 1.5px solid var(--c-border);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    display: inline-block;
+    margin-top: 4px;
+}
+.class-result-card.colored .card-info-box {
+    background: var(--c-lighter);
+    border: 1.5px dashed var(--c-border);
+    border-radius: 14px;
+    padding: 12px;
+}
+.class-result-card.colored .card-schedule-time {
+    color: var(--c-dark);
+    font-weight: 900;
+}
+.class-result-card.colored .card-avail-pill {
+    background: linear-gradient(135deg, var(--c-main), var(--c-dark));
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 10px -3px var(--c-main);
+}
+.class-result-card.colored .card-map-btn {
+    background: var(--c-light);
+    color: var(--c-dark);
+    border: 1.5px solid var(--c-border);
+}
+.class-result-card.colored .card-map-btn:hover {
+    background: var(--c-border);
+    color: #fff;
+}
 </style>
 </head>
 <body>
@@ -252,7 +350,7 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
             </div>
 
             <!-- جدول / قائمة المجموعات -->
-            <div id="classesContainer" class="space-y-4 pb-10"></div>
+            <div id="classesContainer" class="space-y-5 pb-10"></div>
         </div>
 
     </div>
@@ -571,6 +669,42 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         }
     }
 
+    // ✅ دالة تحديد ثيم اللون الصريح حسب اسم المادة
+    function getSubjectTheme(subject) {
+        if (!subject) return 'theme-slate';
+        const s = subject.toLowerCase();
+        
+        // لغة عربية / تاريخ / دراسات / تربية وطنية / فلسفة
+        if (s.includes('عربية') || s.includes('تاريخ') || s.includes('دراسات') || s.includes('وطنية') || s.includes('فلسفة') || s.includes('منطق')) return 'theme-royal';
+        
+        // إنجليزي
+        if (s.includes('إنجليزية') || s.includes('انجليزية') || s.includes('english')) return 'theme-purple';
+        
+        // علوم / أحياء / علوم متكاملة
+        if (s.includes('علوم') || s.includes('أحياء') || s.includes('احياء')) return 'theme-emerald';
+        
+        // رياضيات / حساب
+        if (s.includes('رياضيات') || s.includes('حساب') || s.includes('إحصاء') || s.includes('بحتة')) return 'theme-amber';
+        
+        // فرنساوي / ألماني / إيطالي / إسباني
+        if (s.includes('فرنسية') || s.includes('ألمانية') || s.includes('إيطالية') || s.includes('إسبانية') || s.includes('فرنساوي')) return 'theme-cyan';
+        
+        // تربية فنية / دينية
+        if (s.includes('فنية') || s.includes('دينية')) return 'theme-pink';
+        
+        // فيزياء / كيمياء
+        if (s.includes('فيزياء') || s.includes('كيمياء')) return 'theme-rose';
+        
+        // جغرافيا / جيولوجيا
+        if (s.includes('جغرافيا') || s.includes('جيولوجيا')) return 'theme-indigo';
+        
+        // تربية رياضية / حاسب / كمبيوتر / تكنولوجيا
+        if (s.includes('رياضية') || s.includes('حاسب') || s.includes('كمبيوتر') || s.includes('تكنولوجيا')) return 'theme-lime';
+        
+        // افتراضي
+        return 'theme-slate';
+    }
+
     function renderClasses() {
         const container = document.getElementById('classesContainer');
         container.innerHTML = '';
@@ -621,79 +755,82 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
             return;
         }
 
-        // بناء البطاقات الجديدة بتصميم مبتكر
+        // ✅ بناء البطاقات الجديدة مع ألوان صريحة مميزة لكل مادة
         filteredClasses.forEach((cls, index) => {
             const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
             const isFull = totalBooked >= cls.maxCapacity;
             
+            // ✅ تحديد ثيم اللون حسب المادة
+            const themeClass = getSubjectTheme(cls.subject);
+            
             // تخصيص نوع المكان
-            let typeIcon = '🏫'; let typeText = 'سنتر'; let typeBg = 'bg-blue-50 text-blue-700 border-blue-200';
-            if(cls.type === 'teacher_home') { typeIcon = '🏡'; typeText = 'بيت المستر'; typeBg = 'bg-amber-50 text-amber-700 border-amber-200'; }
-            if(cls.type === 'student_home') { typeIcon = '🚗'; typeText = 'في منزلك'; typeBg = 'bg-emerald-50 text-emerald-700 border-emerald-200'; }
+            let typeIcon = '🏫'; let typeText = 'سنتر';
+            if(cls.type === 'teacher_home') { typeIcon = '🏡'; typeText = 'بيت المستر'; }
+            if(cls.type === 'student_home') { typeIcon = '🚗'; typeText = 'في منزلك'; }
             
             // تخصيص فئة الطلاب
-            let genderIcon = '👫'; let genderText = 'ولاد وبنات'; let genderBg = 'bg-slate-50 text-slate-700 border-slate-200';
-            if(cls.gender === 'boys') { genderIcon = '👦'; genderText = 'ولاد فقط'; genderBg = 'bg-sky-50 text-sky-700 border-sky-200'; }
-            if(cls.gender === 'girls') { genderIcon = '👧'; genderText = 'بنات فقط'; genderBg = 'bg-pink-50 text-pink-700 border-pink-200'; }
+            let genderIcon = '👫'; let genderText = 'ولاد وبنات';
+            if(cls.gender === 'boys') { genderIcon = '👦'; genderText = 'ولاد فقط'; }
+            if(cls.gender === 'girls') { genderIcon = '👧'; genderText = 'بنات فقط'; }
 
             let scheduleText = '';
             if(cls.daysNames && cls.daysNames.length > 0) { scheduleText = `${cls.daysNames.join(' - ')}`; }
             
             let distanceHtml = '';
             if (isGpsActive && cls.calculatedDistance !== 99999) {
-                distanceHtml = `<div class="absolute -top-3 left-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[11px] font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1 border-2 border-white z-10"><span>📍</span> <span>يبعد ${cls.calculatedDistance.toFixed(2)} كم</span></div>`;
+                distanceHtml = `<div class="absolute -top-3 left-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[11px] font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1 border-2 border-white z-20"><span>📍</span> <span>يبعد ${cls.calculatedDistance.toFixed(2)} كم</span></div>`;
             }
 
             let mapFocusBtn = '';
             if (cls.lat && cls.lng) {
-                mapFocusBtn = `<button onclick="window.focusOnMap('${cls.id}', ${cls.lat}, ${cls.lng})" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-xl transition-colors shadow-sm border border-slate-200 flex items-center justify-center h-full aspect-square" title="عرض على الخريطة"><span class="text-lg leading-none">🗺️</span></button>`;
+                mapFocusBtn = `<button onclick="window.focusOnMap('${cls.id}', ${cls.lat}, ${cls.lng})" class="card-map-btn p-2 rounded-xl transition-colors shadow-sm flex items-center justify-center h-full aspect-square" title="عرض على الخريطة"><span class="text-lg leading-none">🗺️</span></button>`;
             }
 
             const card = document.createElement('div');
-            card.className = 'class-result-card bg-white border-2 border-slate-100 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all relative mt-4';
-            card.style.animationDelay = `${index * 0.05}s`; // تأثير دخول متتابع للبطاقات
+            card.className = `class-result-card colored ${themeClass} p-5 shadow-sm hover:shadow-lg transition-all relative mt-4 rounded-3xl`;
+            card.style.animationDelay = `${index * 0.05}s`;
             
             card.innerHTML = `
                 ${distanceHtml}
-                <div class="flex justify-between items-start mb-4">
+                <div class="flex justify-between items-start mb-4 relative z-10 pt-2">
                     <div class="flex-1 pr-2">
-                        <h4 class="text-[19px] font-black text-slate-800 leading-tight mb-1">${cls.teacherTitle} ${cls.teacherName}</h4>
-                        <p class="text-[13px] font-bold text-slate-50 flex items-center gap-1"><span>👥</span> مجموعة: ${cls.groupName}</p>
+                        <h4 class="card-teacher-name leading-tight mb-2">${cls.teacherTitle} ${cls.teacherName}</h4>
+                        <span class="card-group-name">👥 ${cls.groupName}</span>
                     </div>
-                    <div class="flex items-stretch gap-2 h-10">
-                        <span class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[12px] font-black px-3 rounded-xl flex items-center justify-center whitespace-nowrap shadow-sm">📚 ${cls.subject}</span>
+                    <div class="flex items-stretch gap-2 h-11">
+                        <span class="card-subject-badge flex items-center justify-center whitespace-nowrap font-black">📚 ${cls.subject}</span>
                         ${mapFocusBtn}
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 mb-4">
-                    <div class="flex items-center gap-2 ${typeBg} border px-3 py-2 rounded-xl text-[12px] font-black shadow-sm">
+                <div class="grid grid-cols-2 gap-2 mb-4 relative z-10">
+                    <div class="flex items-center gap-2 bg-white border-2 border-slate-200 px-3 py-2 rounded-xl text-[12px] font-black shadow-sm">
                         <span class="text-lg leading-none">${typeIcon}</span>
-                        <span>${typeText}</span>
+                        <span class="text-slate-700">${typeText}</span>
                     </div>
-                    <div class="flex items-center gap-2 ${genderBg} border px-3 py-2 rounded-xl text-[12px] font-black shadow-sm">
+                    <div class="flex items-center gap-2 bg-white border-2 border-slate-200 px-3 py-2 rounded-xl text-[12px] font-black shadow-sm">
                         <span class="text-lg leading-none">${genderIcon}</span>
-                        <span>${genderText}</span>
+                        <span class="text-slate-700">${genderText}</span>
                     </div>
                 </div>
 
-                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4 space-y-3 shadow-inner">
-                    <div class="flex items-start gap-2 text-[13px] font-bold text-slate-700">
+                <div class="card-info-box mb-4 space-y-3 relative z-10">
+                    <div class="flex items-start gap-2 text-[13px] font-bold text-slate-800">
                         <span class="text-base leading-none pt-0.5">📍</span> 
-                        <span class="leading-relaxed">${cls.location} ${cls.address ? `<br><span class="text-[11px] text-slate-400 font-black">${cls.address}</span>` : ''}</span>
+                        <span class="leading-relaxed">${cls.location} ${cls.address ? `<br><span class="text-[11px] text-slate-500 font-black">${cls.address}</span>` : ''}</span>
                     </div>
-                    <div class="flex items-start gap-2 text-[13px] font-bold text-slate-700">
+                    <div class="flex items-start gap-2 text-[13px] font-bold text-slate-800">
                         <span class="text-base leading-none pt-0.5">⏰</span> 
-                        <span>المواعيد: <span class="text-indigo-700 font-black" dir="ltr">${scheduleText}</span> | ${formatTime(cls.startTime)}</span>
+                        <span>المواعيد: <span class="card-schedule-time" dir="ltr">${scheduleText}</span> | ${formatTime(cls.startTime)}</span>
                     </div>
                 </div>
 
-                <div class="flex items-stretch gap-2">
+                <div class="flex items-stretch gap-2 relative z-10">
                     <button onclick="window.bookClass('${cls.id}')" class="flex-1 btn-primary btn-whatsapp !mb-0 !rounded-2xl shadow-md ${isFull ? 'opacity-50 grayscale cursor-not-allowed' : ''}" ${isFull ? 'disabled' : ''}>
                         <span class="text-2xl leading-none">💬</span> 
                         <span class="text-[15px]">${isFull ? 'المجموعة مكتملة' : 'احجز عبر واتساب'}</span>
                     </button>
-                    ${!isFull ? `<div class="bg-emerald-50 text-emerald-700 border border-emerald-200 font-black px-4 rounded-2xl flex flex-col items-center justify-center leading-tight min-w-[70px] text-center shadow-sm"><span class="text-[10px]">متاح</span><span class="text-[16px]">${cls.maxCapacity - totalBooked}</span></div>` : ''}
+                    ${!isFull ? `<div class="card-avail-pill font-black px-4 rounded-2xl flex flex-col items-center justify-center leading-tight min-w-[70px] text-center"><span class="text-[10px]">متاح</span><span class="text-[18px]">${cls.maxCapacity - totalBooked}</span></div>` : ''}
                 </div>
             `;
             container.appendChild(card);
