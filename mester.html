@@ -7,20 +7,23 @@
 
 <!-- Tailwind CSS (CDN) -->
 <script src="https://cdn.tailwindcss.com"></script>
+<!-- تسريع Tailwind وتخصيص الإعدادات لبيئة الـ APK -->
 <script>
-    tailwind.config = { corePlugins: { preflight: true } }
+    tailwind.config = { 
+        corePlugins: { preflight: true } 
+    }
 </script>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- ✅ Mapbox GL JS -->
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet" />
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
-
+<!-- مكتبات Firebase (الإصدار المتوافق مع HTML مباشرة) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
+  // إعدادات الربط الخاصة بمشروعك (tagroba-fbe9b)
   const firebaseConfig = {
     apiKey: "AIzaSyC9EXJnOL6ReTB41Kc8SXMcnK657_h2Mwc",
     authDomain: "tagroba-fbe9b.firebaseapp.com",
@@ -31,12 +34,14 @@
     measurementId: "G-CRVE7VMZMS"
   };
 
+  // تهيئة Firebase
   if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
   }
   const db = firebase.database();
 </script>
 
+<!-- PWA -->
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0A1E3F">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -81,17 +86,6 @@ body{
 .app-title{ font-size:27px; font-weight:900; }
 .app-title .accent{ color:var(--gold-400); }
 .app-subtitle{ font-size:12px; font-weight:700; color:rgba(255,255,255,.85); margin-top:5px; }
-
-/* ✅ تحريك صورة المعلم */
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-12px); }
-    100% { transform: translateY(0px); }
-}
-.animate-float {
-    animation: float 3s ease-in-out infinite;
-}
-
 .role-card{ display:flex; align-items:center; gap:15px; width:100%; padding:17px; background:#fff; border:1.5px solid var(--line); border-radius:18px; text-align:right; cursor:pointer; transition:all .22s ease; margin-bottom:15px;}
 .role-card:hover{ border-color:var(--primary-700); transform:translateY(-2px); box-shadow:0 14px 28px -18px rgba(30,58,138,.7);}
 .role-icon{ width:56px; height:56px; border-radius:16px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:27px; background:linear-gradient(150deg,var(--primary-50),var(--primary-100)); border:1px solid var(--primary-200); }
@@ -105,8 +99,7 @@ select.input-base { appearance:none; background-image:url("data:image/svg+xml;ch
 input[type="radio"]:checked + .option-btn { background:linear-gradient(135deg,var(--primary-600),var(--primary-800)); color:white; border-color:var(--primary-800); box-shadow:0 4px 10px rgba(30,58,138,0.35); }
 input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 .type-btn { background:#F8FAFC; border:1.5px solid #CBD5E1; color:#475569; text-align:center; padding:12px 5px; border-radius:12px; font-size:13px; font-weight:900; cursor:pointer; transition:all 0.2s ease; height:100%; }
-input[type="radio"][name="classType"]:checked + .type-btn,
-input[type="radio"][name="editClassType"]:checked + .type-btn { background:var(--primary-50); color:var(--primary-700); border-color:var(--primary-600); box-shadow:0 4px 10px rgba(37,99,235,0.2); }
+input[type="radio"][name="classType"]:checked + .type-btn { background:var(--primary-50); color:var(--primary-700); border-color:var(--primary-600); box-shadow:0 4px 10px rgba(37,99,235,0.2); }
 .btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border-radius:14px; font-weight:900; font-size:16px; color:#fff; border:none; cursor:pointer; background:linear-gradient(135deg,var(--primary-600) 0%, var(--primary-900) 100%); box-shadow:0 12px 24px -14px rgba(30,58,138,.9); transition:all .22s ease; }
 .btn-primary:active{ transform:scale(.975); }
 .btn-ghost{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:12px; border-radius:14px; font-weight:900; font-size:14px; cursor:pointer; background:var(--surface-3); color:var(--primary-800); border:1.5px solid var(--line); margin-bottom:15px;}
@@ -169,40 +162,12 @@ input[type=range] { accent-color: var(--primary-600); }
 .day-chip .day-emoji { font-size:18px; }
 .day-chip.active { background:linear-gradient(135deg,var(--primary-600),var(--primary-900)); color:#fff; border-color:var(--primary-900); box-shadow:0 4px 12px rgba(30,58,138,.35); }
 .day-chip:active { transform:scale(0.95); }
-
-/* ✅ يوم متعارض - تحذير أحمر */
-.day-chip.conflict {
-    background: linear-gradient(135deg, #EF4444, #991B1B) !important;
-    color: #fff !important;
-    border-color: #991B1B !important;
-    box-shadow: 0 4px 12px rgba(239,68,68,0.5) !important;
-    animation: conflictShake 1.2s ease-in-out infinite;
-}
-.day-chip.conflict .day-emoji {
-    filter: brightness(1.3) drop-shadow(0 0 4px rgba(255,255,255,0.6));
-}
-@keyframes conflictShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    75% { transform: translateX(3px); }
-}
-
 .time-inputs-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .time-input { width:100%; padding:12px; background:#fff; border:1.5px solid var(--line-2); border-radius:12px; font-weight:800; font-size:16px; outline:none; transition:all .18s ease; text-align:center;}
 .time-input:focus { border-color:var(--primary-600); box-shadow:0 0 0 4px rgba(37,99,235,.15); }
 .duration-display { display:flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(135deg,#ECFDF5,#D1FAE5); border:1px solid #6EE7B7; color:#065F46; padding:10px 12px; border-radius:10px; font-size:13px; font-weight:900; margin-top:10px; }
 .schedule-preview { display:flex; flex-wrap:wrap; gap:8px; background:#fff; border:1.5px dashed var(--primary-300); padding:12px; border-radius:12px; margin-top:12px; }
-.schedule-tag { display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,var(--primary-600),var(--primary-900)); color:#fff; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:900; transition: all 0.3s ease; }
-
-/* ✅ شريط الموعد المتعارض - أحمر مع رجّة */
-.schedule-tag-conflict {
-    background: linear-gradient(135deg, #EF4444, #991B1B) !important;
-    color: #fff !important;
-    box-shadow: 0 4px 12px rgba(239,68,68,0.6) !important;
-    animation: conflictShake 1.2s ease-in-out infinite;
-    border: 2px solid #7F1D1D;
-}
-
+.schedule-tag { display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,var(--primary-600),var(--primary-900)); color:#fff; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:900; }
 .teacher-info-card { background:linear-gradient(135deg,var(--primary-50) 0%,var(--primary-100) 100%); border:1px solid var(--primary-200); padding:16px; border-radius:14px; margin-bottom:24px; box-shadow:0 4px 12px -6px rgba(30,58,138,.2); }
 .teacher-info-card h2 { color:var(--primary-900); }
 .teacher-info-card p { color:var(--primary-700); }
@@ -511,6 +476,7 @@ select.input-base{ font-size: 19px !important; }
   #groupDetailTotal{ font-size: 36px !important; }
 }
 
+/* Tabs styles for login/register */
 .auth-tabs { display: flex; border-radius: 14px; background: var(--surface-3); padding: 6px; margin-bottom: 20px; border: 1px solid var(--line); }
 .auth-tab { flex: 1; text-align: center; padding: 12px; font-weight: 900; font-size: 16px; color: var(--muted); cursor: pointer; border-radius: 10px; transition: all 0.3s ease; }
 .auth-tab.active { background: #fff; color: var(--primary-800); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -520,29 +486,12 @@ select.input-base{ font-size: 19px !important; }
 .password-input-wrapper { position: relative; }
 .password-toggle { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; opacity: 0.6; }
 
-.account-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; margin-bottom: 20px; overflow: hidden; }
-.account-card-header { background: linear-gradient(135deg, #1E3A8A 0%, #0F2D5C 100%); color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-.account-card-body { padding: 15px; }
-.account-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #E2E8F0; }
-.account-row:last-child { border-bottom: none; }
-.account-row-label { font-size: 13px; color: #64748B; font-weight: 800; }
-.account-row-value { font-size: 15px; color: #0F172A; font-weight: 900; }
-.account-total-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.account-remaining-box { background: #0A1E3F; color: #fff; border-radius: 12px; padding: 15px; text-align: center; margin-top: 15px; }
-.account-remaining-box p { font-size: 12px; opacity: 0.8; margin-bottom: 5px; }
-.account-remaining-box h3 { font-size: 28px; font-weight: 900; margin: 0; }
-.payment-item { display: flex; justify-content: space-between; align-items: center; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
-.payment-item-date { font-size: 11px; color: #64748B; font-weight: 800; }
-.payment-item-amount { font-size: 14px; color: #0F172A; font-weight: 900; }
-.payment-item-delete { color: #EF4444; cursor: pointer; padding: 5px; }
 </style>
 </head>
 <body>
 
 <div class="main-card relative">
     <header class="app-header">
-        <img src="teacher.png" alt="بوابة المعلم" class="w-28 h-28 mx-auto mb-4 rounded-full border-4 border-white shadow-lg object-cover bg-white animate-float">
-
         <h1 class="app-title">منصة <span class="accent">احجزلى</span></h1>
         <p class="app-subtitle">بوابة المعلم - إدارة المجموعات والدروس</p>
         
@@ -553,7 +502,7 @@ select.input-base{ font-size: 19px !important; }
 
     <div class="flex-1 relative w-full">
 
-        <!-- واجهة المصادقة -->
+        <!-- واجهة المصادقة (تسجيل دخول / إنشاء حساب) -->
         <div id="authView" class="fade-enter-active">
             <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4 flex items-center gap-2">
                 <span>🔐</span> تسجيل الدخول للمعلمين
@@ -564,6 +513,7 @@ select.input-base{ font-size: 19px !important; }
                 <div class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب جديد</div>
             </div>
 
+            <!-- نموذج تسجيل الدخول -->
             <div id="loginFormContainer" class="auth-form-container active">
                 <form onsubmit="handleLogin(event)">
                     <label class="field-label">رقم الهاتف (11 رقم) <span class="text-rose-500">*</span></label>
@@ -577,31 +527,9 @@ select.input-base{ font-size: 19px !important; }
 
                     <button type="submit" class="btn-primary mt-4">دخول ➔</button>
                 </form>
-
-                <div class="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-4 shadow-sm">
-                    <div class="flex items-start gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-2xl flex-shrink-0 shadow-md">
-                            💬
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-[14px] font-black text-blue-900 mb-1 flex items-center gap-2">
-                                <span>📢</span>
-                                <span>للشكاوى والاقتراحات</span>
-                            </h3>
-                            <p class="text-[11.5px] font-bold text-blue-800 leading-relaxed mb-2">
-                                تواصل معنا مباشرة على البريد الإلكتروني:
-                            </p>
-                            <a href="mailto:mmoksh162@gmail.com?subject=شكوى/اقتراح - منصة احجزلى"
-                               class="inline-flex items-center gap-2 bg-white border-2 border-blue-300 hover:bg-blue-100 text-blue-800 font-black px-3 py-2 rounded-lg text-[12px] transition-all shadow-sm active:scale-95"
-                               dir="ltr">
-                                <span>📧</span>
-                                <span>mmoksh162@gmail.com</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
 
+            <!-- نموذج إنشاء الحساب -->
             <div id="registerFormContainer" class="auth-form-container">
                 <form onsubmit="handleRegister(event)">
                     <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl mb-4 text-sm font-bold text-blue-800">
@@ -684,14 +612,9 @@ select.input-base{ font-size: 19px !important; }
         </div>
 
         <div id="teacherStagesProfileView" class="fade-enter">
-            <div class="flex items-center gap-2 mb-4 flex-wrap">
-                <button onclick="logout()" class="btn-ghost !mb-0 text-sm !w-auto px-4 py-2 text-rose-600 border-rose-200 hover:bg-rose-50">
-                    🚪 تسجيل الخروج
-                </button>
-                <button onclick="deleteMyAccount()" class="btn-ghost !mb-0 text-sm !w-auto px-4 py-2 text-white bg-gradient-to-r from-red-600 to-red-700 border-red-700 hover:from-red-700 hover:to-red-800 shadow-md">
-                    🗑️ حذف حسابي نهائياً
-                </button>
-            </div>
+            <button onclick="logout()" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2 text-rose-600 border-rose-200 hover:bg-rose-50">
+                تسجيل الخروج
+            </button>
             <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4">اختيار المراحل والصفوف والمواد 📚 (2/4)</h2>
             
             <form id="teacherStagesForm" onsubmit="handleStagesProfileSubmit(event)">
@@ -718,6 +641,7 @@ select.input-base{ font-size: 19px !important; }
             <form id="addClassForm" onsubmit="handleAddClass(event)">
                 
                 <div class="bg-gradient-to-br from-slate-50 to-blue-50/40 p-4 rounded-2xl border-2 border-[var(--primary-200)] mb-4 shadow-sm">
+                    
                     <div id="classStageSelector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                     <p class="text-[11px] text-slate-500 font-bold mt-3 text-center">💡 اختر المرحلة لعرض الصفوف والمواد الخاصة بها فقط</p>
                 </div>
@@ -725,6 +649,7 @@ select.input-base{ font-size: 19px !important; }
                 <div id="classSubjectGradeGrid" class="hidden grade-subject-grid mb-4">
                     <div id="gradeSectionWrapper" class="section-box">
                         <div class="section-head">
+                            
                             <div class="section-title">الصف الدراسي <span class="text-rose-500">*</span></div>
                         </div>
                         <div id="classGradeContainer" class="flex flex-wrap gap-2"></div>
@@ -732,11 +657,18 @@ select.input-base{ font-size: 19px !important; }
 
                     <div id="subjectSectionWrapper" class="section-box">
                         <div class="section-head">
+                            
                             <div class="section-title">المادة الدراسية <span class="text-rose-500">*</span></div>
                         </div>
                         <div id="classSubjectContainer" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
+
+                <div class="flex items-center gap-2 mb-2 mt-4">
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">1</div>
+                    <label class="field-label !mb-0">اسم المجموعة <span class="text-rose-500">*</span></label>
+                </div>
+                <input type="text" id="groupName" required placeholder="مثال: مجموعة السبت، المجموعة الأولى..." class="input-base">
 
                 <label class="field-label">الفئة المسموح بها</label>
                 <div class="grid grid-cols-3 gap-2 mb-4">
@@ -803,20 +735,9 @@ select.input-base{ font-size: 19px !important; }
                         </div>
                     </div>
                 </div>
-
-                <div id="capacityContainer" class="mb-4">
-                    <label class="field-label">العدد المطلوب (الحد الأقصى للطلاب)</label>
-                    <input type="number" id="maxCapacity" required placeholder="مثال: 30" min="1" class="input-base text-center">
-                </div>
-
+                
                 <div class="flex items-center gap-2 mb-2 mt-4">
-                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">4</div>
-                    <label class="field-label !mb-0">اسم المجموعة <span class="text-rose-500">*</span></label>
-                </div>
-                <input type="text" id="groupName" required placeholder="مثال: مجموعة السبت، المجموعة الأولى..." class="input-base">
-
-                <div class="flex items-center gap-2 mb-2 mt-4">
-                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">5</div>
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">2</div>
                     <label class="field-label !mb-0" id="locationLabel">اسم السنتر / المستر <span class="text-rose-500">*</span></label>
                 </div>
                 <input type="text" id="centerName" required placeholder="مثال: سنتر الأوائل / مستر أحمد" class="input-base">
@@ -860,48 +781,7 @@ select.input-base{ font-size: 19px !important; }
                     <input type="hidden" id="teacherRadius"> 
                 </div>
 
-                <div class="flex items-center gap-2 mb-2 mt-4">
-                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">6</div>
-                    <label class="field-label !mb-0">أيام الأسبوع <span class="text-rose-500">*</span></label>
-                </div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
-                    <div class="days-selector" id="daysSelector"></div>
-                </div>
-
-                <div class="flex items-center gap-2 mb-2 mt-4">
-                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">7</div>
-                    <label class="field-label !mb-0">وقت الحصة <span class="text-rose-500">*</span></label>
-                </div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
-                    <div class="time-inputs-grid">
-                        <div>
-                            <p class="text-[11px] text-slate-600 font-black mb-2 text-center">⏰ وقت البداية</p>
-                            <input type="time" id="startTime" required class="time-input" value="16:00">
-                        </div>
-                        <div>
-                            <p class="text-[11px] text-slate-600 font-black mb-2 text-center">🏁 وقت النهاية</p>
-                            <input type="time" id="endTime" required class="time-input" value="18:00">
-                        </div>
-                    </div>
-                    <div class="duration-display mt-3" id="durationDisplay">
-                        ⏱️ مدة الحصة: -- ساعة
-                    </div>
-                    <div class="schedule-preview" id="schedulePreview">
-                        <span class="text-[11px] text-slate-400 font-black">لم يتم اختيار أيام بعد</span>
-                    </div>
-
-                    <div id="scheduleConflictWarning" class="schedule-conflict-warning">
-                        <div class="flex items-center gap-2 font-black mb-1 text-[13px]">
-                            <span class="text-lg">⚠️</span>
-                            <span>تعارض في المواعيد!</span>
-                        </div>
-                        <p class="text-[11px] mb-1 opacity-90">المواعيد المختارة تتعارض مع المجموعات التالية:</p>
-                        <ul id="conflictList"></ul>
-                        <p class="text-[10px] mt-2 opacity-80 font-bold">💡 قم بتعديل الأيام أو الوقت قبل الحفظ</p>
-                    </div>
-                </div>
-
-                <div class="mt-4 mb-4">
+                <div class="mb-4">
                     <label class="field-label flex items-center gap-2">
                         <span>📅</span>
                         <span>تقويم الشهر الذكي</span>
@@ -944,19 +824,60 @@ select.input-base{ font-size: 19px !important; }
                         </div>
                     </div>
                 </div>
+
+                <div class="flex items-center gap-2 mb-2 mt-4">
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">3</div>
+                    <label class="field-label !mb-0">أيام الأسبوع <span class="text-rose-500">*</span></label>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
+                    <div class="days-selector" id="daysSelector"></div>
+                </div>
+
+                <div class="flex items-center gap-2 mb-2 mt-4">
+                    <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">4</div>
+                    <label class="field-label !mb-0">وقت الحصة <span class="text-rose-500">*</span></label>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
+                    <div class="time-inputs-grid">
+                        <div>
+                            <p class="text-[11px] text-slate-600 font-black mb-2 text-center">⏰ وقت البداية</p>
+                            <input type="time" id="startTime" required class="time-input" value="16:00">
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-slate-600 font-black mb-2 text-center">🏁 وقت النهاية</p>
+                            <input type="time" id="endTime" required class="time-input" value="18:00">
+                        </div>
+                    </div>
+                    <div class="duration-display mt-3" id="durationDisplay">
+                        ⏱️ مدة الحصة: -- ساعة
+                    </div>
+                    <div class="schedule-preview" id="schedulePreview">
+                        <span class="text-[11px] text-slate-400 font-black">لم يتم اختيار أيام بعد</span>
+                    </div>
+
+                    <div id="scheduleConflictWarning" class="schedule-conflict-warning">
+                        <div class="flex items-center gap-2 font-black mb-1 text-[13px]">
+                            <span class="text-lg">⚠️</span>
+                            <span>تعارض في المواعيد!</span>
+                        </div>
+                        <p class="text-[11px] mb-1 opacity-90">المواعيد المختارة تتعارض مع المجموعات التالية:</p>
+                        <ul id="conflictList"></ul>
+                        <p class="text-[10px] mt-2 opacity-80 font-bold">💡 قم بتعديل الأيام أو الوقت قبل الحفظ</p>
+                    </div>
+                </div>
+
+                <div id="capacityContainer" class="mb-4">
+                    <label class="field-label">العدد المطلوب (الحد الأقصى للطلاب)</label>
+                    <input type="number" id="maxCapacity" required placeholder="مثال: 30" min="1" class="input-base text-center">
+                </div>
                 
                 <button type="submit" class="btn-primary mt-2">حفظ ونشر المجموعة ✔️</button>
             </form>
         </div>
 
         <div id="teacherDashboardView" class="fade-enter">
-            <div class="flex items-center gap-2 mb-4 flex-wrap">
-                <button onclick="navigateToStep('teacherStagesProfileView')" class="btn-ghost !mb-0 text-sm !w-auto px-4 py-2">⚙️ تعديل التخصص والمواد</button>
-                <button onclick="logout()" class="btn-ghost !mb-0 text-sm !w-auto px-4 py-2 text-rose-600 border-rose-200 hover:bg-rose-50">🚪 خروج</button>
-                <button onclick="deleteMyAccount()" class="btn-ghost !mb-0 text-sm !w-auto px-4 py-2 text-white bg-gradient-to-r from-red-600 to-red-700 border-red-700 hover:from-red-700 hover:to-red-800 shadow-md">
-                    🗑️ حذف حسابي
-                </button>
-            </div>
+            <button onclick="navigateToStep('teacherStagesProfileView')" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2">⚙️ تعديل التخصص والمواد</button>
+            <button onclick="logout()" class="btn-ghost mb-4 text-sm !w-auto px-4 py-2 text-rose-600 border-rose-200 hover:bg-rose-50 mr-2">خروج</button>
             
             <div class="teacher-info-card">
                 <h2 id="dashTeacherName" class="text-[18px] font-black">مرحباً، --</h2>
@@ -969,26 +890,6 @@ select.input-base{ font-size: 19px !important; }
                 </div>
                 <div id="dashGradesTags" class="flex flex-wrap gap-1 mt-2"></div>
                 <div id="dashSubjectsTags" class="flex flex-wrap gap-1 mt-2"></div>
-            </div>
-
-            <div class="mt-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-4 shadow-sm">
-                <div class="flex items-start gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-xl flex-shrink-0 shadow-md">
-                        💬
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-[13px] font-black text-blue-900 mb-1 flex items-center gap-2">
-                            <span>📢</span>
-                            <span>للشكاوى والاقتراحات</span>
-                        </h3>
-                        <a href="mailto:mmoksh162@gmail.com?subject=شكوى/اقتراح - منصة احجزلى"
-                           class="inline-flex items-center gap-2 bg-white border-2 border-blue-300 hover:bg-blue-100 text-blue-800 font-black px-3 py-2 rounded-lg text-[12px] transition-all shadow-sm active:scale-95"
-                           dir="ltr">
-                            <span>📧</span>
-                            <span>mmoksh162@gmail.com</span>
-                        </a>
-                    </div>
-                </div>
             </div>
 
             <div class="flex justify-between items-center mb-4 mt-6">
@@ -1011,17 +912,6 @@ select.input-base{ font-size: 19px !important; }
                 ➕ تسجيل حجز يدوياً (مباشر)
             </button>
 
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col items-center">
-                    <p class="text-[11px] text-slate-500 font-bold mb-1">إجمالي المحصل</p>
-                    <h3 class="text-xl font-black text-emerald-600" dir="ltr" id="groupTotalCollected">0 ج.م</h3>
-                </div>
-                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col items-center">
-                    <p class="text-[11px] text-slate-500 font-bold mb-1">إجمالي المتبقي</p>
-                    <h3 class="text-xl font-black text-rose-600" dir="ltr" id="groupTotalRemaining">0 ج.م</h3>
-                </div>
-            </div>
-            
             <div class="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm flex flex-col items-center">
                 <p class="text-[12px] text-slate-500 font-bold mb-1">إجمالي المحجوز في المجموعة</p>
                 <h3 class="text-3xl font-black text-[var(--primary-950)]" dir="ltr" id="groupDetailTotal">0 / 0</h3>
@@ -1037,17 +927,7 @@ select.input-base{ font-size: 19px !important; }
 <div id="mapModal" class="modal-overlay">
     <div class="modal-content">
         <h3 class="text-center font-black mb-3 text-[var(--primary-900)] text-lg">📍 حرّك الخريطة لتحديد الموقع</h3>
-        
-        <div class="relative">
-            <div id="leafletMap"></div>
-            
-            <button type="button" onclick="goToMyLocation()" id="myLocationBtn"
-                    class="absolute bottom-4 right-4 z-[999] bg-white text-[var(--primary-700)] border-2 border-[var(--primary-300)] shadow-lg rounded-full px-4 py-3 flex items-center gap-2 font-black text-[13px] hover:bg-[var(--primary-50)] active:scale-95 transition-all"
-                    style="box-shadow: 0 8px 20px -6px rgba(30,58,138,0.5);">
-                <span id="myLocationIcon" class="text-lg">📍</span>
-                <span id="myLocationText">موقعي الحالي</span>
-            </button>
-        </div>
+        <div id="leafletMap"></div>
         
         <div id="radiusControl" class="mt-3 hidden bg-slate-50 p-3 rounded-xl border border-slate-200">
             <label class="text-sm font-black text-slate-700 flex justify-between">
@@ -1097,207 +977,76 @@ select.input-base{ font-size: 19px !important; }
     </div>
 </div>
 
-<!-- ✅ Modal تعديل المجموعة -->
-<div id="editGroupModal" class="modal-overlay">
-    <div class="modal-content !h-auto">
-        <h3 class="text-center font-black mb-4 text-[var(--primary-900)] text-lg">✏️ تعديل بيانات المجموعة</h3>
-        <form onsubmit="handleEditGroupSubmit(event)">
-            <input type="hidden" id="editClassId">
+<!-- Modal المدفوعات والأرشيف -->
+<div id="paymentModal" class="modal-overlay">
+    <div class="modal-content !max-w-2xl !h-[90vh] flex flex-col">
+        <h3 class="text-center font-black mb-2 text-[var(--primary-900)] text-lg flex items-center justify-center gap-2"><span>💳</span> السجل المالي وأرشيف الدفع</h3>
+        <div id="paymentStudentName" class="text-center font-bold text-sm bg-[var(--primary-50)] text-[var(--primary-800)] border border-[var(--primary-200)] p-2 rounded-lg mb-4">...</div>
+
+        <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
             
-            <label class="field-label">اسم المجموعة</label>
-            <input type="text" id="editGroupName" required class="input-base">
-
-            <label class="field-label">الفئة المسموح بها</label>
-            <div class="grid grid-cols-3 gap-2 mb-4">
-                <label>
-                    <input type="radio" name="editTargetGender" value="both" checked class="hidden">
-                    <div class="option-btn">👫 ولاد وبنات</div>
-                </label>
-                <label>
-                    <input type="radio" name="editTargetGender" value="boys" class="hidden">
-                    <div class="option-btn">👦 ولاد فقط</div>
-                </label>
-                <label>
-                    <input type="radio" name="editTargetGender" value="girls" class="hidden">
-                    <div class="option-btn">👧 بنات فقط</div>
-                </label>
-            </div>
-
-            <label class="field-label">مكان ونوع الدرس</label>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
-                <label>
-                    <input type="radio" name="editClassType" value="center" class="hidden" onchange="updateEditLocationPlaceholder()">
-                    <div class="type-btn flex flex-col items-center justify-center">
-                        <span class="text-xl mb-1">🏫</span><span>مجموعة بسنتر</span>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-5 shadow-sm">
+                <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1"><span>➕</span> تسجيل دفعة جديدة</h4>
+                <form onsubmit="saveStudentPayment(event)">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="field-label !text-xs">نوع الدفع</label>
+                            <select id="payType" required class="input-base !mb-0 !p-2.5 !text-sm" onchange="handlePayTypeChange()">
+                                <option value="" disabled selected>اختر النوع...</option>
+                                <option value="session">بالحصة</option>
+                                <option value="week">بالأسبوع</option>
+                                <option value="month">بالشهر</option>
+                                <option value="term1">الترم الأول</option>
+                                <option value="term2">الترم الثاني</option>
+                                <option value="both_terms">الترمين معاً (العام كاملاً)</option>
+                            </select>
+                        </div>
+                        <div id="payDetailsContainer" class="hidden">
+                            <label class="field-label !text-xs" id="payDetailsLabel">التفاصيل</label>
+                            <input type="number" id="payDetailsNum" class="input-base !mb-0 !p-2.5 !text-sm hidden" min="1" placeholder="العدد...">
+                            <select id="payDetailsMonth" class="input-base !mb-0 !p-2.5 !text-sm hidden">
+                                <option value="أغسطس">أغسطس</option>
+                                <option value="سبتمبر">سبتمبر</option>
+                                <option value="أكتوبر">أكتوبر</option>
+                                <option value="نوفمبر">نوفمبر</option>
+                                <option value="ديسمبر">ديسمبر</option>
+                                <option value="يناير">يناير</option>
+                                <option value="فبراير">فبراير</option>
+                                <option value="مارس">مارس</option>
+                                <option value="أبريل">أبريل</option>
+                                <option value="مايو">مايو</option>
+                            </select>
+                        </div>
                     </div>
-                </label>
-                <label>
-                    <input type="radio" name="editClassType" value="teacher_home" class="hidden" onchange="updateEditLocationPlaceholder()">
-                    <div class="type-btn flex flex-col items-center justify-center">
-                        <span class="text-xl mb-1">🏡</span><span>بيت المستر</span>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label class="field-label !text-xs">المبلغ المدفوع (ج.م)</label>
+                            <input type="number" id="payAmount" required placeholder="مثال: 150" min="0" class="input-base !mb-0 !p-2.5 !text-sm text-left" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="field-label !text-xs">ملاحظات (اختياري)</label>
+                            <input type="text" id="payNotes" placeholder="أي ملاحظات إضافية..." class="input-base !mb-0 !p-2.5 !text-sm">
+                        </div>
                     </div>
-                </label>
-                <label>
-                    <input type="radio" name="editClassType" value="student_home" class="hidden" onchange="updateEditLocationPlaceholder()">
-                    <div class="type-btn flex flex-col items-center justify-center">
-                        <span class="text-xl mb-1">🚗</span><span>يروح للطالب</span>
-                    </div>
-                </label>
+
+                    <button type="submit" class="btn-primary !mb-0 py-2.5 text-sm w-full">حفظ في الأرشيف 💾</button>
+                </form>
             </div>
 
-            <div class="flex items-center gap-2 mb-2 mt-4">
-                <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">1</div>
-                <label class="field-label !mb-0" id="editLocationLabel">اسم السنتر / المستر <span class="text-rose-500">*</span></label>
-            </div>
-            <input type="text" id="editCenterName" required placeholder="مثال: سنتر الأوائل / مستر أحمد" class="input-base">
-
-            <label class="field-label">أيام الأسبوع</label>
-            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 mb-4">
-                <div class="days-selector" id="editDaysSelector"></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div>
-                    <label class="field-label !text-xs">وقت البداية</label>
-                    <input type="time" id="editStartTime" required class="input-base !mb-0 text-center">
-                </div>
-                <div>
-                    <label class="field-label !text-xs">وقت النهاية</label>
-                    <input type="time" id="editEndTime" required class="input-base !mb-0 text-center">
-                </div>
-            </div>
-
-            <div id="editCapacityContainer" class="mb-4">
-                <label class="field-label">العدد المطلوب (الحد الأقصى للطلاب)</label>
-                <input type="number" id="editMaxCapacity" required min="1" class="input-base text-center">
-            </div>
-
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-4 flex items-start gap-2">
-                <span class="text-lg">🔒</span>
-                <div class="flex-1">
-                    <p class="text-[12px] text-blue-900 font-black mb-1">الصف والمادة والموقع غير قابلين للتعديل</p>
-                    <p class="text-[11px] text-blue-800 font-bold leading-relaxed">
-                        لو محتاج تغيّر الصف أو المادة أو الموقع، لازم تعمل مجموعة جديدة.
-                    </p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 mt-4">
-                <button type="button" onclick="closeEditGroupModal()" class="btn-ghost !mb-0 py-3 bg-slate-100">إلغاء</button>
-                <button type="submit" class="btn-primary !mb-0 py-3 border-none shadow-md">حفظ التعديلات ✔️</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- ✅ Modal كارت الحساب المالي للطالب -->
-<div id="studentAccountModal" class="modal-overlay">
-    <div class="modal-content !max-w-lg !h-[95vh] flex flex-col p-0 overflow-hidden">
-        <div class="account-card-header">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl font-black">
-                    <span id="accStudentIcon">👤</span>
-                </div>
-                <div>
-                    <h3 class="font-black text-lg" id="accStudentName">اسم الطالب</h3>
-                    <p class="text-[11px] opacity-80" dir="ltr" id="accStudentPhone">01xxxxxxxxx</p>
-                </div>
-            </div>
-            <button onclick="closeStudentAccountModal()" class="text-white/70 hover:text-white bg-white/10 p-2 rounded-lg">
-                ✖
-            </button>
-        </div>
-
-        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50">
-            <div class="account-total-box">
-                <span class="account-row-label">المبلغ الإجمالي المتفق عليه</span>
-                <div class="flex items-center gap-2">
-                    <input type="number" id="accTotalFees" class="w-24 text-center font-black text-lg bg-transparent border-b-2 border-slate-300 outline-none focus:border-[var(--primary-600)]" placeholder="0" min="0">
-                    <span class="font-black text-slate-700">ج.م</span>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1">
-                    <span>📋</span> سجل الدفعات (الأقساط)
-                </h4>
-                <div id="accPaymentsList" class="space-y-2">
-                </div>
-            </div>
-
-            <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm mb-4">
-                <h4 class="font-black text-[var(--primary-800)] mb-2 text-xs">➕ إضافة دفعة جديدة</h4>
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <div>
-                        <label class="text-[10px] text-slate-500 font-bold">المبلغ (ج.م)</label>
-                        <input type="number" id="accNewPaymentAmount" class="input-base !mb-0 !p-2 !text-sm text-center" placeholder="0" min="1">
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-slate-500 font-bold">التاريخ</label>
-                        <input type="date" id="accNewPaymentDate" class="input-base !mb-0 !p-2 !text-sm text-center">
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <label class="text-[10px] text-slate-500 font-bold">ملاحظات (اختياري)</label>
-                    <input type="text" id="accNewPaymentNote" class="input-base !mb-0 !p-2 !text-sm" placeholder="مثال: الدفعة الأولى...">
-                </div>
-                <button type="button" onclick="addAccountPayment()" class="w-full bg-[var(--primary-600)] text-white font-black py-2 rounded-lg text-xs hover:bg-[var(--primary-700)] transition-colors">
-                    إضافة الدفعة
-                </button>
-            </div>
-
-            <div class="account-remaining-box">
-                <p>المتبقي</p>
-                <h3 id="accRemainingAmount">0 ج.م</h3>
+            <div>
+                <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1"><span>🗂️</span> تقرير أرشيف المدفوعات السابقة</h4>
+                <div id="paymentArchiveContainer" class="space-y-2"></div>
             </div>
         </div>
 
-        <div class="p-4 bg-white border-t border-slate-200 flex gap-2">
-            <button onclick="saveStudentAccount()" class="flex-1 bg-[#0F2D5C] text-white font-black py-3 rounded-xl shadow-md text-sm hover:bg-[#1E3A8A] transition-colors flex items-center justify-center gap-2">
-                <span>💾</span> حفظ الحساب
-            </button>
-            <button onclick="sendWhatsAppInvoice()" class="flex-1 bg-[#25D366] text-white font-black py-3 rounded-xl shadow-md text-sm hover:bg-[#128C7E] transition-colors flex items-center justify-center gap-2">
-                <span>💬</span> واتس فاتورة
-            </button>
+        <div class="mt-4 pt-3 border-t border-slate-200">
+            <button type="button" onclick="closePaymentModal()" class="btn-ghost w-full !mb-0 py-3 bg-slate-100">إغلاق</button>
         </div>
     </div>
 </div>
 
 <script>
-    // ✅ نظام صوت الضغط - يعمل على جميع الأزرار والروابط
-    let clickAudioCtx = null;
-    function playClickSound() {
-        try {
-            if (!clickAudioCtx) {
-                clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (clickAudioCtx.state === 'suspended') {
-                clickAudioCtx.resume();
-            }
-            const osc = clickAudioCtx.createOscillator();
-            const gain = clickAudioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(clickAudioCtx.destination);
-            
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(800, clickAudioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(400, clickAudioCtx.currentTime + 0.08);
-            
-            gain.gain.setValueAtTime(0.15, clickAudioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, clickAudioCtx.currentTime + 0.08);
-            
-            osc.start(clickAudioCtx.currentTime);
-            osc.stop(clickAudioCtx.currentTime + 0.08);
-        } catch(e) { }
-    }
-
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('button, a, .day-chip, .acc-chip, .stage-card, .option-btn, .type-btn, .filter-chip, .role-card, .calendar-cell, .calendar-nav-btn, .add-class-subject-chip, .quick-radius-btn, .filter-chip, input[type="radio"], input[type="checkbox"], input[type="range"], .banner-group-item, .payment-item-delete');
-        if (target) {
-            playClickSound();
-        }
-    }, true);
-
     const WEEK_DAYS = [
         { key: 'sat', name: 'السبت', emoji: '🌙' },
         { key: 'sun', name: 'الأحد', emoji: '☀️' },
@@ -1308,17 +1057,15 @@ select.input-base{ font-size: 19px !important; }
         { key: 'fri', name: 'الجمعة', emoji: '🌟' }
     ];
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A';
-
     let selectedDays = [];
     let classesDB = []; 
-    let allTeachersDB = {}; 
+    let allTeachersDB = {}; // لتخزين حسابات المعلمين من Firebase
     let isFirebaseLoaded = false;
     let currentTeacherProfile = null;
-    let currentOpenedGroupId = null;
-    let currentAccountStudentId = null;
 
+    // دالة لجلب المجموعات وحسابات المعلمين من Firebase
     function fetchClassesFromFirebase() {
+        // جلب المجموعات
         db.ref('classes').on('value', (snapshot) => {
             const data = snapshot.val();
             classesDB = data ? data : [];
@@ -1331,36 +1078,22 @@ select.input-base{ font-size: 19px !important; }
             }
         });
 
+        // جلب حسابات المعلمين
         db.ref('teachers').on('value', (snapshot) => {
             const data = snapshot.val();
             allTeachersDB = data ? data : {};
         });
     }
 
-    // ✅ دالة رسم أيام الأسبوع مع تلوين المتعارض
     function renderDaysSelector() {
         const container = document.getElementById('daysSelector');
         if(!container) return;
-
-        const startTime = document.getElementById('startTime')?.value;
-        const endTime = document.getElementById('endTime')?.value;
-        let conflictDays = [];
-        
-        if (selectedDays.length > 0 && startTime && endTime 
-            && timeToMinutes(endTime) > timeToMinutes(startTime)
-            && currentTeacherProfile) {
-            selectedDays.forEach(dayKey => {
-                const dayConflicts = checkScheduleConflicts([dayKey], startTime, endTime);
-                if (dayConflicts.length > 0) conflictDays.push(dayKey);
-            });
-        }
         
         container.innerHTML = WEEK_DAYS.map(day => {
             const isActive = selectedDays.includes(day.key);
-            const hasConflict = conflictDays.includes(day.key);
-            return `<div class="day-chip ${isActive ? 'active' : ''} ${hasConflict ? 'conflict' : ''}" onclick="toggleDay('${day.key}')">
+            return `<div class="day-chip ${isActive ? 'active' : ''}" onclick="toggleDay('${day.key}')">
                 <span class="day-emoji">${day.emoji}</span>
-                <span>${day.name}${hasConflict ? ' ⚠️' : ''}</span>
+                <span>${day.name}</span>
             </div>`;
         }).join('');
     }
@@ -1372,10 +1105,8 @@ select.input-base{ font-size: 19px !important; }
         renderDaysSelector();
         updateSchedulePreview();
         renderSmartCalendar();
-        updateScheduleConflictWarning();
     }
 
-    // ✅ دالة معاينة المواعيد مع تلوين المتعارض بالأحمر
     function updateSchedulePreview() {
         const preview = document.getElementById('schedulePreview');
         const startTime = document.getElementById('startTime').value;
@@ -1390,21 +1121,9 @@ select.input-base{ font-size: 19px !important; }
         const orderedDays = WEEK_DAYS.filter(d => selectedDays.includes(d.key));
         const timeText = (startTime && endTime) ? ` (${formatTime(startTime)} - ${formatTime(endTime)})` : '';
         
-        // ✅ حساب الأيام المتعارضة
-        let conflictDays = [];
-        if (startTime && endTime 
-            && timeToMinutes(endTime) > timeToMinutes(startTime)
-            && currentTeacherProfile) {
-            selectedDays.forEach(dayKey => {
-                const dayConflicts = checkScheduleConflicts([dayKey], startTime, endTime);
-                if (dayConflicts.length > 0) conflictDays.push(dayKey);
-            });
-        }
-        
-        preview.innerHTML = orderedDays.map(d => {
-            const hasConflict = conflictDays.includes(d.key);
-            return `<span class="schedule-tag ${hasConflict ? 'schedule-tag-conflict' : ''}">📅 ${d.name}${timeText}${hasConflict ? ' ⚠️' : ''}</span>`;
-        }).join('');
+        preview.innerHTML = orderedDays.map(d => 
+            `<span class="schedule-tag">📅 ${d.name}${timeText}</span>`
+        ).join('');
         
         updateDuration();
     }
@@ -1511,280 +1230,72 @@ select.input-base{ font-size: 19px !important; }
         else document.body.classList.remove('theme-miss');
     }
 
-    // ============ Mapbox Setup ============
-    let mapInstance = null;
-    let mapMarker = null;
+    let mapInstance = null, mapMarker = null, mapCircle = null;
     let tempLat = null, tempLng = null, tempRadius = 2000; 
-    let mapMode = 'add';
-    let editingClassType = 'center';
 
     function openMapModal() {
-        mapMode = 'add';
-        editingClassType = document.querySelector('input[name="classType"]:checked')?.value || 'center';
-        const existLat = document.getElementById('teacherLat').value;
-        const existLng = document.getElementById('teacherLng').value;
-        if (existLat && existLng) {
-            tempLat = parseFloat(existLat);
-            tempLng = parseFloat(existLng);
-        } else {
-            tempLat = null;
-            tempLng = null;
-        }
-        const existRad = document.getElementById('teacherRadius').value;
-        tempRadius = existRad ? parseFloat(existRad) : 2000;
-        document.getElementById('radiusSlider').value = tempRadius / 1000;
-        document.getElementById('radiusValueDisplay').innerText = (tempRadius / 1000) + ' كم';
-        _showMapWithType();
-    }
-
-    function _showMapWithType() {
         document.getElementById('mapModal').style.display = 'flex';
-        const type = editingClassType;
+        const type = document.querySelector('input[name="classType"]:checked').value;
         const radiusControl = document.getElementById('radiusControl');
         
         if (type === 'student_home') radiusControl.classList.remove('hidden');
         else radiusControl.classList.add('hidden');
 
         if (!mapInstance) {
-            const initLat = tempLat || 31.0409;
-            const initLng = tempLng || 31.3785;
+            let initLat = 31.0409, initLng = 31.3785;
+            mapInstance = L.map('leafletMap').setView([initLat, initLng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(mapInstance);
+            mapMarker = L.marker([initLat, initLng], { draggable: true }).addTo(mapInstance);
+            mapCircle = L.circle([initLat, initLng], { color: '#2563EB', fillColor: '#3B82F6', fillOpacity: 0.2, radius: tempRadius });
+
+            mapInstance.on('click', e => { 
+                mapMarker.setLatLng(e.latlng); 
+                tempLat = e.latlng.lat; tempLng = e.latlng.lng; 
+                if (type === 'student_home') mapCircle.setLatLng(e.latlng);
+            });
             
-            mapInstance = new mapboxgl.Map({
-                container: 'leafletMap',
-                style: 'mapbox://styles/mapbox/streets-v12',
-                center: [initLng, initLat],
-                zoom: 13,
-                attributionControl: false
+            mapMarker.on('dragend', () => { 
+                let pos = mapMarker.getLatLng(); 
+                tempLat = pos.lat; tempLng = pos.lng; 
+                if (type === 'student_home') mapCircle.setLatLng(pos);
             });
-
-            mapInstance.addControl(new mapboxgl.NavigationControl(), 'top-left');
             
-            mapInstance.addControl(new mapboxgl.GeolocateControl({
-                positionOptions: { enableHighAccuracy: true },
-                trackUserLocation: false,
-                showUserHeading: true
-            }), 'top-right');
-
-            mapMarker = new mapboxgl.Marker({ 
-                draggable: true, 
-                color: '#2563EB' 
-            })
-            .setLngLat([initLng, initLat])
-            .addTo(mapInstance);
-
-            mapMarker.on('dragend', () => {
-                const lngLat = mapMarker.getLngLat();
-                tempLat = lngLat.lat;
-                tempLng = lngLat.lng;
-                updateCircleOnMap();
-            });
-
-            mapInstance.on('click', (e) => {
-                tempLat = e.lngLat.lat;
-                tempLng = e.lngLat.lng;
-                mapMarker.setLngLat([tempLng, tempLat]);
-                updateCircleOnMap();
-            });
-
-            mapInstance.on('load', () => {
-                mapInstance.addSource('radius-circle', {
-                    type: 'geojson',
-                    data: createCircleGeoJSON(initLat, initLng, tempRadius)
-                });
-
-                mapInstance.addLayer({
-                    id: 'radius-circle-fill',
-                    type: 'fill',
-                    source: 'radius-circle',
-                    paint: {
-                        'fill-color': '#3B82F6',
-                        'fill-opacity': 0.2
-                    }
-                });
-
-                mapInstance.addLayer({
-                    id: 'radius-circle-stroke',
-                    type: 'line',
-                    source: 'radius-circle',
-                    paint: {
-                        'line-color': '#2563EB',
-                        'line-width': 2
-                    }
-                });
-
-                updateCircleOnMap();
-            });
-
-            if (!tempLat && navigator.geolocation) {
+            if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
-                    const lat = pos.coords.latitude, lng = pos.coords.longitude;
-                    mapInstance.flyTo({ center: [lng, lat], zoom: 14 });
-                    mapMarker.setLngLat([lng, lat]);
+                    let lat = pos.coords.latitude, lng = pos.coords.longitude;
+                    mapInstance.setView([lat, lng], 14); 
+                    mapMarker.setLatLng([lat, lng]); 
+                    mapCircle.setLatLng([lat, lng]);
                     tempLat = lat; tempLng = lng;
-                    updateCircleOnMap();
                 }, () => {}, { enableHighAccuracy: true });
             }
+        }
+        
+        if (type === 'student_home') {
+            if (!mapInstance.hasLayer(mapCircle)) mapInstance.addLayer(mapCircle);
+            if (tempLat && tempLng) mapCircle.setLatLng([tempLat, tempLng]);
+            mapCircle.setRadius(tempRadius);
+            if (mapCircle.getBounds().isValid()) setTimeout(() => mapInstance.fitBounds(mapCircle.getBounds(), {padding: [20,20]}), 400);
         } else {
-            if (tempLat && tempLng) {
-                mapInstance.flyTo({ center: [tempLng, tempLat], zoom: 14 });
-                mapMarker.setLngLat([tempLng, tempLat]);
-                updateCircleOnMap();
-            }
+            if (mapInstance.hasLayer(mapCircle)) mapInstance.removeLayer(mapCircle);
         }
 
-        setTimeout(() => {
-            if (mapInstance) mapInstance.resize();
-        }, 300);
-    }
-
-    function createCircleGeoJSON(lat, lng, radiusMeters, steps = 64) {
-        const coords = [];
-        const earthRadius = 6378137;
-        const latRad = lat * Math.PI / 180;
-
-        for (let i = 0; i < steps; i++) {
-            const angle = (i / steps) * 2 * Math.PI;
-            const dx = radiusMeters * Math.cos(angle);
-            const dy = radiusMeters * Math.sin(angle);
-
-            const newLat = lat + (dy / earthRadius) * (180 / Math.PI);
-            const newLng = lng + (dx / (earthRadius * Math.cos(latRad))) * (180 / Math.PI);
-
-            coords.push([newLng, newLat]);
-        }
-        coords.push(coords[0]);
-
-        return {
-            type: 'Feature',
-            geometry: {
-                type: 'Polygon',
-                coordinates: [coords]
-            }
-        };
-    }
-
-    function updateCircleOnMap() {
-        if (!mapInstance || !tempLat || !tempLng) return;
-
-        const source = mapInstance.getSource('radius-circle');
-        if (source) {
-            source.setData(createCircleGeoJSON(tempLat, tempLng, tempRadius));
-        }
-
-        if (editingClassType === 'student_home') {
-            if (mapInstance.getLayer('radius-circle-fill')) {
-                mapInstance.setLayoutProperty('radius-circle-fill', 'visibility', 'visible');
-                mapInstance.setLayoutProperty('radius-circle-stroke', 'visibility', 'visible');
-            }
-        } else {
-            if (mapInstance.getLayer('radius-circle-fill')) {
-                mapInstance.setLayoutProperty('radius-circle-fill', 'visibility', 'none');
-                mapInstance.setLayoutProperty('radius-circle-stroke', 'visibility', 'none');
-            }
-        }
+        setTimeout(() => { mapInstance.invalidateSize(); }, 300);
     }
 
     function updateCircleRadius(km) {
         tempRadius = km * 1000;
         document.getElementById('radiusValueDisplay').innerText = km + ' كم';
-        updateCircleOnMap();
+        if (mapCircle) mapCircle.setRadius(tempRadius);
     }
 
-    let isLocating = false;
-
-    function goToMyLocation() {
-        if (isLocating) return;
-
-        const btn = document.getElementById('myLocationBtn');
-        const icon = document.getElementById('myLocationIcon');
-        const text = document.getElementById('myLocationText');
-
-        if (!navigator.geolocation) {
-            alert('⚠️ متصفحك لا يدعم خدمة تحديد الموقع.');
-            return;
-        }
-
-        isLocating = true;
-        btn.classList.add('opacity-70', 'cursor-wait');
-        icon.innerText = '⏳';
-        icon.classList.add('animate-spin');
-        text.innerText = 'جاري تحديد موقعك...';
-
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-
-                tempLat = lat;
-                tempLng = lng;
-
-                mapInstance.flyTo({
-                    center: [lng, lat],
-                    zoom: 16,
-                    speed: 1.5,
-                    essential: true
-                });
-
-                mapMarker.setLngLat([lng, lat]);
-                updateCircleOnMap();
-
-                icon.innerText = '✅';
-                icon.classList.remove('animate-spin');
-                text.innerText = 'تم تحديد موقعك';
-                btn.classList.remove('opacity-70', 'cursor-wait');
-                btn.classList.add('!bg-emerald-50', '!border-emerald-400', '!text-emerald-700');
-
-                setTimeout(() => {
-                    icon.innerText = '📍';
-                    text.innerText = 'موقعي الحالي';
-                    btn.classList.remove('!bg-emerald-50', '!border-emerald-400', '!text-emerald-700');
-                    isLocating = false;
-                }, 2500);
-            },
-            (err) => {
-                let errorMsg = '⚠️ تعذر تحديد موقعك.';
-                
-                if (err.code === 1) {
-                    errorMsg = '⚠️ تم رفض إذن الوصول للموقع.\n\nيرجى السماح بالوصول للموقع من إعدادات المتصفح، ثم إعادة المحاولة.';
-                } else if (err.code === 2) {
-                    errorMsg = '⚠️ الموقع غير متاح حالياً.\n\nتأكد من تشغيل GPS أو الشبكة.';
-                } else if (err.code === 3) {
-                    errorMsg = '⏱️ انتهت مدة المحاولة.\n\nحاول مرة أخرى.';
-                }
-
-                alert(errorMsg);
-
-                icon.innerText = '❌';
-                icon.classList.remove('animate-spin');
-                text.innerText = 'فشل التحديد';
-                btn.classList.remove('opacity-70', 'cursor-wait');
-                btn.classList.add('!bg-rose-50', '!border-rose-400', '!text-rose-700');
-
-                setTimeout(() => {
-                    icon.innerText = '📍';
-                    text.innerText = 'موقعي الحالي';
-                    btn.classList.remove('!bg-rose-50', '!border-rose-400', '!text-rose-700');
-                    isLocating = false;
-                }, 2500);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-            }
-        );
-    }
-
-    function closeMapModal() { 
-        document.getElementById('mapModal').style.display = 'none'; 
-    }
+    function closeMapModal() { document.getElementById('mapModal').style.display = 'none'; }
     
     function confirmLocation() {
         if(!tempLat || !tempLng) { 
-            const pos = mapMarker.getLngLat(); 
+            let pos = mapMarker.getLatLng(); 
             tempLat = pos.lat; tempLng = pos.lng; 
         }
-
         document.getElementById('teacherLat').value = tempLat; 
         document.getElementById('teacherLng').value = tempLng;
         document.getElementById('teacherRadius').value = tempRadius; 
@@ -1815,7 +1326,9 @@ select.input-base{ font-size: 19px !important; }
                         if(data.address.neighbourhood) parts.push(data.address.neighbourhood);
                         if(data.address.suburb) parts.push(data.address.suburb);
                         if(data.address.city || data.address.town || data.address.village) parts.push(data.address.city || data.address.town || data.address.village);
-                        if(parts.length > 0) addressName = parts.join('، '); 
+                        if(parts.length > 0) {
+                            addressName = parts.join('، '); 
+                        }
                     }
                     addressInput.value = addressName;
                 } else {
@@ -1828,6 +1341,7 @@ select.input-base{ font-size: 19px !important; }
             .catch(err => {
                 const addressInput = document.getElementById('centerAddress');
                 addressInput.value = `📍 ${tempLat.toFixed(5)}, ${tempLng.toFixed(5)}`;
+                
                 status.innerHTML = '<span>✅</span><span>تم تحديد الموقع (تعذر جلب اسم الشارع)</span>'; 
                 status.className = "text-xs text-orange-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
             });
@@ -1896,42 +1410,7 @@ select.input-base{ font-size: 19px !important; }
         }
     }
 
-    function updateEditLocationPlaceholder() {
-        const type = document.querySelector('input[name="editClassType"]:checked')?.value || 'center';
-        const label = document.getElementById('editLocationLabel');
-        const input = document.getElementById('editCenterName');
-        
-        const capacityContainer = document.getElementById('editCapacityContainer');
-        const maxCapacityInput = document.getElementById('editMaxCapacity');
-
-        editingClassType = type;
-
-        if (type === 'student_home') {
-            if (capacityContainer) capacityContainer.style.display = 'none';
-            if (maxCapacityInput) {
-                maxCapacityInput.removeAttribute('required');
-                if (!maxCapacityInput.value || maxCapacityInput.value == 0) maxCapacityInput.value = 1;
-            }
-        } else {
-            if (capacityContainer) capacityContainer.style.display = 'block';
-            if (maxCapacityInput) {
-                maxCapacityInput.setAttribute('required', 'true');
-                if (maxCapacityInput.value == 1) maxCapacityInput.value = '';
-            }
-        }
-
-        if (type === 'center') {
-            label.innerHTML = 'اسم السنتر / المستر <span class="text-rose-500">*</span>';
-            input.placeholder = 'مثال: سنتر الأوائل / مستر أحمد';
-        } else if (type === 'teacher_home') {
-            label.innerHTML = 'اسم المستر / منزله <span class="text-rose-500">*</span>';
-            input.placeholder = 'مثال: مستر أحمد - حي الجامعة';
-        } else if (type === 'student_home') {
-            label.innerHTML = 'اسم المستر <span class="text-rose-500">*</span>';
-            input.placeholder = 'مثال: مستر أحمد';
-        }
-    }
-
+    // ====== دوال تسجيل الدخول وإنشاء الحساب الجديدة ======
     function switchAuthTab(tab) {
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.auth-form-container').forEach(c => c.classList.remove('active'));
@@ -1969,22 +1448,20 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
+        // فحص ما إذا كان الرقم مسجل مسبقاً
         if (allTeachersDB[phone]) {
             alert('⚠️ هذا الرقم مسجل به حساب معلم بالفعل! برجاء تسجيل الدخول.');
             switchAuthTab('login');
             return;
         }
 
-        selectedGrades = [];
-        selectedSubjects = [];
-        selectedClassStage = null;
-        
+        // إنشاء الحساب الجديد في Firebase
         currentTeacherProfile = {
             teacherTitle: title,
             teacherName: name,
             teacherAge: age,
             phone: phone,
-            password: pass1,
+            password: pass1, // ملاحظة: في التطبيقات الحقيقية يتم تشفير كلمة المرور، لكننا نحفظها كما هي للتبسيط
             gov: gov,
             grades: [],
             subjects: [],
@@ -1994,11 +1471,12 @@ select.input-base{ font-size: 19px !important; }
         allTeachersDB[phone] = currentTeacherProfile;
         db.ref('teachers/' + phone).set(currentTeacherProfile);
         
+        // حفظ جلسة الدخول في الهاتف
         localStorage.setItem('logged_in_teacher_phone', phone);
         
         alert('🎉 تم إنشاء حسابك بنجاح!');
         applyTheme(title);
-        showView('teacherStagesProfileView');
+        showView('teacherStagesProfileView'); // التوجيه لصفحة اختيار المواد (التخصص)
     }
 
     function handleLogin(e) {
@@ -2016,10 +1494,12 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
+        // تسجيل الدخول ناجح
         currentTeacherProfile = allTeachersDB[phone];
         localStorage.setItem('logged_in_teacher_phone', phone);
         applyTheme(currentTeacherProfile.teacherTitle);
         
+        // إذا لم يكن المعلم قد اختار مواده بعد
         if (!currentTeacherProfile.subjects || currentTeacherProfile.subjects.length === 0) {
             showView('teacherStagesProfileView');
         } else {
@@ -2030,100 +1510,13 @@ select.input-base{ font-size: 19px !important; }
     function logout() {
         if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
             currentTeacherProfile = null;
-            selectedGrades = [];
-            selectedSubjects = [];
-            selectedClassStage = null;
-            selectedDays = [];
-            openAccordionStage = null;
             localStorage.removeItem('logged_in_teacher_phone');
             document.getElementById('loginFormContainer').reset?.();
             document.getElementById('registerFormContainer').reset?.();
             showView('authView');
         }
     }
-
-    function deleteMyAccount() {
-        if (!currentTeacherProfile || !currentTeacherProfile.phone) {
-            alert('⚠️ لا يوجد حساب مسجل لحذفه.');
-            return;
-        }
-
-        const teacherPhone = currentTeacherProfile.phone;
-        const teacherName = `${currentTeacherProfile.teacherTitle} ${currentTeacherProfile.teacherName}`;
-
-        const teacherClasses = classesDB.filter(c => c.phone === teacherPhone);
-        const classesCount = teacherClasses.length;
-
-        let totalStudents = 0;
-        teacherClasses.forEach(c => {
-            if (c.students && c.students.length > 0) {
-                totalStudents += c.students.length;
-            }
-        });
-
-        let warningMsg = '⚠️ تحذير خطير جداً ⚠️\n\n';
-        warningMsg += `أنت على وشك حذف حسابك نهائياً:\n\n`;
-        warningMsg += `👤 المعلم: ${teacherName}\n`;
-        warningMsg += `📞 الهاتف: ${teacherPhone}\n\n`;
-        warningMsg += `📊 البيانات التي سيتم حذفها:\n`;
-        warningMsg += `• عدد المجموعات: ${classesCount}\n`;
-        warningMsg += `• عدد الطلاب المسجلين: ${totalStudents}\n`;
-        warningMsg += `• كل البيانات المالية والدفعات\n`;
-        warningMsg += `• كل سجل الحضور والمواعيد\n\n`;
-        warningMsg += `🚨 لا يمكن التراجع عن هذه العملية أبداً! 🚨\n\n`;
-        warningMsg += `هل أنت متأكد 100% أنك تريد حذف حسابك نهائياً؟`;
-
-        if (!confirm(warningMsg)) {
-            return;
-        }
-
-        const confirmWord = prompt(
-            '🔒 للتأكيد النهائي، اكتب كلمة "حذف" بالإنجليزي أو العربي:\n\n' +
-            '(اكتب: DELETE أو حذف)'
-        );
-
-        if (!confirmWord) {
-            alert('✅ تم إلغاء عملية الحذف.');
-            return;
-        }
-
-        const normalizedWord = confirmWord.trim().toLowerCase();
-        if (normalizedWord !== 'delete' && normalizedWord !== 'حذف') {
-            alert('❌ كلمة التأكيد غير صحيحة. تم إلغاء عملية الحذف.');
-            return;
-        }
-
-        try {
-            const remainingClasses = classesDB.filter(c => c.phone !== teacherPhone);
-            db.ref('classes').set(remainingClasses);
-
-            db.ref('teachers/' + teacherPhone).remove();
-
-            localStorage.removeItem('logged_in_teacher_phone');
-
-            currentTeacherProfile = null;
-            selectedGrades = [];
-            selectedSubjects = [];
-            selectedClassStage = null;
-            selectedDays = [];
-            openAccordionStage = null;
-            currentOpenedGroupId = null;
-            currentAccountStudentId = null;
-
-            alert(
-                '✅ تم حذف حسابك بنجاح\n\n' +
-                'شكراً لك على استخدام منصة احجزلى.\n' +
-                'إذا كنت ترغب في العودة لاحقاً، يمكنك إنشاء حساب جديد في أي وقت.\n\n' +
-                '📧 للتواصل: mmoksh162@gmail.com'
-            );
-
-            showView('authView');
-
-        } catch (error) {
-            console.error('خطأ في حذف الحساب:', error);
-            alert('⚠️ حدث خطأ أثناء حذف الحساب. يرجى المحاولة مرة أخرى أو التواصل معنا على:\nmmoksh162@gmail.com');
-        }
-    }
+    // =====================================================
 
     function navigateToStep(viewId) {
         if (['teacherClassDetailsView', 'teacherDashboardView', 'groupDetailsView'].includes(viewId)) {
@@ -2139,6 +1532,7 @@ select.input-base{ font-size: 19px !important; }
         const container = document.getElementById('liveJourneyTrackerContainer');
         if(!container) return;
 
+        // حساب عدد المجموعات الخاصة بهذا المعلم فقط
         const teacherClasses = classesDB.filter(c => c.phone === (currentTeacherProfile?.phone || ''));
         const hasPublishedClasses = teacherClasses.length > 0;
         const isAppView = ['teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(viewId);
@@ -2165,7 +1559,7 @@ select.input-base{ font-size: 19px !important; }
         ];
 
         if (viewId === 'groupDetailsView') steps[2] = { id: 'groupDetailsView', label: '3. إدارة المجموعة' };
-        if (viewId === 'roleView' || viewId === 'authView') return container.innerHTML = '';
+        if (viewId === 'roleView' || viewId === 'authView') return container.innerHTML = ''; // إخفاء الشريط في البداية
 
         const separator = `<span class="text-white/30 text-[10px] px-1">➔</span>`;
 
@@ -2214,16 +1608,7 @@ select.input-base{ font-size: 19px !important; }
         updateLiveJourneyTracker(viewId);
 
         if(viewId === 'teacherDashboardView') renderTeacherDashboard();
-        if(viewId === 'teacherStagesProfileView') {
-            if (currentTeacherProfile) {
-                selectedGrades = currentTeacherProfile.grades ? [...currentTeacherProfile.grades] : [];
-                selectedSubjects = currentTeacherProfile.subjects ? [...currentTeacherProfile.subjects] : [];
-            } else {
-                selectedGrades = [];
-                selectedSubjects = [];
-            }
-            renderUnifiedSelection();
-        }
+        if(viewId === 'teacherStagesProfileView') renderUnifiedSelection();
     }
 
     let selectedGrades = [];
@@ -2254,6 +1639,12 @@ select.input-base{ font-size: 19px !important; }
     function renderUnifiedSelection() {
         const container = document.getElementById('unifiedEducationSelector');
         if(!container) return;
+
+        // تحديث الاختيارات من البروفايل إذا كانت موجودة
+        if (currentTeacherProfile && selectedGrades.length === 0 && selectedSubjects.length === 0) {
+            if (currentTeacherProfile.grades) selectedGrades = [...currentTeacherProfile.grades];
+            if (currentTeacherProfile.subjects) selectedSubjects = [...currentTeacherProfile.subjects];
+        }
 
         let html = '';
         const stagesList = ['kg', 'primary', 'prep', 'secondary'];
@@ -2421,6 +1812,7 @@ select.input-base{ font-size: 19px !important; }
             if(hasG || hasS) calcStages.push(st);
         });
 
+        // تحديث بيانات المعلم في Firebase
         currentTeacherProfile.stages = calcStages;
         currentTeacherProfile.grades = [...selectedGrades];
         currentTeacherProfile.subjects = [...selectedSubjects];
@@ -2448,6 +1840,7 @@ select.input-base{ font-size: 19px !important; }
     }
 
     window.onload = function() {
+        // الاتصال بقاعدة البيانات عند تحميل الصفحة وجلب البيانات ثم فحص التسجيل
         db.ref('teachers').once('value').then((snapshot) => {
             const data = snapshot.val();
             allTeachersDB = data ? data : {};
@@ -2465,6 +1858,7 @@ select.input-base{ font-size: 19px !important; }
                 }
             });
 
+            // بعد تحميل بيانات المعلمين من الفايربيز، تحقق هل هو مسجل دخول أم لا
             const savedPhone = localStorage.getItem('logged_in_teacher_phone');
             if (savedPhone && allTeachersDB[savedPhone]) {
                 currentTeacherProfile = allTeachersDB[savedPhone];
@@ -2475,10 +1869,10 @@ select.input-base{ font-size: 19px !important; }
         
         renderDaysSelector();
         
-        document.getElementById('startTime')?.addEventListener('change', () => { updateSchedulePreview(); renderDaysSelector(); });
-        document.getElementById('endTime')?.addEventListener('change', () => { updateSchedulePreview(); renderDaysSelector(); });
-        document.getElementById('startTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); updateSchedulePreview(); });
-        document.getElementById('endTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); updateSchedulePreview(); });
+        document.getElementById('startTime')?.addEventListener('change', updateSchedulePreview);
+        document.getElementById('endTime')?.addEventListener('change', updateSchedulePreview);
+        document.getElementById('startTime')?.addEventListener('input', updateScheduleConflictWarning);
+        document.getElementById('endTime')?.addEventListener('input', updateScheduleConflictWarning);
     };
 
     let selectedClassStage = null;
@@ -2604,6 +1998,7 @@ select.input-base{ font-size: 19px !important; }
         }
         
         const gradesHtml = grades.map(grade => {
+            // نختار أول صف كقيمة افتراضية إذا لم يتم الاختيار
             let isSel = false;
             return `
                 <label>
@@ -2717,6 +2112,7 @@ select.input-base{ font-size: 19px !important; }
         if (!days || days.length === 0 || !startTime || !endTime) return [];
         const conflicts = [];
         
+        // نتحقق من مجموعات المعلم الحالي فقط
         const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
 
         teacherClasses.forEach(cls => {
@@ -2808,6 +2204,7 @@ select.input-base{ font-size: 19px !important; }
         const label = document.getElementById('calendarMonthLabel');
         if (!grid || !label || !currentTeacherProfile) return;
         
+        // عرض مجموعات هذا المعلم فقط في النتيجة
         const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
 
         const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
@@ -2998,10 +2395,10 @@ select.input-base{ font-size: 19px !important; }
         const radius = type === 'student_home' ? parseFloat(document.getElementById('teacherRadius').value || 2000) : null;
 
         const newClass = {
-            id: Date.now().toString() + '_' + currentTeacherProfile.phone,
+            id: Date.now().toString() + '_' + currentTeacherProfile.phone, // جعل الـ ID فريد
             teacherTitle: currentTeacherProfile.teacherTitle,
             teacherName: currentTeacherProfile.teacherName,
-            phone: currentTeacherProfile.phone,
+            phone: currentTeacherProfile.phone, // ربط المجموعة برقم المعلم
             subjects: currentTeacherProfile.subjects || [],
             grades: currentTeacherProfile.grades || [],
             subject: selectedSubjectEl.value,
@@ -3028,6 +2425,7 @@ select.input-base{ font-size: 19px !important; }
 
         classesDB.push(newClass);
         
+        // حفظ المجموعة الجديدة في Firebase
         db.ref('classes').set(classesDB);
         
         alert('✅ تم إضافة ونشر المجموعة بنجاح!');
@@ -3071,6 +2469,8 @@ select.input-base{ font-size: 19px !important; }
         showView('teacherDashboardView'); 
     }
 
+    let currentOpenedGroupId = null;
+
     function renderTeacherDashboard() {
         if(!currentTeacherProfile) return;
         
@@ -3112,10 +2512,457 @@ select.input-base{ font-size: 19px !important; }
         const container = document.getElementById('teacherClassesList');
         container.innerHTML = '';
 
+        // استخراج المجموعات الخاصة بهذا المعلم فقط بناءً على رقم الهاتف
         const myClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
 
         if (myClasses.length === 0) {
             container.innerHTML = '<div class="text-center py-10 text-slate-400 font-black bg-slate-50 rounded-2xl border-2 border-slate-200 border-dashed">لا توجد لديك مجموعات حتى الآن.<br>أضف مجموعاتك من الزر في شريط التتبع بالأعلى.</div>';
+            return;
+        }
+
+        const reversedDB = [...myClasses].reverse();
+
+        reversedDB.forEach(cls => {
+            const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
+            const isFull = totalBooked >= cls.maxCapacity;
+            const isActive = cls.isActive !== false; 
+            
+            const stageKey = getStageForGrade(cls.grade) !== 'custom' ? getStageForGrade(cls.grade) : getStageForSubject(cls.subject);
+
+            let headerBg = '';
+            if (stageKey === 'kg') headerBg = 'linear-gradient(135deg, #F59E0B, #B45309)';
+            else if (stageKey === 'primary') headerBg = 'linear-gradient(135deg, #10B981, #047857)';
+            else if (stageKey === 'prep') headerBg = 'linear-gradient(135deg, #3B82F6, #1E40AF)';
+            else if (stageKey === 'secondary') headerBg = 'linear-gradient(135deg, #8B5CF6, #5B21B6)';
+            else headerBg = 'linear-gradient(135deg, #EF4444, #991B1B)';
+
+            let gradeColorClass = 'bg-white text-[var(--primary-700)] border-[var(--primary-200)] shadow-sm';
+            if (stageKey === 'kg') gradeColorClass = 'bg-white text-[#92400E] border-[#FCD34D] shadow-sm';
+            if (stageKey === 'primary') gradeColorClass = 'bg-white text-[#065F46] border-[#6EE7B7] shadow-sm';
+            if (stageKey === 'prep') gradeColorClass = 'bg-white text-[#1E40AF] border-[#93C5FD] shadow-sm';
+            if (stageKey === 'secondary') gradeColorClass = 'bg-white text-[#5B21B6] border-[#C4B5FD] shadow-sm';
+
+            const gradeBadge = `<span class="inline-block ${gradeColorClass} border px-2 py-0.5 rounded-full text-[12px] font-black">🎯 ${cls.grade || cls.stage || ''}</span>`;
+            
+            const subStageKey = getStageForSubject(cls.subject);
+            let subColorClass = 'bg-white text-[var(--primary-700)] border-[var(--primary-200)] shadow-sm';
+            if (subStageKey === 'kg') subColorClass = 'bg-white text-[#92400E] border-[#FCD34D] shadow-sm';
+            if (subStageKey === 'primary') subColorClass = 'bg-white text-[#065F46] border-[#6EE7B7] shadow-sm';
+            if (subStageKey === 'prep') subColorClass = 'bg-white text-[#1E40AF] border-[#93C5FD] shadow-sm';
+            if (subStageKey === 'secondary') subColorClass = 'bg-white text-[#5B21B6] border-[#C4B5FD] shadow-sm';
+
+            const subjectBadge = `<span class="inline-block ${subColorClass} border px-2 py-0.5 rounded-full text-[12px] font-black">📚 ${cls.subject || ''}</span>`;
+            
+            let locationIcon = '';
+            let displayLocation = cls.location;
+            
+            if (cls.type === 'center') locationIcon = '🏫';
+            else if (cls.type === 'teacher_home') locationIcon = '🏡';
+            else if (cls.type === 'student_home') { 
+                locationIcon = '🚗'; 
+                if(cls.radius) displayLocation = `${cls.location} (نطاق ${cls.radius / 1000} كم)`;
+            }
+
+            let genderBadge = '';
+            if (cls.gender === 'boys') genderBadge = `<span class="gender-badge bg-white text-blue-700 border border-blue-200 shadow-sm">👦 ولاد فقط</span>`;
+            else if (cls.gender === 'girls') genderBadge = `<span class="gender-badge bg-white text-pink-700 border border-pink-200 shadow-sm">👧 بنات فقط</span>`;
+            else genderBadge = `<span class="gender-badge bg-white text-slate-700 border border-slate-300 shadow-sm">👫 ولاد وبنات</span>`;
+            
+            let scheduleText = '';
+            if(cls.daysNames && cls.daysNames.length > 0 && cls.startTime && cls.endTime) {
+                scheduleText = `${cls.daysNames.join(' - ')} | من ${formatTime(cls.startTime)} إلى ${formatTime(cls.endTime)}`;
+            } else if(cls.times) {
+                scheduleText = cls.times;
+            }
+
+            const addressLine = cls.address ? `<div class="flex items-center gap-3 text-sm text-slate-800 font-bold"><span class="bg-white shadow-sm p-2 rounded-lg text-lg leading-none">📍</span> <span class="truncate pt-1 text-[12px]">${cls.address}</span></div>` : '';
+
+            let countersHtml = '';
+            if (cls.gender === 'boys') {
+                countersHtml = `<span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👦 ولاد: ${cls.bookedBoys || 0}</span>`;
+            } else if (cls.gender === 'girls') {
+                countersHtml = `<span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👧 بنات: ${cls.bookedGirls || 0}</span>`;
+            } else {
+                countersHtml = `
+                    <span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👦 ولاد: ${cls.bookedBoys || 0}</span>
+                    <span class="flex-1 text-center text-slate-700 font-black text-xs bg-white py-2 rounded-lg shadow-sm">👧 بنات: ${cls.bookedGirls || 0}</span>
+                `;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'class-card cursor-default p-0 flex flex-col justify-between';
+            card.setAttribute('data-stage', stageKey);
+            
+            card.innerHTML = `
+                <div class="cursor-pointer flex flex-col" onclick="openGroupDetails('${cls.id}')">
+                    <div style="background: ${headerBg};" class="px-5 py-4 flex justify-between items-center text-white shadow-sm ${!isActive ? 'opacity-80 grayscale-[30%]' : ''}">
+                        <h4 class="text-[17px] font-black text-white flex items-center gap-2">
+                            👥 ${cls.groupName} 
+                            ${!isActive ? '<span class="bg-rose-600 border border-white/30 text-white text-[10px] px-2 py-0.5 rounded-md leading-none shadow-sm">مغلق</span>' : ''}
+                        </h4>
+                        <div class="text-white opacity-90 text-xl font-bold">➔</div>
+                    </div>
+                    
+                    <div class="p-5 pb-0 ${!isActive ? 'opacity-80' : ''}">
+                        <div class="flex flex-wrap gap-2 mb-4">${gradeBadge} ${subjectBadge} ${genderBadge}</div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center gap-3 text-sm text-slate-800 font-bold">
+                                <span class="bg-white shadow-sm p-2 rounded-lg text-lg leading-none">${locationIcon}</span> <span class="truncate pt-1">${displayLocation}</span>
+                            </div>
+                            ${addressLine}
+                            <div class="flex items-start gap-3 text-sm text-slate-800 font-bold">
+                                <span class="bg-white shadow-sm p-2 rounded-lg text-lg leading-none">⏰</span> 
+                                <span class="text-[13px] leading-relaxed pt-1">${scheduleText}</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/70 p-4 rounded-xl border border-white mt-2 mb-4 shadow-sm backdrop-blur-sm">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[13px] font-black text-slate-800">عدد الطلاب المحجوزين:</span>
+                                <span class="text-base font-black ${isFull ? 'text-rose-600' : 'text-slate-800'}" dir="ltr">${totalBooked} / ${cls.maxCapacity}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                ${countersHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-5 pb-5 grid grid-cols-2 gap-2 relative z-10">
+                    <button onclick="toggleGroupStatus('${cls.id}'); event.stopPropagation();" class="w-full ${isActive ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'} border shadow-sm font-black py-3 rounded-xl text-[13px] active:scale-95 transition-all">
+                        ${isActive ? '⏸️ قفل الحجز' : '▶️ فتح الحجز'}
+                    </button>
+                    <button onclick="deleteGroup('${cls.id}'); event.stopPropagation();" class="w-full bg-white text-rose-600 border border-rose-200 shadow-sm font-black py-3 rounded-xl text-[13px] hover:bg-rose-50 active:scale-95 transition-all">
+                        🗑️ إلغاء نهائي
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function deleteGroup(classId) {
+        if(confirm("⚠️ تحذير: هل أنت متأكد أنك تريد إلغاء هذه المجموعة نهائياً؟\n\nسيتم حذف بيانات المجموعة وجميع الطلاب المحجوزين بداخلها ولن تتمكن من استعادتها.")) {
+            classesDB = classesDB.filter(c => c.id !== classId);
+            
+            // رفع التحديث للحذف على Firebase
+            db.ref('classes').set(classesDB);
+            
+            alert('تم إلغاء المجموعة بنجاح.');
+            updateLiveJourneyTracker('teacherDashboardView');
+            // الواجهة سيتم تحديثها تلقائياً من خلال مستمع Firebase
+        }
+    }
+
+    function toggleGroupStatus(classId) {
+        const clsIndex = classesDB.findIndex(c => c.id === classId);
+        if (clsIndex > -1) {
+            const currentStatus = classesDB[clsIndex].isActive !== false;
+            const newStatus = !currentStatus;
+            
+            if (!newStatus) { 
+                if(!confirm("هل أنت متأكد أنك تريد قفل الحجز لهذه المجموعة؟\nلن يتمكن الطلاب الجدد من رؤيتها أو الحجز بها عبر المنصة.")) return;
+            }
+            
+            classesDB[clsIndex].isActive = newStatus;
+            
+            // تحديث حالة المجموعة على Firebase
+            db.ref('classes').set(classesDB);
+        }
+    }
+
+    function openGroupDetails(classId) {
+        const cls = classesDB.find(c => c.id === classId);
+        if(!cls) return;
+
+        currentOpenedGroupId = classId;
+        document.getElementById('groupDetailName').innerText = `${cls.groupName} - ${cls.grade || ''} - ${cls.subject || ''}`;
+        const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
+        document.getElementById('groupDetailTotal').innerText = `${totalBooked} / ${cls.maxCapacity}`;
+
+        const container = document.getElementById('excelTablesContainer');
+        container.innerHTML = '';
+
+        if (!cls.students) cls.students = [];
+
+        const boysList = cls.students.filter(s => s.gender === 'boy');
+        const girlsList = cls.students.filter(s => s.gender === 'girl');
+
+        if (cls.gender === 'boys' || cls.gender === 'both') {
+            let trs = boysList.map((s, idx) => `
+                <tr>
+                    <td class="text-center w-6 text-xs">${idx + 1}</td>
+                    <td>${s.name}</td>
+                    <td dir="ltr" class="text-center font-bold en-num">${s.phone}</td>
+                    <td class="text-center">
+                        <button onclick="openPaymentModal('${cls.id}', '${s.id}')" class="text-[11px] font-black bg-white text-blue-700 px-3 py-1.5 rounded-lg shadow-sm border border-blue-200 hover:bg-blue-50 transition-colors">الدفع 💳</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (boysList.length === 0) trs = `<tr><td colspan="4" class="text-center py-6 text-slate-400 font-bold">لا يوجد حجوزات للأولاد حتى الآن.</td></tr>`;
+
+            container.innerHTML += `
+                <div class="student-col">
+                    <div class="col-header boys">
+                        <span>👦 كشف الأولاد</span>
+                        <span class="badge-white">${cls.bookedBoys || 0}</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="excel-table table-boys">
+                            <thead><tr><th>#</th><th>الاسم</th><th class="text-center">الهاتف</th><th class="text-center">السجل</th></tr></thead>
+                            <tbody>${trs}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        if (cls.gender === 'girls' || cls.gender === 'both') {
+            let trs = girlsList.map((s, idx) => `
+                <tr>
+                    <td class="text-center w-6 text-xs">${idx + 1}</td>
+                    <td>${s.name}</td>
+                    <td dir="ltr" class="text-center font-bold en-num">${s.phone}</td>
+                    <td class="text-center">
+                        <button onclick="openPaymentModal('${cls.id}', '${s.id}')" class="text-[11px] font-black bg-white text-pink-700 px-3 py-1.5 rounded-lg shadow-sm border border-pink-200 hover:bg-pink-50 transition-colors">الدفع 💳</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (girlsList.length === 0) trs = `<tr><td colspan="4" class="text-center py-6 text-slate-400 font-bold">لا يوجد حجوزات للبنات حتى الآن.</td></tr>`;
+
+            container.innerHTML += `
+                <div class="student-col">
+                    <div class="col-header girls">
+                        <span>👧 كشف البنات</span>
+                        <span class="badge-white">${cls.bookedGirls || 0}</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="excel-table table-girls">
+                            <thead><tr><th>#</th><th>الاسم</th><th class="text-center">الهاتف</th><th class="text-center">السجل</th></tr></thead>
+                            <tbody>${trs}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        showView('groupDetailsView');
+    }
+
+    function openManualAddModal() {
+        if(!currentOpenedGroupId) return;
+        const cls = classesDB.find(c => c.id === currentOpenedGroupId);
+        const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
+        
+        if (cls.isActive === false) {
+            if(!confirm('⚠️ هذه المجموعة مغلقة للحجز حالياً.\nهل تريد الاستمرار وتسجيل طالب يدوياً على أي حال؟')) return;
+        }
+
+        if (totalBooked >= cls.maxCapacity) { alert('عذراً، هذه المجموعة اكتمل عددها تماماً!'); return; }
+
+        document.getElementById('manualClassId').value = currentOpenedGroupId;
+        const genderSelect = document.getElementById('manualGenderSelect');
+        if(cls.gender === 'boys') { genderSelect.innerHTML = `<label><input type="radio" name="manualStudentGender" value="boy" checked class="hidden"><div class="option-btn">👦 ولد</div></label>`; } 
+        else if (cls.gender === 'girls') { genderSelect.innerHTML = `<label><input type="radio" name="manualStudentGender" value="girl" checked class="hidden"><div class="option-btn">👧 بنت</div></label>`; } 
+        else {
+            genderSelect.innerHTML = `
+                <label><input type="radio" name="manualStudentGender" value="boy" checked class="hidden"><div class="option-btn">👦 ولد</div></label>
+                <label><input type="radio" name="manualStudentGender" value="girl" checked class="hidden"><div class="option-btn">👧 بنت</div></label>
+            `;
+        }
+
+        document.getElementById('manualAddModal').style.display = 'flex';
+    }
+
+    function closeManualAddModal() {
+        document.getElementById('manualAddModal').style.display = 'none';
+        document.getElementById('manualStudentName').value = '';
+        document.getElementById('manualStudentPhone').value = '';
+    }
+
+    function handleManualAdd(e) {
+        e.preventDefault();
+        const classId = document.getElementById('manualClassId').value;
+        const name = document.getElementById('manualStudentName').value;
+        const phone = document.getElementById('manualStudentPhone').value;
+        const gender = document.querySelector('input[name="manualStudentGender"]:checked').value;
+
+        const classIndex = classesDB.findIndex(c => c.id === classId);
+        if (classIndex > -1) {
+            const cls = classesDB[classIndex];
+            if (!cls.students) cls.students = [];
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-EG') + ' ' + now.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+
+            cls.students.push({
+                id: 'std_' + Date.now(),
+                name: name, phone: phone, gender: gender, date: dateStr
+            });
+
+            if (gender === 'boy') cls.bookedBoys = (cls.bookedBoys || 0) + 1;
+            else if (gender === 'girl') cls.bookedGirls = (cls.bookedGirls || 0) + 1;
+
+            // تحديث بيانات المجموعة وإضافة الطالب الجديد على Firebase
+            db.ref('classes').set(classesDB);
+            
+            alert('✅ تم إضافة الطالب وتحديث العداد بنجاح!');
+            closeManualAddModal();
+            // الواجهة سيتم تحديثها تلقائياً بفضل مستمع Firebase
+        }
+    }
+
+    let currentPayClassId = null;
+    let currentPayStudentId = null;
+
+    function handlePayTypeChange() {
+        const type = document.getElementById('payType').value;
+        const container = document.getElementById('payDetailsContainer');
+        const label = document.getElementById('payDetailsLabel');
+        const numInput = document.getElementById('payDetailsNum');
+        const monthSelect = document.getElementById('payDetailsMonth');
+
+        container.classList.remove('hidden');
+        numInput.classList.add('hidden');
+        numInput.removeAttribute('required');
+        monthSelect.classList.add('hidden');
+        monthSelect.removeAttribute('required');
+
+        if(type === 'session') {
+            label.innerText = 'عدد الحصص';
+            numInput.classList.remove('hidden');
+            numInput.setAttribute('required', 'true');
+        } else if(type === 'week') {
+            label.innerText = 'عدد الأسابيع';
+            numInput.classList.remove('hidden');
+            numInput.setAttribute('required', 'true');
+        } else if(type === 'month') {
+            label.innerText = 'اختر الشهر';
+            monthSelect.classList.remove('hidden');
+            monthSelect.setAttribute('required', 'true');
+        } else {
+            container.classList.add('hidden');
+        }
+    }
+
+    function openPaymentModal(classId, studentId) {
+        currentPayClassId = classId;
+        currentPayStudentId = studentId;
+
+        const cls = classesDB.find(c => c.id === classId);
+        const student = cls.students.find(s => s.id === studentId);
+
+        document.getElementById('paymentStudentName').innerText = `الطالب: ${student.name}`;
+        
+        document.getElementById('payType').value = "";
+        document.getElementById('payDetailsNum').value = "";
+        document.getElementById('payAmount').value = "";
+        document.getElementById('payNotes').value = "";
+        handlePayTypeChange();
+
+        renderPaymentArchive(student);
+        document.getElementById('paymentModal').style.display = 'flex';
+    }
+
+    function saveStudentPayment(e) {
+        e.preventDefault();
+        const cls = classesDB.find(c => c.id === currentPayClassId);
+        const student = cls.students.find(s => s.id === currentPayStudentId);
+
+        const typeVal = document.getElementById('payType').value;
+        const numVal = document.getElementById('payDetailsNum').value;
+        const monthVal = document.getElementById('payDetailsMonth').value;
+        const amount = document.getElementById('payAmount').value;
+        const notes = document.getElementById('payNotes').value;
+
+        if(!typeVal) { alert('الرجاء اختيار نوع الدفع'); return; }
+
+        let typeText = '';
+        if(typeVal === 'session') typeText = `حصة (${numVal} حصص)`;
+        else if(typeVal === 'week') typeText = `أسبوع (${numVal} أسابيع)`;
+        else if(typeVal === 'month') typeText = `شهر (${monthVal})`;
+        else if(typeVal === 'term1') typeText = 'الترم الأول';
+        else if(typeVal === 'term2') typeText = 'الترم الثاني';
+        else if(typeVal === 'both_terms') typeText = 'الترمين معاً (عام كامل)';
+
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG') + ' ' + now.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+
+        if(!student.paymentArchive) student.paymentArchive = [];
+
+        student.paymentArchive.unshift({
+            id: 'pay_' + Date.now(),
+            date: dateStr,
+            typeText: typeText,
+            amount: amount,
+            notes: notes
+        });
+
+        // حفظ الدفعة الجديدة على Firebase
+        db.ref('classes').set(classesDB);
+        
+        e.target.reset();
+        handlePayTypeChange();
+        renderPaymentArchive(student);
+    }
+
+    function renderPaymentArchive(student) {
+        const container = document.getElementById('paymentArchiveContainer');
+        if(!student.paymentArchive || student.paymentArchive.length === 0) {
+            container.innerHTML = '<div class="text-center py-6 bg-white border border-slate-200 border-dashed rounded-xl text-slate-400 font-bold text-sm">لا توجد مدفوعات مسجلة في الأرشيف حتى الآن.</div>';
+            return;
+        }
+
+        container.innerHTML = student.paymentArchive.map(pay => `
+            <div class="bg-white border border-slate-200 rounded-xl p-3 flex justify-between items-center shadow-sm">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="bg-[var(--primary-100)] text-[var(--primary-800)] px-2 py-0.5 rounded text-[11px] font-black">${pay.typeText}</span>
+                        <span class="text-[11px] text-slate-400 font-bold" dir="ltr">${pay.date}</span>
+                    </div>
+                    <div class="font-black text-[var(--primary-950)] text-sm mb-1">المبلغ: ${pay.amount} ج.م</div>
+                    ${pay.notes ? `<div class="text-[11px] text-slate-500 font-bold flex items-start gap-1"><span class="text-[10px]">📝</span> ${pay.notes}</div>` : ''}
+                </div>
+                <button type="button" onclick="deletePaymentRecord('${pay.id}')" class="text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg transition-colors" title="حذف السجل">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function deletePaymentRecord(recordId) {
+        if(!confirm('⚠️ هل أنت متأكد من حذف هذا السجل المالي؟')) return;
+
+        const cls = classesDB.find(c => c.id === currentPayClassId);
+        const student = cls.students.find(s => s.id === currentPayStudentId);
+        
+        student.paymentArchive = student.paymentArchive.filter(p => p.id !== recordId);
+        
+        // مسح الدفعة من Firebase
+        db.ref('classes').set(classesDB);
+        
+        renderPaymentArchive(student);
+    }
+
+    function closePaymentModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+    }
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then((registration) => console.log('SW registered'))
+                .catch((error) => console.log('SW failed:', error));
+        });
+    }
+</script>
+</body>
+</html>
+r.innerHTML = '<div class="text-center py-10 text-slate-400 font-black bg-slate-50 rounded-2xl border-2 border-slate-200 border-dashed">لا توجد لديك مجموعات حتى الآن.<br>أضف مجموعاتك من الزر في شريط التتبع بالأعلى.</div>';
             return;
         }
 
@@ -3245,7 +3092,7 @@ select.input-base{ font-size: 19px !important; }
     }
 
     function deleteGroup(classId) {
-        if(confirm("⚠️ تحذير: هل أنت متأكد أنك تريد إلغاء هذه المجموعة نهائياً؟\n\nسيتم حذف بيانات المجموعة وجميع الطلاب المحجوزين بداخلها ولن تتمكن من استعادتها.")) {
+        if(confirm("⚠️ تحذير: هل أنت متأكد أنك تريد إلغاء هذه المجموعة نهائياً؟\n\nسيتم حذف بيانات المجموعة وجميع الطلاب المحجوزين بداخلها ولن تتمكن من استعادته.")) {
             classesDB = classesDB.filter(c => c.id !== classId);
             db.ref('classes').set(classesDB);
             alert('تم إلغاء المجموعة بنجاح.');
