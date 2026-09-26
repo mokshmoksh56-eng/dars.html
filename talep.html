@@ -79,6 +79,16 @@ body{
 .app-title .accent{ color:var(--gold-400); }
 .app-subtitle{ font-size:15px; font-weight:800; color:rgba(255,255,255,.9); margin-top:5px; }
 
+/* ✅ تحريك صورة الطالب */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0px); }
+}
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
 .field-label{ display:block; font-size:16px; font-weight:900; color:var(--primary-900); margin-bottom:8px; }
 .input-base{ width:100%; padding:14px 16px; background:#fff; border:2px solid var(--line); border-radius:14px; font-weight:800; font-size:17px; outline:none; transition:all .2s ease; margin-bottom:16px;}
 .input-base:focus{ border-color:var(--primary-600); box-shadow:0 0 0 4px rgba(16,185,129,.15); }
@@ -274,8 +284,8 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
 
 <div class="main-card relative">
     <header class="app-header">
-        <!-- ✅ إضافة صورة الطالب -->
-        <img src="student.png" alt="بوابة الطالب" class="w-28 h-28 mx-auto mb-4 rounded-full border-4 border-white shadow-lg object-cover bg-white">
+        <!-- ✅ إضافة صورة الطالب مع تأثير الحركة -->
+        <img src="student.png" alt="بوابة الطالب" class="w-28 h-28 mx-auto mb-4 rounded-full border-4 border-white shadow-lg object-cover bg-white animate-float">
         
         <h1 class="app-title">منصة <span class="accent">احجزلى</span></h1>
         <p class="app-subtitle">بوابة الطالب - احجز دروسك بسهولة</p>
