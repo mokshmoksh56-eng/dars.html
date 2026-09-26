@@ -35,12 +35,12 @@
         }
 
         /* ============================================ */
-        /* ✅ الهيدر العلوي مع الصورة teacher2.png كخلفية */
+        /* ✅ الهيدر العلوي */
         /* ============================================ */
         .hero-banner {
             position: relative;
             width: 100%;
-            min-height: 400px;
+            min-height: 380px;
             background-image: url('./teacher2.png');
             background-size: cover;
             background-position: center;
@@ -52,19 +52,17 @@
             padding: 40px 20px;
         }
 
-        /* طبقة شفافة بيضاء فوق الصورة لضمان وضوح النص */
         .hero-banner::before {
             content: '';
             position: absolute;
             inset: 0;
             background: linear-gradient(180deg, 
-                rgba(255, 255, 255, 0.70) 0%, 
+                rgba(255, 255, 255, 0.72) 0%, 
                 rgba(255, 255, 255, 0.85) 50%, 
                 rgba(255, 255, 255, 0.95) 100%);
             z-index: 1;
         }
 
-        /* تدريج ناعم أسفل الهيدر */
         .hero-banner::after {
             content: '';
             position: absolute;
@@ -84,7 +82,6 @@
             width: 100%;
         }
 
-        /* العنوان الرئيسي */
         .hero-brand {
             font-size: 48px;
             font-weight: 900;
@@ -115,7 +112,6 @@
             to { transform: scaleX(1); transform-origin: right; }
         }
 
-        /* العنوان المبتكر */
         .hero-headline {
             font-size: 26px;
             font-weight: 900;
@@ -180,7 +176,6 @@
             50% { opacity: 1; transform: scaleX(1); }
         }
 
-        /* النص التوضيحي */
         .hero-subtitle {
             font-size: 15px;
             font-weight: 700;
@@ -197,7 +192,7 @@
         }
 
         /* ============================================ */
-        /* البطاقات */
+        /* ✅ البطاقات */
         /* ============================================ */
         .cards-section {
             background: #F8FAFC;
@@ -208,7 +203,7 @@
         .portal-card {
             position: relative;
             border-radius: 28px;
-            padding: 30px 25px;
+            padding: 25px 22px;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 15px 35px -15px rgba(0,0,0,0.1);
             text-decoration: none;
@@ -216,12 +211,57 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
+            gap: 18px;
             cursor: pointer;
-            min-height: 240px;
             overflow: hidden;
+            min-height: 200px;
         }
 
+        /* ✅ صندوق صورة المعلم/الطالب — دائري وأنيق */
+        .card-image-box {
+            flex-shrink: 0;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 3;
+            overflow: hidden;
+            padding: 8px;
+        }
+
+        .card-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: block;
+            border-radius: 50%;
+        }
+
+        .card-teacher .card-image-box {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 4px solid #BFDBFE;
+            box-shadow: 0 10px 25px -10px rgba(37, 99, 235, 0.5);
+        }
+
+        .card-student .card-image-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border: 4px solid #A7F3D0;
+            box-shadow: 0 10px 25px -10px rgba(16, 185, 129, 0.5);
+        }
+
+        .portal-card:hover .card-image-box img {
+            transform: scale(1.12);
+        }
+
+        .portal-card:hover .card-image-box {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
+        /* النص */
         .card-text {
             display: flex;
             flex-direction: column;
@@ -232,50 +272,21 @@
             min-width: 0;
         }
         .card-text h2 {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             line-height: 1.2;
         }
         .card-text p {
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 700;
-            line-height: 1.7;
-            margin-bottom: 18px;
-        }
-
-        /* الأيقونة الكبيرة */
-        .card-icon-box {
-            flex-shrink: 0;
-            width: 150px;
-            height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 3;
-            border-radius: 50%;
-            font-size: 90px;
-            line-height: 1;
-            position: relative;
-            transition: all 0.4s ease;
-        }
-
-        .card-teacher .card-icon-box {
-            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
-            box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.5), inset 0 0 0 4px rgba(255, 255, 255, 0.8);
-        }
-        .card-student .card-icon-box {
-            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
-            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.5), inset 0 0 0 4px rgba(255, 255, 255, 0.8);
-        }
-
-        .portal-card:hover .card-icon-box {
-            transform: scale(1.08) rotate(-5deg);
+            line-height: 1.6;
+            margin-bottom: 16px;
         }
 
         /* كارت المعلم */
         .card-teacher {
-            background: linear-gradient(135deg, #F0F7FF 0%, #E0EFFF 100%);
+            background: linear-gradient(135deg, #F0F7FF 0%, #FFFFFF 100%);
             border: 3px solid #BFDBFE;
             border-bottom: 8px solid var(--primary-600);
         }
@@ -293,7 +304,7 @@
 
         /* كارت الطالب */
         .card-student {
-            background: linear-gradient(135deg, #F0FDF8 0%, #E0FBEF 100%);
+            background: linear-gradient(135deg, #F0FDF8 0%, #FFFFFF 100%);
             border: 3px solid #A7F3D0;
             border-bottom: 8px solid var(--emerald-600);
         }
@@ -310,9 +321,9 @@
         }
 
         .btn-go {
-            padding: 12px 28px;
+            padding: 12px 26px;
             border-radius: 999px;
-            font-size: 15px;
+            font-size: 14.5px;
             font-weight: 900;
             color: white;
             display: inline-flex;
@@ -323,8 +334,7 @@
             white-space: nowrap;
         }
         .portal-card:hover .btn-go {
-            padding: 12px 36px;
-            transform: translateX(-3px);
+            padding: 12px 34px;
         }
 
         @keyframes fadeIn {
@@ -341,9 +351,8 @@
         /* ============================================ */
         @media (max-width: 768px) {
             .hero-banner {
-                min-height: 340px;
+                min-height: 320px;
                 padding: 30px 15px;
-                background-size: cover;
             }
             .hero-brand { font-size: 36px; }
             .hero-headline { font-size: 20px; gap: 6px; margin-top: 26px; }
@@ -351,19 +360,24 @@
             .hero-subtitle { font-size: 13px; margin-top: 18px; }
 
             .portal-card {
-                padding: 22px 18px;
-                min-height: 180px;
-                gap: 10px;
+                padding: 18px 15px;
+                gap: 12px;
+                min-height: 160px;
             }
-            .card-text h2 { font-size: 21px; margin-bottom: 8px; }
-            .card-text p { font-size: 12.5px; margin-bottom: 14px; line-height: 1.6; }
-            .card-icon-box { width: 110px; height: 110px; font-size: 65px; }
-            .btn-go { padding: 10px 22px; font-size: 13px; }
+            .card-image-box {
+                width: 100px;
+                height: 100px;
+                padding: 6px;
+                border-width: 3px;
+            }
+            .card-text h2 { font-size: 19px; margin-bottom: 6px; }
+            .card-text p { font-size: 12px; margin-bottom: 12px; line-height: 1.55; }
+            .btn-go { padding: 10px 20px; font-size: 12.5px; }
         }
 
         @media (max-width: 480px) {
             .hero-banner {
-                min-height: 300px;
+                min-height: 280px;
                 padding: 25px 12px;
             }
             .hero-brand { font-size: 30px; }
@@ -372,19 +386,23 @@
             .hero-subtitle { font-size: 12px; }
 
             .portal-card {
-                padding: 18px 14px;
-                min-height: 160px;
+                padding: 15px 12px;
+                gap: 10px;
             }
-            .card-icon-box { width: 90px; height: 90px; font-size: 55px; }
-            .card-text h2 { font-size: 19px; }
-            .card-text p { font-size: 11.5px; }
-            .btn-go { padding: 9px 18px; font-size: 12px; }
+            .card-image-box {
+                width: 85px;
+                height: 85px;
+                padding: 5px;
+            }
+            .card-text h2 { font-size: 17px; }
+            .card-text p { font-size: 11px; }
+            .btn-go { padding: 8px 16px; font-size: 11.5px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ✅ الهيدر العلوي مع الصورة teacher2.png كخلفية -->
+    <!-- ✅ الهيدر العلوي -->
     <section class="hero-banner">
         <div class="hero-content">
             <div class="hero-brand">
@@ -408,8 +426,11 @@
         <div class="container mx-auto max-w-5xl">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
                 
-                <!-- كارت المعلم -->
+                <!-- ✅ كارت المعلم مع صورة teacher.png -->
                 <a href="./mester.html" class="portal-card card-teacher">
+                    <div class="card-image-box">
+                        <img src="./teacher.png" alt="صورة المعلم">
+                    </div>
                     <div class="card-text">
                         <h2>بوابة المعلم</h2>
                         <p>أنشئ مجموعاتك، حدد مواعيدك، وتابع الحضور والمدفوعات لطلابك بسهولة.</p>
@@ -417,11 +438,13 @@
                             دخول المعلمين <span>➔</span>
                         </div>
                     </div>
-                    <div class="card-icon-box">👨‍🏫</div>
                 </a>
 
-                <!-- كارت الطالب -->
+                <!-- ✅ كارت الطالب مع صورة student.png -->
                 <a href="./talep.html" class="portal-card card-student">
+                    <div class="card-image-box">
+                        <img src="./student.png" alt="صورة الطالب">
+                    </div>
                     <div class="card-text">
                         <h2>بوابة الطالب</h2>
                         <p>ابحث عن أفضل المعلمين في منطقتك، واحجز مكانك بضغطة زر.</p>
@@ -429,7 +452,6 @@
                             دخول الطلاب <span>➔</span>
                         </div>
                     </div>
-                    <div class="card-icon-box">🎓</div>
                 </a>
 
             </div>
