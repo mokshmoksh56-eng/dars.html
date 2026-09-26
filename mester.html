@@ -664,6 +664,11 @@ select.input-base{ font-size: 19px !important; }
                     </div>
                 </div>
 
+                <div id="capacityContainer" class="mb-4">
+                    <label class="field-label">العدد المطلوب (الحد الأقصى للطلاب)</label>
+                    <input type="number" id="maxCapacity" required placeholder="مثال: 30" min="1" class="input-base text-center">
+                </div>
+
                 <div class="flex items-center gap-2 mb-2 mt-4">
                     <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">1</div>
                     <label class="field-label !mb-0">اسم المجموعة <span class="text-rose-500">*</span></label>
@@ -864,11 +869,6 @@ select.input-base{ font-size: 19px !important; }
                         <ul id="conflictList"></ul>
                         <p class="text-[10px] mt-2 opacity-80 font-bold">💡 قم بتعديل الأيام أو الوقت قبل الحفظ</p>
                     </div>
-                </div>
-
-                <div id="capacityContainer" class="mb-4">
-                    <label class="field-label">العدد المطلوب (الحد الأقصى للطلاب)</label>
-                    <input type="number" id="maxCapacity" required placeholder="مثال: 30" min="1" class="input-base text-center">
                 </div>
                 
                 <button type="submit" class="btn-primary mt-2">حفظ ونشر المجموعة ✔️</button>
