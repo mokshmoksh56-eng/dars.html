@@ -27,113 +27,125 @@
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background: radial-gradient(circle at 50% 0%, #E0F2FE 0%, #F8FAFC 60%, #F1F5F9 100%);
+            background: #F8FAFC;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
         }
 
-        .bg-grid {
-            position: fixed;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(37, 99, 235, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(37, 99, 235, 0.04) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        .bg-blob {
-            position: fixed;
-            filter: blur(80px);
-            z-index: -1;
-            opacity: 0.2;
-            pointer-events: none;
-        }
-        .blob-1 { top: -5%; right: -5%; width: 400px; height: 400px; background: #2563EB; }
-        .blob-2 { bottom: -5%; left: -5%; width: 450px; height: 450px; background: #10B981; }
-
         /* ============================================ */
-        /* ✅ عنوان مبتكر مع خطوط وأيقونات */
+        /* ✅ الهيدر العلوي مع الصورة teacher2.png كخلفية */
         /* ============================================ */
-        .hero-title-wrap {
-            text-align: center;
-            margin-bottom: 40px;
+        .hero-banner {
             position: relative;
+            width: 100%;
+            min-height: 400px;
+            background-image: url('./teacher2.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 40px 20px;
         }
 
+        /* طبقة شفافة بيضاء فوق الصورة لضمان وضوح النص */
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.70) 0%, 
+                rgba(255, 255, 255, 0.85) 50%, 
+                rgba(255, 255, 255, 0.95) 100%);
+            z-index: 1;
+        }
+
+        /* تدريج ناعم أسفل الهيدر */
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(180deg, transparent 0%, #F8FAFC 100%);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        /* العنوان الرئيسي */
         .hero-brand {
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 900;
             color: #0F172A;
             letter-spacing: -1px;
             line-height: 1;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             display: inline-block;
             position: relative;
         }
-
         .hero-brand .accent {
             color: #F59E0B;
             position: relative;
         }
-
-        /* خط تحت كلمة احجزلى */
         .hero-brand .accent::after {
             content: '';
             position: absolute;
-            bottom: -6px;
+            bottom: -8px;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 5px;
             background: linear-gradient(90deg, #F59E0B, #FCD34D);
             border-radius: 999px;
             animation: underlineExpand 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
         }
-
         @keyframes underlineExpand {
             from { transform: scaleX(0); transform-origin: right; }
             to { transform: scaleX(1); transform-origin: right; }
         }
 
-        /* ✅ العنوان الرئيسي المبتكر */
+        /* العنوان المبتكر */
         .hero-headline {
             font-size: 26px;
             font-weight: 900;
             color: #1E293B;
             line-height: 1.4;
-            margin-top: 24px;
+            margin-top: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             position: relative;
         }
-
         .hero-headline .part-1 {
             color: #1E293B;
             position: relative;
         }
-
-        /* أيقونة موقع صغيرة فوق "موقعك" */
         .hero-headline .part-1::before {
             content: '📍';
             position: absolute;
-            top: -22px;
+            top: -24px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 18px;
+            font-size: 20px;
             animation: bouncePin 2s ease-in-out infinite;
         }
-
         @keyframes bouncePin {
             0%, 100% { transform: translateX(-50%) translateY(0); }
             50% { transform: translateX(-50%) translateY(-5px); }
         }
-
         .hero-headline .dots {
             color: #F59E0B;
             font-size: 32px;
@@ -141,12 +153,10 @@
             letter-spacing: 2px;
             animation: dotsPulse 1.8s ease-in-out infinite;
         }
-
         @keyframes dotsPulse {
             0%, 100% { opacity: 0.4; transform: translateY(0); }
             50% { opacity: 1; transform: translateY(-3px); }
         }
-
         .hero-headline .part-2 {
             background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
             -webkit-background-clip: text;
@@ -155,8 +165,6 @@
             position: relative;
             font-weight: 900;
         }
-
-        /* خط متحرك تحت part-2 */
         .hero-headline .part-2::after {
             content: '';
             position: absolute;
@@ -167,32 +175,36 @@
             background: linear-gradient(90deg, transparent, #F59E0B, transparent);
             animation: lineSlide 2s ease-in-out infinite;
         }
-
         @keyframes lineSlide {
             0%, 100% { opacity: 0.4; transform: scaleX(0.7); }
             50% { opacity: 1; transform: scaleX(1); }
         }
 
-        /* النص التوضيحي الصغير تحت العنوان */
+        /* النص التوضيحي */
         .hero-subtitle {
             font-size: 15px;
             font-weight: 700;
-            color: #64748B;
-            margin-top: 18px;
+            color: #475569;
+            margin-top: 22px;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
             line-height: 1.7;
         }
-
         .hero-subtitle .highlight {
             color: #10B981;
             font-weight: 900;
         }
 
         /* ============================================ */
-        /* ✅ البطاقة */
+        /* البطاقات */
         /* ============================================ */
+        .cards-section {
+            background: #F8FAFC;
+            padding: 20px 20px 40px;
+            flex: 1;
+        }
+
         .portal-card {
             position: relative;
             border-radius: 28px;
@@ -206,7 +218,7 @@
             justify-content: space-between;
             gap: 15px;
             cursor: pointer;
-            min-height: 260px;
+            min-height: 240px;
             overflow: hidden;
         }
 
@@ -219,14 +231,12 @@
             flex: 1;
             min-width: 0;
         }
-
         .card-text h2 {
             font-size: 26px;
             font-weight: 900;
             margin-bottom: 12px;
             line-height: 1.2;
         }
-
         .card-text p {
             font-size: 14.5px;
             font-weight: 700;
@@ -234,26 +244,38 @@
             margin-bottom: 18px;
         }
 
-        .card-image-box {
+        /* الأيقونة الكبيرة */
+        .card-icon-box {
             flex-shrink: 0;
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 3;
+            border-radius: 50%;
+            font-size: 90px;
+            line-height: 1;
+            position: relative;
+            transition: all 0.4s ease;
         }
 
-        .card-image-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
+        .card-teacher .card-icon-box {
+            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+            box-shadow: 0 10px 30px -10px rgba(37, 99, 235, 0.5), inset 0 0 0 4px rgba(255, 255, 255, 0.8);
+        }
+        .card-student .card-icon-box {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.5), inset 0 0 0 4px rgba(255, 255, 255, 0.8);
         }
 
+        .portal-card:hover .card-icon-box {
+            transform: scale(1.08) rotate(-5deg);
+        }
+
+        /* كارت المعلم */
         .card-teacher {
-            background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%);
+            background: linear-gradient(135deg, #F0F7FF 0%, #E0EFFF 100%);
             border: 3px solid #BFDBFE;
             border-bottom: 8px solid var(--primary-600);
         }
@@ -262,9 +284,6 @@
             box-shadow: 0 30px 60px -20px rgba(37, 99, 235, 0.4);
             border-color: var(--primary-600);
         }
-        .card-teacher:hover .card-image-box img {
-            transform: scale(1.1) rotate(-4deg);
-        }
         .card-teacher h2 { color: #0F2D5C; }
         .card-teacher p { color: #475569; }
         .card-teacher .btn-go {
@@ -272,8 +291,9 @@
             box-shadow: 0 10px 22px -8px rgba(37, 99, 235, 0.6);
         }
 
+        /* كارت الطالب */
         .card-student {
-            background: linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 100%);
+            background: linear-gradient(135deg, #F0FDF8 0%, #E0FBEF 100%);
             border: 3px solid #A7F3D0;
             border-bottom: 8px solid var(--emerald-600);
         }
@@ -281,9 +301,6 @@
             transform: translateY(-8px) scale(1.01);
             box-shadow: 0 30px 60px -20px rgba(16, 185, 129, 0.4);
             border-color: var(--emerald-600);
-        }
-        .card-student:hover .card-image-box img {
-            transform: scale(1.1) rotate(-4deg);
         }
         .card-student h2 { color: #064E3B; }
         .card-student p { color: #475569; }
@@ -310,81 +327,66 @@
             transform: translateX(-3px);
         }
 
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: scale(0.9); } 
-            to { opacity: 1; transform: scale(1); } 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        .animate-fade-in { 
-            animation: fadeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
         }
         .delay-1 { animation-delay: 0.2s; opacity: 0; }
 
+        /* ============================================ */
+        /* الموبايل */
+        /* ============================================ */
         @media (max-width: 768px) {
-            .hero-brand { font-size: 34px; }
-            .hero-headline { font-size: 20px; gap: 6px; }
+            .hero-banner {
+                min-height: 340px;
+                padding: 30px 15px;
+                background-size: cover;
+            }
+            .hero-brand { font-size: 36px; }
+            .hero-headline { font-size: 20px; gap: 6px; margin-top: 26px; }
             .hero-headline .dots { font-size: 24px; }
-            .hero-subtitle { font-size: 13px; }
+            .hero-subtitle { font-size: 13px; margin-top: 18px; }
 
             .portal-card {
                 padding: 22px 18px;
-                min-height: 200px;
+                min-height: 180px;
                 gap: 10px;
             }
-            .card-text h2 {
-                font-size: 22px;
-                margin-bottom: 8px;
-            }
-            .card-text p {
-                font-size: 13px;
-                margin-bottom: 14px;
-                line-height: 1.6;
-            }
-            .card-image-box {
-                width: 140px;
-                height: 140px;
-            }
-            .btn-go {
-                padding: 10px 22px;
-                font-size: 13.5px;
-            }
+            .card-text h2 { font-size: 21px; margin-bottom: 8px; }
+            .card-text p { font-size: 12.5px; margin-bottom: 14px; line-height: 1.6; }
+            .card-icon-box { width: 110px; height: 110px; font-size: 65px; }
+            .btn-go { padding: 10px 22px; font-size: 13px; }
         }
 
         @media (max-width: 480px) {
+            .hero-banner {
+                min-height: 300px;
+                padding: 25px 12px;
+            }
             .hero-brand { font-size: 30px; }
-            .hero-headline { font-size: 17px; }
+            .hero-headline { font-size: 16px; gap: 5px; }
             .hero-headline .dots { font-size: 20px; }
+            .hero-subtitle { font-size: 12px; }
 
             .portal-card {
                 padding: 18px 14px;
+                min-height: 160px;
             }
-            .card-image-box {
-                width: 120px;
-                height: 120px;
-            }
-            .card-text h2 {
-                font-size: 20px;
-            }
-            .card-text p {
-                font-size: 12px;
-            }
-            .btn-go {
-                padding: 9px 18px;
-                font-size: 12.5px;
-            }
+            .card-icon-box { width: 90px; height: 90px; font-size: 55px; }
+            .card-text h2 { font-size: 19px; }
+            .card-text p { font-size: 11.5px; }
+            .btn-go { padding: 9px 18px; font-size: 12px; }
         }
     </style>
 </head>
-<body class="relative">
+<body>
 
-    <div class="bg-grid"></div>
-    <div class="bg-blob blob-1"></div>
-    <div class="bg-blob blob-2"></div>
-
-    <div class="container mx-auto px-4 py-8 flex flex-col items-center justify-center flex-1 max-w-5xl relative z-10">
-        
-        <!-- ✅ العنوان الرئيسي المبتكر -->
-        <div class="hero-title-wrap animate-fade-in">
+    <!-- ✅ الهيدر العلوي مع الصورة teacher2.png كخلفية -->
+    <section class="hero-banner">
+        <div class="hero-content">
             <div class="hero-brand">
                 منصة <span class="accent">احجزلى</span>
             </div>
@@ -399,46 +401,45 @@
                 ابحث عن أفضل المعلمين في منطقتك بالـ GPS، <span class="highlight">واستعد لرحلة تعليمية استثنائية</span>
             </p>
         </div>
+    </section>
 
-        <!-- الكروت -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
-            
-            <!-- كارت المعلم -->
-            <a href="./mester.html" class="portal-card card-teacher">
-                <div class="card-text">
-                    <h2>بوابة المعلم</h2>
-                    <p>أنشئ مجموعاتك، حدد مواعيدك، وتابع الحضور والمدفوعات لطلابك بسهولة.</p>
-                    <div class="btn-go">
-                        دخول المعلمين <span>➔</span>
+    <!-- ✅ قسم البطاقات -->
+    <section class="cards-section">
+        <div class="container mx-auto max-w-5xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
+                
+                <!-- كارت المعلم -->
+                <a href="./mester.html" class="portal-card card-teacher">
+                    <div class="card-text">
+                        <h2>بوابة المعلم</h2>
+                        <p>أنشئ مجموعاتك، حدد مواعيدك، وتابع الحضور والمدفوعات لطلابك بسهولة.</p>
+                        <div class="btn-go">
+                            دخول المعلمين <span>➔</span>
+                        </div>
                     </div>
-                </div>
-                <div class="card-image-box">
-                    <img src="./teacher.png" alt="المعلم" onerror="this.parentElement.innerHTML='<div style=&quot;font-size:100px;opacity:0.3&quot;>👨‍🏫</div>'">
-                </div>
-            </a>
+                    <div class="card-icon-box">👨‍🏫</div>
+                </a>
 
-            <!-- كارت الطالب -->
-            <a href="./talep.html" class="portal-card card-student">
-                <div class="card-text">
-                    <h2>بوابة الطالب</h2>
-                    <p>ابحث عن أفضل المعلمين في منطقتك، واحجز مكانك بضغطة زر.</p>
-                    <div class="btn-go">
-                        دخول الطلاب <span>➔</span>
+                <!-- كارت الطالب -->
+                <a href="./talep.html" class="portal-card card-student">
+                    <div class="card-text">
+                        <h2>بوابة الطالب</h2>
+                        <p>ابحث عن أفضل المعلمين في منطقتك، واحجز مكانك بضغطة زر.</p>
+                        <div class="btn-go">
+                            دخول الطلاب <span>➔</span>
+                        </div>
                     </div>
-                </div>
-                <div class="card-image-box">
-                    <img src="./student.png" alt="الطالب" onerror="this.parentElement.innerHTML='<div style=&quot;font-size:100px;opacity:0.3&quot;>🎓</div>'">
-                </div>
-            </a>
+                    <div class="card-icon-box">🎓</div>
+                </a>
 
+            </div>
         </div>
+    </section>
 
-        <!-- الفوتر -->
-        <div class="mt-12 text-center text-slate-400 font-bold text-sm animate-fade-in delay-1">
-            <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
-        </div>
-
-    </div>
+    <!-- الفوتر -->
+    <footer class="py-6 text-center text-slate-400 font-bold text-sm">
+        <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
+    </footer>
 
     <script>
         if ('serviceWorker' in navigator) {
