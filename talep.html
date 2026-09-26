@@ -322,12 +322,15 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         </div>
 
         <div id="searchView" class="fade-enter">
-            <div class="bg-gradient-to-l from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-4 mb-6 shadow-sm flex justify-between items-center">
-                <div>
-                    <h3 class="text-lg font-black text-emerald-900" id="displayStudentName">--</h3>
-                    <p class="text-sm font-bold text-emerald-700 mt-1" id="displayStudentGrade">--</p>
+            <div class="bg-gradient-to-l from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-4 mb-6 shadow-sm flex justify-between items-center gap-2">
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-lg font-black text-emerald-900 truncate" id="displayStudentName">--</h3>
+                    <p class="text-sm font-bold text-emerald-700 mt-1 truncate" id="displayStudentGrade">--</p>
                 </div>
-                <button onclick="logout()" class="bg-white text-rose-600 border border-rose-200 px-3 py-1.5 rounded-lg text-xs font-black shadow-sm active:scale-95">تعديل البيانات</button>
+                <div class="flex gap-1.5 flex-shrink-0">
+                    <button onclick="editStudentData()" class="bg-white text-blue-600 border border-blue-200 px-2.5 py-1.5 rounded-lg text-[11px] font-black shadow-sm active:scale-95 transition-all">✏️ تعديل</button>
+                    <button onclick="clearAllData()" class="bg-white text-rose-600 border border-rose-200 px-2.5 py-1.5 rounded-lg text-[11px] font-black shadow-sm active:scale-95 transition-all">🗑️ مسح</button>
+                </div>
             </div>
 
             <h2 class="text-[18px] font-black text-slate-800 mb-3 flex items-center gap-2">🔍 ابحث عن مجموعتك</h2>
@@ -457,9 +460,11 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         fetchClassesFromFirebase();
         
         if (studentProfile) {
+            // ✅ المستخدم مسجل دخول مسبقاً → دخول مباشر لصفحة البحث
             setupStudentDashboard();
             showView('searchView');
         } else {
+            // ❌ مستخدم جديد → شاشة التسجيل
             showView('loginView');
         }
     };
@@ -727,18 +732,70 @@ input[type="radio"]:active + .option-btn { transform:scale(0.95); }
         const grade = document.getElementById('gradeSelect').value;
         if (!name || !phone || !grade) return alert('يرجى إكمال جميع البيانات.');
         studentProfile = { name, phone, gender, stage, grade };
+        
+        // ✅ حفظ البيانات في localStorage
         localStorage.setItem('current_student_profile', JSON.stringify(studentProfile));
+        
         setupStudentDashboard();
         showView('searchView');
     }
 
-    function logout() {
-        if(confirm('هل تريد تعديل بياناتك والعودة لشاشة التسجيل؟')) {
+    // ✅ دالة تعديل بيانات الطالب (تعبئة الفورم بالبيانات الحالية)
+    function editStudentData() {
+        if (!studentProfile) {
+            showView('loginView');
+            return;
+        }
+        
+        // تعبئة الفورم بالبيانات الحالية
+        document.getElementById('studentName').value = studentProfile.name || '';
+        document.getElementById('studentPhone').value = studentProfile.phone || '';
+        document.getElementById('stageSelect').value = studentProfile.stage || '';
+        
+        // تحديث قائمة الصفوف
+        updateGrades();
+        
+        // اختيار الصف الحالي
+        setTimeout(() => {
+            document.getElementById('gradeSelect').value = studentProfile.grade || '';
+        }, 50);
+        
+        // اختيار النوع
+        if (studentProfile.gender === 'girl') {
+            document.querySelector('input[name="studentGender"][value="girl"]').checked = true;
+        } else {
+            document.querySelector('input[name="studentGender"][value="boy"]').checked = true;
+        }
+        
+        // إيقاف البحث عن الموقع
+        isGpsActive = false;
+        
+        // الرجوع لشاشة التسجيل مع البيانات معبأة
+        showView('loginView');
+    }
+
+    // ✅ دالة مسح كل البيانات والبدء من جديد
+    function clearAllData() {
+        if (confirm('⚠️ هل أنت متأكد من مسح كل بياناتك؟\n\nستحتاج للتسجيل من جديد.')) {
             studentProfile = null;
             isGpsActive = false;
             localStorage.removeItem('current_student_profile');
+            
+            // تفريغ الفورم
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentPhone').value = '';
+            document.getElementById('stageSelect').value = '';
+            document.getElementById('gradeSelect').innerHTML = '<option value="" disabled selected>اختر المرحلة أولاً...</option>';
+            document.getElementById('gradeSelect').disabled = true;
+            document.querySelector('input[name="studentGender"][value="boy"]').checked = true;
+            
             showView('loginView');
         }
+    }
+
+    // ✅ دالة قديمة (للتوافق مع أي كود بيستخدمها)
+    function logout() {
+        editStudentData();
     }
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
