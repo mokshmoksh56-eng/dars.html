@@ -7,23 +7,18 @@
 
 <!-- Tailwind CSS (CDN) -->
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- تسريع Tailwind وتخصيص الإعدادات لبيئة الـ APK -->
 <script>
-    tailwind.config = { 
-        corePlugins: { preflight: true } 
-    }
+    tailwind.config = { corePlugins: { preflight: true } }
 </script>
 
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- مكتبات Firebase (الإصدار المتوافق مع HTML مباشرة) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-  // إعدادات الربط الخاصة بمشروعك (tagroba-fbe9b)
   const firebaseConfig = {
     apiKey: "AIzaSyC9EXJnOL6ReTB41Kc8SXMcnK657_h2Mwc",
     authDomain: "tagroba-fbe9b.firebaseapp.com",
@@ -34,14 +29,12 @@
     measurementId: "G-CRVE7VMZMS"
   };
 
-  // تهيئة Firebase
   if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
   }
   const db = firebase.database();
 </script>
 
-<!-- PWA -->
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0A1E3F">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -476,7 +469,6 @@ select.input-base{ font-size: 19px !important; }
   #groupDetailTotal{ font-size: 36px !important; }
 }
 
-/* Tabs styles for login/register */
 .auth-tabs { display: flex; border-radius: 14px; background: var(--surface-3); padding: 6px; margin-bottom: 20px; border: 1px solid var(--line); }
 .auth-tab { flex: 1; text-align: center; padding: 12px; font-weight: 900; font-size: 16px; color: var(--muted); cursor: pointer; border-radius: 10px; transition: all 0.3s ease; }
 .auth-tab.active { background: #fff; color: var(--primary-800); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -486,6 +478,108 @@ select.input-base{ font-size: 19px !important; }
 .password-input-wrapper { position: relative; }
 .password-toggle { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; opacity: 0.6; }
 
+/* ====== تنسيقات كروت الحسابات (مطابقة للصورة) ====== */
+.account-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #E2E8F0;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.account-card-header {
+    background: linear-gradient(135deg, #1E3A8A 0%, #0F2D5C 100%);
+    color: #fff;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.account-card-body {
+    padding: 15px;
+}
+.account-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #E2E8F0;
+}
+.account-row:last-child {
+    border-bottom: none;
+}
+.account-row-label {
+    font-size: 13px;
+    color: #64748B;
+    font-weight: 800;
+}
+.account-row-value {
+    font-size: 15px;
+    color: #0F172A;
+    font-weight: 900;
+}
+.account-total-box {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.account-remaining-box {
+    background: #0A1E3F;
+    color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    margin-top: 15px;
+}
+.account-remaining-box p {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+.account-remaining-box h3 {
+    font-size: 28px;
+    font-weight: 900;
+    margin: 0;
+}
+.payment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+.payment-item-date {
+    font-size: 11px;
+    color: #64748B;
+    font-weight: 800;
+}
+.payment-item-amount {
+    font-size: 14px;
+    color: #0F172A;
+    font-weight: 900;
+}
+.payment-item-delete {
+    color: #EF4444;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* ====== تنسيقات زر الظهور (Visibility Toggle) ====== */
+.toggle-on #visibilityToggleSwitch { background-color: #10B981; /* emerald-500 */ }
+.toggle-on #visibilityToggleKnob { transform: translateX(-20px); }
+.toggle-on #visibilityStatusDot { background-color: #34D399; /* emerald-400 */ box-shadow: 0 0 8px rgba(52,211,153,0.8); }
+
+.toggle-off #visibilityToggleSwitch { background-color: #F43F5E; /* rose-500 */ }
+.toggle-off #visibilityToggleKnob { transform: translateX(0); }
+.toggle-off #visibilityStatusDot { background-color: #FB7185; /* rose-400 */ box-shadow: none; }
 </style>
 </head>
 <body>
@@ -495,6 +589,19 @@ select.input-base{ font-size: 19px !important; }
         <h1 class="app-title">منصة <span class="accent">احجزلى</span></h1>
         <p class="app-subtitle">بوابة المعلم - إدارة المجموعات والدروس</p>
         
+        <!-- ✅ زر الظهور للآخرين (Visibility Toggle) -->
+        <div id="teacherVisibilityWrapper" class="mt-3 hidden justify-center w-full">
+            <div id="visibilityToggleBtn" onclick="toggleTeacherVisibility()" class="toggle-off inline-flex items-center justify-between bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-rose-400/50 gap-3 shadow-md cursor-pointer transition-all hover:bg-black/30 active:scale-95">
+                <span class="text-[13px] font-black text-white flex items-center gap-2">
+                    <span id="visibilityStatusDot" class="w-2.5 h-2.5 rounded-full bg-rose-400 transition-colors"></span>
+                    <span id="visibilityStatusText">أنت الآن غير ظاهر</span>
+                </span>
+                <div id="visibilityToggleSwitch" class="w-10 h-5 bg-rose-500 rounded-full relative transition-colors duration-300 flex items-center px-0.5">
+                    <div id="visibilityToggleKnob" class="w-4 h-4 bg-white rounded-full transition-all duration-300 shadow-sm transform translate-x-0"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="mt-4 w-full overflow-x-auto no-scrollbar flex justify-start sm:justify-center pb-2 px-2">
             <div id="liveJourneyTrackerContainer" class="inline-flex items-center bg-white/10 backdrop-blur-md p-1.5 rounded-xl border border-white/20 text-[12px] font-black text-white shadow-sm whitespace-nowrap min-w-max mx-auto"></div>
         </div>
@@ -502,7 +609,7 @@ select.input-base{ font-size: 19px !important; }
 
     <div class="flex-1 relative w-full">
 
-        <!-- واجهة المصادقة (تسجيل دخول / إنشاء حساب) -->
+        <!-- واجهة المصادقة -->
         <div id="authView" class="fade-enter-active">
             <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4 flex items-center gap-2">
                 <span>🔐</span> تسجيل الدخول للمعلمين
@@ -513,7 +620,6 @@ select.input-base{ font-size: 19px !important; }
                 <div class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب جديد</div>
             </div>
 
-            <!-- نموذج تسجيل الدخول -->
             <div id="loginFormContainer" class="auth-form-container active">
                 <form onsubmit="handleLogin(event)">
                     <label class="field-label">رقم الهاتف (11 رقم) <span class="text-rose-500">*</span></label>
@@ -529,7 +635,6 @@ select.input-base{ font-size: 19px !important; }
                 </form>
             </div>
 
-            <!-- نموذج إنشاء الحساب -->
             <div id="registerFormContainer" class="auth-form-container">
                 <form onsubmit="handleRegister(event)">
                     <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl mb-4 text-sm font-bold text-blue-800">
@@ -912,6 +1017,18 @@ select.input-base{ font-size: 19px !important; }
                 ➕ تسجيل حجز يدوياً (مباشر)
             </button>
 
+            <!-- لوحة التحصيل المالي للمجموعة (مبتكرة مثل الصورة) -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col items-center">
+                    <p class="text-[11px] text-slate-500 font-bold mb-1">إجمالي المحصل</p>
+                    <h3 class="text-xl font-black text-emerald-600" dir="ltr" id="groupTotalCollected">0 ج.م</h3>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col items-center">
+                    <p class="text-[11px] text-slate-500 font-bold mb-1">إجمالي المتبقي</p>
+                    <h3 class="text-xl font-black text-rose-600" dir="ltr" id="groupTotalRemaining">0 ج.م</h3>
+                </div>
+            </div>
+            
             <div class="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm flex flex-col items-center">
                 <p class="text-[12px] text-slate-500 font-bold mb-1">إجمالي المحجوز في المجموعة</p>
                 <h3 class="text-3xl font-black text-[var(--primary-950)]" dir="ltr" id="groupDetailTotal">0 / 0</h3>
@@ -1024,7 +1141,6 @@ select.input-base{ font-size: 19px !important; }
                 <input type="number" id="editMaxCapacity" required min="1" class="input-base text-center">
             </div>
 
-            <!-- ========== قسم تعديل الموقع GPS الجديد ========== -->
             <div class="mb-4 bg-gradient-to-br from-amber-50 to-orange-50/50 p-4 rounded-2xl border-2 border-amber-300 shadow-sm">
                 <div class="flex items-start gap-2 mb-3 bg-white/70 border border-amber-200 rounded-xl p-3">
                     <span class="text-xl">⚠️</span>
@@ -1071,7 +1187,6 @@ select.input-base{ font-size: 19px !important; }
                 <input type="hidden" id="editTeacherLng">
                 <input type="hidden" id="editTeacherRadius">
             </div>
-            <!-- ========== نهاية قسم تعديل الموقع ========== -->
 
             <div class="grid grid-cols-2 gap-2 mt-4">
                 <button type="button" onclick="closeEditGroupModal()" class="btn-ghost !mb-0 py-3 bg-slate-100">إلغاء</button>
@@ -1081,71 +1196,82 @@ select.input-base{ font-size: 19px !important; }
     </div>
 </div>
 
-<!-- Modal المدفوعات والأرشيف -->
-<div id="paymentModal" class="modal-overlay">
-    <div class="modal-content !max-w-2xl !h-[90vh] flex flex-col">
-        <h3 class="text-center font-black mb-2 text-[var(--primary-900)] text-lg flex items-center justify-center gap-2"><span>💳</span> السجل المالي وأرشيف الدفع</h3>
-        <div id="paymentStudentName" class="text-center font-bold text-sm bg-[var(--primary-50)] text-[var(--primary-800)] border border-[var(--primary-200)] p-2 rounded-lg mb-4">...</div>
+<!-- ✅ Modal كارت الحساب المالي للطالب (مبتكر ومطابق للصورة) -->
+<div id="studentAccountModal" class="modal-overlay">
+    <div class="modal-content !max-w-lg !h-[95vh] flex flex-col p-0 overflow-hidden">
+        <!-- الترويسة (مثل الصورة) -->
+        <div class="account-card-header">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl font-black">
+                    <span id="accStudentIcon">👤</span>
+                </div>
+                <div>
+                    <h3 class="font-black text-lg" id="accStudentName">اسم الطالب</h3>
+                    <p class="text-[11px] opacity-80" dir="ltr" id="accStudentPhone">01xxxxxxxxx</p>
+                </div>
+            </div>
+            <button onclick="closeStudentAccountModal()" class="text-white/70 hover:text-white bg-white/10 p-2 rounded-lg">
+                ✖
+            </button>
+        </div>
 
-        <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-            
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-5 shadow-sm">
-                <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1"><span>➕</span> تسجيل دفعة جديدة</h4>
-                <form onsubmit="saveStudentPayment(event)">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="field-label !text-xs">نوع الدفع</label>
-                            <select id="payType" required class="input-base !mb-0 !p-2.5 !text-sm" onchange="handlePayTypeChange()">
-                                <option value="" disabled selected>اختر النوع...</option>
-                                <option value="session">بالحصة</option>
-                                <option value="week">بالأسبوع</option>
-                                <option value="month">بالشهر</option>
-                                <option value="term1">الترم الأول</option>
-                                <option value="term2">الترم الثاني</option>
-                                <option value="both_terms">الترمين معاً (العام كاملاً)</option>
-                            </select>
-                        </div>
-                        <div id="payDetailsContainer" class="hidden">
-                            <label class="field-label !text-xs" id="payDetailsLabel">التفاصيل</label>
-                            <input type="number" id="payDetailsNum" class="input-base !mb-0 !p-2.5 !text-sm hidden" min="1" placeholder="العدد...">
-                            <select id="payDetailsMonth" class="input-base !mb-0 !p-2.5 !text-sm hidden">
-                                <option value="أغسطس">أغسطس</option>
-                                <option value="سبتمبر">سبتمبر</option>
-                                <option value="أكتوبر">أكتوبر</option>
-                                <option value="نوفمبر">نوفمبر</option>
-                                <option value="ديسمبر">ديسمبر</option>
-                                <option value="يناير">يناير</option>
-                                <option value="فبراير">فبراير</option>
-                                <option value="مارس">مارس</option>
-                                <option value="أبريل">أبريل</option>
-                                <option value="مايو">مايو</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                        <div>
-                            <label class="field-label !text-xs">المبلغ المدفوع (ج.م)</label>
-                            <input type="number" id="payAmount" required placeholder="مثال: 150" min="0" class="input-base !mb-0 !p-2.5 !text-sm text-left" dir="ltr">
-                        </div>
-                        <div>
-                            <label class="field-label !text-xs">ملاحظات (اختياري)</label>
-                            <input type="text" id="payNotes" placeholder="أي ملاحظات إضافية..." class="input-base !mb-0 !p-2.5 !text-sm">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-primary !mb-0 py-2.5 text-sm w-full">حفظ في الأرشيف 💾</button>
-                </form>
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50">
+            <!-- الإجمالي -->
+            <div class="account-total-box">
+                <span class="account-row-label">المبلغ الإجمالي المتفق عليه</span>
+                <div class="flex items-center gap-2">
+                    <input type="number" id="accTotalFees" class="w-24 text-center font-black text-lg bg-transparent border-b-2 border-slate-300 outline-none focus:border-[var(--primary-600)]" placeholder="0" min="0">
+                    <span class="font-black text-slate-700">ج.م</span>
+                </div>
             </div>
 
-            <div>
-                <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1"><span>🗂️</span> تقرير أرشيف المدفوعات السابقة</h4>
-                <div id="paymentArchiveContainer" class="space-y-2"></div>
+            <!-- قائمة الدفعات -->
+            <div class="mb-4">
+                <h4 class="font-black text-[var(--primary-800)] mb-3 text-sm flex items-center gap-1">
+                    <span>📋</span> سجل الدفعات (الأقساط)
+                </h4>
+                <div id="accPaymentsList" class="space-y-2">
+                    <!-- سيتم تعبئتها ديناميكياً -->
+                </div>
+            </div>
+
+            <!-- إضافة دفعة جديدة -->
+            <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm mb-4">
+                <h4 class="font-black text-[var(--primary-800)] mb-2 text-xs">➕ إضافة دفعة جديدة</h4>
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                    <div>
+                        <label class="text-[10px] text-slate-500 font-bold">المبلغ (ج.م)</label>
+                        <input type="number" id="accNewPaymentAmount" class="input-base !mb-0 !p-2 !text-sm text-center" placeholder="0" min="1">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-500 font-bold">التاريخ</label>
+                        <input type="date" id="accNewPaymentDate" class="input-base !mb-0 !p-2 !text-sm text-center">
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="text-[10px] text-slate-500 font-bold">ملاحظات (اختياري)</label>
+                    <input type="text" id="accNewPaymentNote" class="input-base !mb-0 !p-2 !text-sm" placeholder="مثال: الدفعة الأولى...">
+                </div>
+                <button type="button" onclick="addAccountPayment()" class="w-full bg-[var(--primary-600)] text-white font-black py-2 rounded-lg text-xs hover:bg-[var(--primary-700)] transition-colors">
+                    إضافة الدفعة
+                </button>
+            </div>
+
+            <!-- المتبقي (مثل الصورة) -->
+            <div class="account-remaining-box">
+                <p>المتبقي</p>
+                <h3 id="accRemainingAmount">0 ج.م</h3>
             </div>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-slate-200">
-            <button type="button" onclick="closePaymentModal()" class="btn-ghost w-full !mb-0 py-3 bg-slate-100">إغلاق</button>
+        <!-- أزرار التحكم السفلية (مثل الصورة) -->
+        <div class="p-4 bg-white border-t border-slate-200 flex gap-2">
+            <button onclick="saveStudentAccount()" class="flex-1 bg-[#0F2D5C] text-white font-black py-3 rounded-xl shadow-md text-sm hover:bg-[#1E3A8A] transition-colors flex items-center justify-center gap-2">
+                <span>💾</span> حفظ الحساب
+            </button>
+            <button onclick="sendWhatsAppInvoice()" class="flex-1 bg-[#25D366] text-white font-black py-3 rounded-xl shadow-md text-sm hover:bg-[#128C7E] transition-colors flex items-center justify-center gap-2">
+                <span>💬</span> واتس فاتورة
+            </button>
         </div>
     </div>
 </div>
@@ -1163,13 +1289,14 @@ select.input-base{ font-size: 19px !important; }
 
     let selectedDays = [];
     let classesDB = []; 
-    let allTeachersDB = {}; // لتخزين حسابات المعلمين من Firebase
+    let allTeachersDB = {}; 
     let isFirebaseLoaded = false;
     let currentTeacherProfile = null;
+    let currentOpenedGroupId = null;
+    let currentAccountStudentId = null;
 
     // دالة لجلب المجموعات وحسابات المعلمين من Firebase
     function fetchClassesFromFirebase() {
-        // جلب المجموعات
         db.ref('classes').on('value', (snapshot) => {
             const data = snapshot.val();
             classesDB = data ? data : [];
@@ -1182,7 +1309,6 @@ select.input-base{ font-size: 19px !important; }
             }
         });
 
-        // جلب حسابات المعلمين
         db.ref('teachers').on('value', (snapshot) => {
             const data = snapshot.val();
             allTeachersDB = data ? data : {};
@@ -1336,14 +1462,12 @@ select.input-base{ font-size: 19px !important; }
 
     let mapInstance = null, mapMarker = null, mapCircle = null;
     let tempLat = null, tempLng = null, tempRadius = 2000; 
-    let mapMode = 'add';              // وضع الخريطة: 'add' أو 'edit'
-    let editingClassType = 'center';  // نوع الدرس أثناء التعديل
+    let mapMode = 'add';
+    let editingClassType = 'center';
 
-    // ===== فتح الخريطة في وضع الإضافة (السلوك الأصلي) =====
     function openMapModal() {
         mapMode = 'add';
         editingClassType = document.querySelector('input[name="classType"]:checked')?.value || 'center';
-        // نبدأ من الإحداثيات المحفوظة في وضع الإضافة أو من الافتراضي
         const existLat = document.getElementById('teacherLat').value;
         const existLng = document.getElementById('teacherLng').value;
         if (existLat && existLng) {
@@ -1360,9 +1484,7 @@ select.input-base{ font-size: 19px !important; }
         _showMapWithType();
     }
 
-    // ===== فتح الخريطة في وضع التعديل (مع رسالة التحذير أولاً) =====
     function openEditMapModal() {
-        // ⚠️ رسالة التحذير تظهر هنا قبل فتح الخريطة
         const confirmMsg = 
             '⚠️ تنبيه مهم: تغيير مكان الدرس\n\n' +
             'أنت على وشك تغيير موقع هذه المجموعة.\n\n' +
@@ -1375,10 +1497,8 @@ select.input-base{ font-size: 19px !important; }
         if (!confirm(confirmMsg)) return;
 
         mapMode = 'edit';
-        // نستخدم نوع المجموعة الحالي (center / teacher_home / student_home)
         editingClassType = (currentEditingClass && currentEditingClass.type) ? currentEditingClass.type : 'center';
 
-        // تحميل إحداثيات المجموعة الحالية إن وجدت
         const editLat = document.getElementById('editTeacherLat').value;
         const editLng = document.getElementById('editTeacherLng').value;
         const editRad = document.getElementById('editTeacherRadius').value;
@@ -1400,7 +1520,6 @@ select.input-base{ font-size: 19px !important; }
         _showMapWithType();
     }
 
-    // ===== دالة مشتركة لعرض الخريطة =====
     function _showMapWithType() {
         document.getElementById('mapModal').style.display = 'flex';
         const type = editingClassType;
@@ -1429,7 +1548,6 @@ select.input-base{ font-size: 19px !important; }
                 if (editingClassType === 'student_home') mapCircle.setLatLng(pos);
             });
             
-            // جلب الموقع الحقيقي فقط إذا لم يكن هناك إحداثيات محفوظة
             if (!tempLat && navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(pos => {
                     let lat = pos.coords.latitude, lng = pos.coords.longitude;
@@ -1440,7 +1558,6 @@ select.input-base{ font-size: 19px !important; }
                 }, () => {}, { enableHighAccuracy: true });
             }
         } else {
-            // تحديث الخريطة عند إعادة الفتح
             if (tempLat && tempLng) {
                 mapInstance.setView([tempLat, tempLng], 14);
                 mapMarker.setLatLng([tempLat, tempLng]);
@@ -1474,7 +1591,6 @@ select.input-base{ font-size: 19px !important; }
             tempLat = pos.lat; tempLng = pos.lng; 
         }
 
-        // ============ وضع التعديل ============
         if (mapMode === 'edit') {
             document.getElementById('editTeacherLat').value = tempLat; 
             document.getElementById('editTeacherLng').value = tempLng;
@@ -1525,7 +1641,6 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
-        // ============ وضع الإضافة (الأصلي) ============
         document.getElementById('teacherLat').value = tempLat; 
         document.getElementById('teacherLng').value = tempLng;
         document.getElementById('teacherRadius').value = tempRadius; 
@@ -1637,7 +1752,6 @@ select.input-base{ font-size: 19px !important; }
         }
     }
 
-    // ====== دوال تسجيل الدخول وإنشاء الحساب الجديدة ======
     function switchAuthTab(tab) {
         document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.auth-form-container').forEach(c => c.classList.remove('active'));
@@ -1675,40 +1789,37 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
-        // فحص ما إذا كان الرقم مسجل مسبقاً
         if (allTeachersDB[phone]) {
             alert('⚠️ هذا الرقم مسجل به حساب معلم بالفعل! برجاء تسجيل الدخول.');
             switchAuthTab('login');
             return;
         }
 
-        // تنظيف المتغيرات القديمة إن وجدت
         selectedGrades = [];
         selectedSubjects = [];
         selectedClassStage = null;
         
-        // إنشاء الحساب الجديد في Firebase
         currentTeacherProfile = {
             teacherTitle: title,
             teacherName: name,
             teacherAge: age,
             phone: phone,
-            password: pass1, // ملاحظة: في التطبيقات الحقيقية يتم تشفير كلمة المرور، لكننا نحفظها كما هي للتبسيط
+            password: pass1,
             gov: gov,
             grades: [],
             subjects: [],
-            stages: []
+            stages: [],
+            isVisible: false // القيمة الافتراضية: غير ظاهر
         };
 
         allTeachersDB[phone] = currentTeacherProfile;
         db.ref('teachers/' + phone).set(currentTeacherProfile);
         
-        // حفظ جلسة الدخول في الهاتف
         localStorage.setItem('logged_in_teacher_phone', phone);
         
         alert('🎉 تم إنشاء حسابك بنجاح!');
         applyTheme(title);
-        showView('teacherStagesProfileView'); // التوجيه لصفحة اختيار المواد (التخصص)
+        showView('teacherStagesProfileView');
     }
 
     function handleLogin(e) {
@@ -1726,12 +1837,14 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
-        // تسجيل الدخول ناجح
         currentTeacherProfile = allTeachersDB[phone];
+        if (currentTeacherProfile.isVisible === undefined) {
+            currentTeacherProfile.isVisible = false; // لحسابات المعلمين القدامى
+        }
+        
         localStorage.setItem('logged_in_teacher_phone', phone);
         applyTheme(currentTeacherProfile.teacherTitle);
         
-        // إذا لم يكن المعلم قد اختار مواده بعد
         if (!currentTeacherProfile.subjects || currentTeacherProfile.subjects.length === 0) {
             showView('teacherStagesProfileView');
         } else {
@@ -1753,7 +1866,6 @@ select.input-base{ font-size: 19px !important; }
             showView('authView');
         }
     }
-    // =====================================================
 
     function navigateToStep(viewId) {
         if (['teacherClassDetailsView', 'teacherDashboardView', 'groupDetailsView'].includes(viewId)) {
@@ -1765,11 +1877,56 @@ select.input-base{ font-size: 19px !important; }
         showView(viewId);
     }
 
+    // ✅ دالة تحديث زر الظهور (Visibility Toggle)
+    function updateVisibilityUI(isVisible) {
+        const wrapper = document.getElementById('teacherVisibilityWrapper');
+        const toggleBtn = document.getElementById('visibilityToggleBtn');
+        const text = document.getElementById('visibilityStatusText');
+        
+        if (!wrapper) return;
+        
+        wrapper.classList.remove('hidden');
+        wrapper.classList.add('flex');
+        
+        if (isVisible) {
+            toggleBtn.className = 'toggle-on inline-flex items-center justify-between bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-emerald-400/50 gap-3 shadow-md cursor-pointer transition-all hover:bg-black/30 active:scale-95';
+            text.innerText = 'أنت الآن ظاهر للآخرين';
+        } else {
+            toggleBtn.className = 'toggle-off inline-flex items-center justify-between bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-rose-400/50 gap-3 shadow-md cursor-pointer transition-all hover:bg-black/30 active:scale-95';
+            text.innerText = 'أنت الآن غير ظاهر';
+        }
+    }
+
+    // ✅ دالة تبديل حالة الظهور
+    function toggleTeacherVisibility() {
+        if (!currentTeacherProfile) return;
+        
+        const newState = !currentTeacherProfile.isVisible;
+        
+        // تحديث البيانات محلياً
+        currentTeacherProfile.isVisible = newState;
+        if (allTeachersDB[currentTeacherProfile.phone]) {
+            allTeachersDB[currentTeacherProfile.phone].isVisible = newState;
+        }
+        
+        // تحديث في Firebase
+        db.ref('teachers/' + currentTeacherProfile.phone).update({ isVisible: newState });
+        
+        // تحديث الواجهة
+        updateVisibilityUI(newState);
+        
+        // إشعار
+        if (newState) {
+            alert('✅ أنت الآن ظاهر للطلاب. يمكنهم رؤية مجموعاتك والحجز فيها.');
+        } else {
+            alert('👻 أنت الآن غير ظاهر. تم إخفاء مجموعاتك عن الطلاب مؤقتاً.');
+        }
+    }
+
     function updateLiveJourneyTracker(viewId) {
         const container = document.getElementById('liveJourneyTrackerContainer');
         if(!container) return;
 
-        // حساب عدد المجموعات الخاصة بهذا المعلم فقط
         const teacherClasses = classesDB.filter(c => c.phone === (currentTeacherProfile?.phone || ''));
         const hasPublishedClasses = teacherClasses.length > 0;
         const isAppView = ['teacherDashboardView', 'teacherClassDetailsView', 'groupDetailsView'].includes(viewId);
@@ -1796,7 +1953,7 @@ select.input-base{ font-size: 19px !important; }
         ];
 
         if (viewId === 'groupDetailsView') steps[2] = { id: 'groupDetailsView', label: '3. إدارة المجموعة' };
-        if (viewId === 'roleView' || viewId === 'authView') return container.innerHTML = ''; // إخفاء الشريط في البداية
+        if (viewId === 'roleView' || viewId === 'authView') return container.innerHTML = '';
 
         const separator = `<span class="text-white/30 text-[10px] px-1">➔</span>`;
 
@@ -1844,9 +2001,21 @@ select.input-base{ font-size: 19px !important; }
         
         updateLiveJourneyTracker(viewId);
 
+        // ✅ إظهار/إخفاء زر الظهور بناءً على الصفحة الحالية
+        const visibilityWrapper = document.getElementById('teacherVisibilityWrapper');
+        if (visibilityWrapper) {
+            if (viewId === 'teacherDashboardView') {
+                visibilityWrapper.classList.remove('hidden');
+                visibilityWrapper.classList.add('flex');
+                updateVisibilityUI(currentTeacherProfile ? currentTeacherProfile.isVisible : false);
+            } else {
+                visibilityWrapper.classList.add('hidden');
+                visibilityWrapper.classList.remove('flex');
+            }
+        }
+
         if(viewId === 'teacherDashboardView') renderTeacherDashboard();
         if(viewId === 'teacherStagesProfileView') {
-            // تصفير وضبط المتغيرات بناءً على الحساب الحالي لمنع تداخل البيانات بين الحسابات
             if (currentTeacherProfile) {
                 selectedGrades = currentTeacherProfile.grades ? [...currentTeacherProfile.grades] : [];
                 selectedSubjects = currentTeacherProfile.subjects ? [...currentTeacherProfile.subjects] : [];
@@ -2053,7 +2222,6 @@ select.input-base{ font-size: 19px !important; }
             if(hasG || hasS) calcStages.push(st);
         });
 
-        // تحديث بيانات المعلم في Firebase
         currentTeacherProfile.stages = calcStages;
         currentTeacherProfile.grades = [...selectedGrades];
         currentTeacherProfile.subjects = [...selectedSubjects];
@@ -2068,6 +2236,7 @@ select.input-base{ font-size: 19px !important; }
         const savedPhone = localStorage.getItem('logged_in_teacher_phone');
         if (savedPhone && allTeachersDB[savedPhone]) {
             currentTeacherProfile = allTeachersDB[savedPhone];
+            if (currentTeacherProfile.isVisible === undefined) currentTeacherProfile.isVisible = false;
             applyTheme(currentTeacherProfile.teacherTitle);
             
             if (!currentTeacherProfile.subjects || currentTeacherProfile.subjects.length === 0) {
@@ -2081,7 +2250,6 @@ select.input-base{ font-size: 19px !important; }
     }
 
     window.onload = function() {
-        // الاتصال بقاعدة البيانات عند تحميل الصفحة وجلب البيانات ثم فحص التسجيل
         db.ref('teachers').once('value').then((snapshot) => {
             const data = snapshot.val();
             allTeachersDB = data ? data : {};
@@ -2099,10 +2267,10 @@ select.input-base{ font-size: 19px !important; }
                 }
             });
 
-            // بعد تحميل بيانات المعلمين من الفايربيز، تحقق هل هو مسجل دخول أم لا
             const savedPhone = localStorage.getItem('logged_in_teacher_phone');
             if (savedPhone && allTeachersDB[savedPhone]) {
                 currentTeacherProfile = allTeachersDB[savedPhone];
+                if (currentTeacherProfile.isVisible === undefined) currentTeacherProfile.isVisible = false;
                 applyTheme(currentTeacherProfile.teacherTitle);
                 showView('teacherDashboardView');
             }
@@ -2239,7 +2407,6 @@ select.input-base{ font-size: 19px !important; }
         }
         
         const gradesHtml = grades.map(grade => {
-            // نختار أول صف كقيمة افتراضية إذا لم يتم الاختيار
             let isSel = false;
             return `
                 <label>
@@ -2353,7 +2520,6 @@ select.input-base{ font-size: 19px !important; }
         if (!days || days.length === 0 || !startTime || !endTime) return [];
         const conflicts = [];
         
-        // نتحقق من مجموعات المعلم الحالي فقط
         const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
 
         teacherClasses.forEach(cls => {
@@ -2445,7 +2611,6 @@ select.input-base{ font-size: 19px !important; }
         const label = document.getElementById('calendarMonthLabel');
         if (!grid || !label || !currentTeacherProfile) return;
         
-        // عرض مجموعات هذا المعلم فقط في النتيجة
         const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
 
         const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
@@ -2636,10 +2801,10 @@ select.input-base{ font-size: 19px !important; }
         const radius = type === 'student_home' ? parseFloat(document.getElementById('teacherRadius').value || 2000) : null;
 
         const newClass = {
-            id: Date.now().toString() + '_' + currentTeacherProfile.phone, // جعل الـ ID فريد
+            id: Date.now().toString() + '_' + currentTeacherProfile.phone,
             teacherTitle: currentTeacherProfile.teacherTitle,
             teacherName: currentTeacherProfile.teacherName,
-            phone: currentTeacherProfile.phone, // ربط المجموعة برقم المعلم
+            phone: currentTeacherProfile.phone,
             subjects: currentTeacherProfile.subjects || [],
             grades: currentTeacherProfile.grades || [],
             subject: selectedSubjectEl.value,
@@ -2666,7 +2831,6 @@ select.input-base{ font-size: 19px !important; }
 
         classesDB.push(newClass);
         
-        // حفظ المجموعة الجديدة في Firebase
         db.ref('classes').set(classesDB);
         
         alert('✅ تم إضافة ونشر المجموعة بنجاح!');
@@ -2710,8 +2874,6 @@ select.input-base{ font-size: 19px !important; }
         showView('teacherDashboardView'); 
     }
 
-    let currentOpenedGroupId = null;
-
     function renderTeacherDashboard() {
         if(!currentTeacherProfile) return;
         
@@ -2753,7 +2915,6 @@ select.input-base{ font-size: 19px !important; }
         const container = document.getElementById('teacherClassesList');
         container.innerHTML = '';
 
-        // استخراج المجموعات الخاصة بهذا المعلم فقط بناءً على رقم الهاتف
         const myClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
 
         if (myClasses.length === 0) {
@@ -2890,13 +3051,9 @@ select.input-base{ font-size: 19px !important; }
     function deleteGroup(classId) {
         if(confirm("⚠️ تحذير: هل أنت متأكد أنك تريد إلغاء هذه المجموعة نهائياً؟\n\nسيتم حذف بيانات المجموعة وجميع الطلاب المحجوزين بداخلها ولن تتمكن من استعادتها.")) {
             classesDB = classesDB.filter(c => c.id !== classId);
-            
-            // رفع التحديث للحذف على Firebase
             db.ref('classes').set(classesDB);
-            
             alert('تم إلغاء المجموعة بنجاح.');
             updateLiveJourneyTracker('teacherDashboardView');
-            // الواجهة سيتم تحديثها تلقائياً من خلال مستمع Firebase
         }
     }
 
@@ -2911,8 +3068,6 @@ select.input-base{ font-size: 19px !important; }
             }
             
             classesDB[clsIndex].isActive = newStatus;
-            
-            // تحديث حالة المجموعة على Firebase
             db.ref('classes').set(classesDB);
         }
     }
@@ -2925,6 +3080,20 @@ select.input-base{ font-size: 19px !important; }
         document.getElementById('groupDetailName').innerText = `${cls.groupName} - ${cls.grade || ''} - ${cls.subject || ''}`;
         const totalBooked = (cls.bookedBoys || 0) + (cls.bookedGirls || 0);
         document.getElementById('groupDetailTotal').innerText = `${totalBooked} / ${cls.maxCapacity}`;
+
+        // حساب الإجماليات المالية للمجموعة
+        let totalCollected = 0;
+        let totalRemaining = 0;
+        if (cls.students && cls.students.length > 0) {
+            cls.students.forEach(s => {
+                const fees = s.totalFees || 0;
+                const paid = s.paidAmount || 0;
+                totalCollected += paid;
+                totalRemaining += Math.max(0, fees - paid);
+            });
+        }
+        document.getElementById('groupTotalCollected').innerText = `${totalCollected.toLocaleString()} ج.م`;
+        document.getElementById('groupTotalRemaining').innerText = `${totalRemaining.toLocaleString()} ج.م`;
 
         const container = document.getElementById('excelTablesContainer');
         container.innerHTML = '';
@@ -2942,7 +3111,7 @@ select.input-base{ font-size: 19px !important; }
                     <td dir="ltr" class="text-center font-bold en-num">${s.phone}</td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-1">
-                            <button onclick="openPaymentModal('${cls.id}', '${s.id}')" class="text-[10px] font-black bg-white text-blue-700 px-2 py-1.5 rounded-lg shadow-sm border border-blue-200 hover:bg-blue-50 transition-colors">دفع 💳</button>
+                            <button onclick="openStudentAccountModal('${cls.id}', '${s.id}')" class="text-[10px] font-black bg-white text-blue-700 px-2 py-1.5 rounded-lg shadow-sm border border-blue-200 hover:bg-blue-50 transition-colors">الحساب المالي 💳</button>
                             <button onclick="deleteStudent('${cls.id}', '${s.id}')" class="text-[10px] font-black bg-white text-rose-700 px-2 py-1.5 rounded-lg shadow-sm border border-rose-200 hover:bg-rose-50 transition-colors">حذف 🗑️</button>
                         </div>
                     </td>
@@ -2975,7 +3144,7 @@ select.input-base{ font-size: 19px !important; }
                     <td dir="ltr" class="text-center font-bold en-num">${s.phone}</td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-1">
-                            <button onclick="openPaymentModal('${cls.id}', '${s.id}')" class="text-[10px] font-black bg-white text-pink-700 px-2 py-1.5 rounded-lg shadow-sm border border-pink-200 hover:bg-pink-50 transition-colors">دفع 💳</button>
+                            <button onclick="openStudentAccountModal('${cls.id}', '${s.id}')" class="text-[10px] font-black bg-white text-pink-700 px-2 py-1.5 rounded-lg shadow-sm border border-pink-200 hover:bg-pink-50 transition-colors">الحساب المالي 💳</button>
                             <button onclick="deleteStudent('${cls.id}', '${s.id}')" class="text-[10px] font-black bg-white text-rose-700 px-2 py-1.5 rounded-lg shadow-sm border border-rose-200 hover:bg-rose-50 transition-colors">حذف 🗑️</button>
                         </div>
                     </td>
@@ -3072,152 +3241,208 @@ select.input-base{ font-size: 19px !important; }
 
             cls.students.push({
                 id: 'std_' + Date.now(),
-                name: name, phone: phone, gender: gender, date: dateStr
+                name: name, 
+                phone: phone, 
+                gender: gender, 
+                date: dateStr,
+                totalFees: 0,
+                paidAmount: 0,
+                payments: []
             });
 
             if (gender === 'boy') cls.bookedBoys = (cls.bookedBoys || 0) + 1;
             else if (gender === 'girl') cls.bookedGirls = (cls.bookedGirls || 0) + 1;
 
-            // تحديث بيانات المجموعة وإضافة الطالب الجديد على Firebase
             db.ref('classes').set(classesDB);
             
             alert('✅ تم إضافة الطالب وتحديث العداد بنجاح!');
             closeManualAddModal();
-            // الواجهة سيتم تحديثها تلقائياً بفضل مستمع Firebase
         }
     }
 
-    let currentPayClassId = null;
-    let currentPayStudentId = null;
+    // ==========================================================
+    // 🚀 نظام "الكروت" (الحساب المالي للطالب) - مبتكر ومطابق للصورة
+    // ==========================================================
 
-    function handlePayTypeChange() {
-        const type = document.getElementById('payType').value;
-        const container = document.getElementById('payDetailsContainer');
-        const label = document.getElementById('payDetailsLabel');
-        const numInput = document.getElementById('payDetailsNum');
-        const monthSelect = document.getElementById('payDetailsMonth');
-
-        container.classList.remove('hidden');
-        numInput.classList.add('hidden');
-        numInput.removeAttribute('required');
-        monthSelect.classList.add('hidden');
-        monthSelect.removeAttribute('required');
-
-        if(type === 'session') {
-            label.innerText = 'عدد الحصص';
-            numInput.classList.remove('hidden');
-            numInput.setAttribute('required', 'true');
-        } else if(type === 'week') {
-            label.innerText = 'عدد الأسابيع';
-            numInput.classList.remove('hidden');
-            numInput.setAttribute('required', 'true');
-        } else if(type === 'month') {
-            label.innerText = 'اختر الشهر';
-            monthSelect.classList.remove('hidden');
-            monthSelect.setAttribute('required', 'true');
-        } else {
-            container.classList.add('hidden');
-        }
-    }
-
-    function openPaymentModal(classId, studentId) {
-        currentPayClassId = classId;
-        currentPayStudentId = studentId;
+    function openStudentAccountModal(classId, studentId) {
+        currentOpenedGroupId = classId;
+        currentAccountStudentId = studentId;
 
         const cls = classesDB.find(c => c.id === classId);
         const student = cls.students.find(s => s.id === studentId);
 
-        document.getElementById('paymentStudentName').innerText = `الطالب: ${student.name}`;
-        
-        document.getElementById('payType').value = "";
-        document.getElementById('payDetailsNum').value = "";
-        document.getElementById('payAmount').value = "";
-        document.getElementById('payNotes').value = "";
-        handlePayTypeChange();
+        if (!student) return;
 
-        renderPaymentArchive(student);
-        document.getElementById('paymentModal').style.display = 'flex';
+        document.getElementById('accStudentName').innerText = student.name;
+        document.getElementById('accStudentPhone').innerText = student.phone;
+        document.getElementById('accStudentIcon').innerText = student.gender === 'boy' ? '👦' : '👧';
+        
+        const totalInput = document.getElementById('accTotalFees');
+        totalInput.value = student.totalFees || 0;
+
+        renderAccountPaymentsList(student);
+        calculateAccountRemaining();
+
+        document.getElementById('studentAccountModal').style.display = 'flex';
     }
 
-    function saveStudentPayment(e) {
-        e.preventDefault();
-        const cls = classesDB.find(c => c.id === currentPayClassId);
-        const student = cls.students.find(s => s.id === currentPayStudentId);
-
-        const typeVal = document.getElementById('payType').value;
-        const numVal = document.getElementById('payDetailsNum').value;
-        const monthVal = document.getElementById('payDetailsMonth').value;
-        const amount = document.getElementById('payAmount').value;
-        const notes = document.getElementById('payNotes').value;
-
-        if(!typeVal) { alert('الرجاء اختيار نوع الدفع'); return; }
-
-        let typeText = '';
-        if(typeVal === 'session') typeText = `حصة (${numVal} حصص)`;
-        else if(typeVal === 'week') typeText = `أسبوع (${numVal} أسابيع)`;
-        else if(typeVal === 'month') typeText = `شهر (${monthVal})`;
-        else if(typeVal === 'term1') typeText = 'الترم الأول';
-        else if(typeVal === 'term2') typeText = 'الترم الثاني';
-        else if(typeVal === 'both_terms') typeText = 'الترمين معاً (عام كامل)';
-
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('ar-EG') + ' ' + now.toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
-
-        if(!student.paymentArchive) student.paymentArchive = [];
-
-        student.paymentArchive.unshift({
-            id: 'pay_' + Date.now(),
-            date: dateStr,
-            typeText: typeText,
-            amount: amount,
-            notes: notes
-        });
-
-        // حفظ الدفعة الجديدة على Firebase
-        db.ref('classes').set(classesDB);
-        
-        e.target.reset();
-        handlePayTypeChange();
-        renderPaymentArchive(student);
+    function closeStudentAccountModal() {
+        document.getElementById('studentAccountModal').style.display = 'none';
+        currentAccountStudentId = null;
     }
 
-    function renderPaymentArchive(student) {
-        const container = document.getElementById('paymentArchiveContainer');
-        if(!student.paymentArchive || student.paymentArchive.length === 0) {
-            container.innerHTML = '<div class="text-center py-6 bg-white border border-slate-200 border-dashed rounded-xl text-slate-400 font-bold text-sm">لا توجد مدفوعات مسجلة في الأرشيف حتى الآن.</div>';
+    function renderAccountPaymentsList(student) {
+        const container = document.getElementById('accPaymentsList');
+        if (!student.payments || student.payments.length === 0) {
+            container.innerHTML = '<p class="text-center text-slate-400 font-bold text-xs py-4">لا توجد دفعات مسجلة.</p>';
             return;
         }
 
-        container.innerHTML = student.paymentArchive.map(pay => `
-            <div class="bg-white border border-slate-200 rounded-xl p-3 flex justify-between items-center shadow-sm">
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="bg-[var(--primary-100)] text-[var(--primary-800)] px-2 py-0.5 rounded text-[11px] font-black">${pay.typeText}</span>
-                        <span class="text-[11px] text-slate-400 font-bold" dir="ltr">${pay.date}</span>
-                    </div>
-                    <div class="font-black text-[var(--primary-950)] text-sm mb-1">المبلغ: ${pay.amount} ج.م</div>
-                    ${pay.notes ? `<div class="text-[11px] text-slate-500 font-bold flex items-start gap-1"><span class="text-[10px]">📝</span> ${pay.notes}</div>` : ''}
+        const sorted = [...student.payments].reverse();
+        container.innerHTML = sorted.map(pay => `
+            <div class="payment-item">
+                <div>
+                    <div class="payment-item-amount">${pay.amount} ج.م</div>
+                    <div class="payment-item-date">${pay.date || ''} ${pay.note ? '| ' + pay.note : ''}</div>
                 </div>
-                <button type="button" onclick="deletePaymentRecord('${pay.id}')" class="text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg transition-colors" title="حذف السجل">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <button type="button" onclick="deleteAccountPayment('${pay.id}')" class="payment-item-delete">
+                    🗑️
                 </button>
             </div>
         `).join('');
     }
 
-    function deletePaymentRecord(recordId) {
-        if(!confirm('⚠️ هل أنت متأكد من حذف هذا السجل المالي؟')) return;
+    function addAccountPayment() {
+        const amountInput = document.getElementById('accNewPaymentAmount');
+        const dateInput = document.getElementById('accNewPaymentDate');
+        const noteInput = document.getElementById('accNewPaymentNote');
 
-        const cls = classesDB.find(c => c.id === currentPayClassId);
-        const student = cls.students.find(s => s.id === currentPayStudentId);
-        
-        student.paymentArchive = student.paymentArchive.filter(p => p.id !== recordId);
-        
-        // مسح الدفعة من Firebase
+        const amount = parseFloat(amountInput.value);
+        if (!amount || amount <= 0) { alert('⚠️ يرجى إدخال مبلغ صحيح'); return; }
+
+        const cls = classesDB.find(c => c.id === currentOpenedGroupId);
+        const student = cls.students.find(s => s.id === currentAccountStudentId);
+        if (!student) return;
+
+        if (!student.payments) student.payments = [];
+        if (!student.paidAmount) student.paidAmount = 0;
+
+        const newPayment = {
+            id: 'pay_' + Date.now(),
+            amount: amount,
+            date: dateInput.value || new Date().toISOString().split('T')[0],
+            note: noteInput.value.trim()
+        };
+
+        student.payments.push(newPayment);
+        student.paidAmount += amount;
+
         db.ref('classes').set(classesDB);
+
+        amountInput.value = '';
+        noteInput.value = '';
+
+        renderAccountPaymentsList(student);
+        calculateAccountRemaining();
         
-        renderPaymentArchive(student);
+        if (document.getElementById('groupDetailsView').classList.contains('fade-enter-active')) {
+            openGroupDetails(currentOpenedGroupId);
+        }
     }
+
+    function deleteAccountPayment(paymentId) {
+        if (!confirm('⚠️ هل أنت متأكد من حذف هذه الدفعة؟')) return;
+
+        const cls = classesDB.find(c => c.id === currentOpenedGroupId);
+        const student = cls.students.find(s => s.id === currentAccountStudentId);
+        if (!student || !student.payments) return;
+
+        const paymentIndex = student.payments.findIndex(p => p.id === paymentId);
+        if (paymentIndex === -1) return;
+
+        const paymentAmount = student.payments[paymentIndex].amount;
+        student.paidAmount = Math.max(0, (student.paidAmount || 0) - paymentAmount);
+
+        student.payments.splice(paymentIndex, 1);
+
+        db.ref('classes').set(classesDB);
+
+        renderAccountPaymentsList(student);
+        calculateAccountRemaining();
+
+        if (document.getElementById('groupDetailsView').classList.contains('fade-enter-active')) {
+            openGroupDetails(currentOpenedGroupId);
+        }
+    }
+
+    function calculateAccountRemaining() {
+        const totalFees = parseFloat(document.getElementById('accTotalFees').value) || 0;
+        const cls = classesDB.find(c => c.id === currentOpenedGroupId);
+        const student = cls.students.find(s => s.id === currentAccountStudentId);
+        
+        let paidAmount = 0;
+        if (student && student.paidAmount) {
+            paidAmount = student.paidAmount;
+        }
+
+        const remaining = Math.max(0, totalFees - paidAmount);
+        document.getElementById('accRemainingAmount').innerText = `${remaining.toLocaleString()} ج.م`;
+    }
+
+    document.getElementById('accTotalFees')?.addEventListener('input', calculateAccountRemaining);
+
+    function saveStudentAccount() {
+        const cls = classesDB.find(c => c.id === currentOpenedGroupId);
+        const student = cls.students.find(s => s.id === currentAccountStudentId);
+        if (!student) return;
+
+        const totalFees = parseFloat(document.getElementById('accTotalFees').value) || 0;
+        student.totalFees = totalFees;
+
+        db.ref('classes').set(classesDB);
+
+        alert('✅ تم حفظ الحساب المالي بنجاح!');
+        closeStudentAccountModal();
+        
+        if (document.getElementById('groupDetailsView').classList.contains('fade-enter-active')) {
+            openGroupDetails(currentOpenedGroupId);
+        }
+    }
+
+    function sendWhatsAppInvoice() {
+        const cls = classesDB.find(c => c.id === currentOpenedGroupId);
+        const student = cls.students.find(s => s.id === currentAccountStudentId);
+        if (!student) return;
+
+        const totalFees = parseFloat(document.getElementById('accTotalFees').value) || 0;
+        const paidAmount = student.paidAmount || 0;
+        const remaining = Math.max(0, totalFees - paidAmount);
+
+        let message = `*فاتورة حساب الطالب*\n`;
+        message += `الاسم: ${student.name}\n`;
+        message += `المجموعة: ${cls.groupName}\n`;
+        message += `-------------------------\n`;
+        message += `*المبلغ الإجمالي:* ${totalFees.toLocaleString()} ج.م\n`;
+        message += `*إجمالي المدفوع:* ${paidAmount.toLocaleString()} ج.م\n`;
+        message += `*المتبقي:* ${remaining.toLocaleString()} ج.م\n`;
+        
+        if (student.payments && student.payments.length > 0) {
+            message += `-------------------------\n`;
+            message += `*تفاصيل الدفعات:*\n`;
+            student.payments.forEach((p, i) => {
+                message += `${i+1}. ${p.amount} ج.م (${p.date || ''})\n`;
+            });
+        }
+        
+        message += `-------------------------\n`;
+        message += `شكراً لتعاملكم معنا 🌟`;
+
+        const phone = student.phone.replace(/^0/, '20');
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    }
+
+    // ==========================================================
 
     function closePaymentModal() {
         document.getElementById('paymentModal').style.display = 'none';
@@ -3233,7 +3458,7 @@ select.input-base{ font-size: 19px !important; }
         });
     }
     let editSelectedDays = [];
-    let currentEditingClass = null; // متغير جديد لتخزين المجموعة الجاري تعديلها
+    let currentEditingClass = null;
 
     function renderEditDaysSelector() {
         const container = document.getElementById('editDaysSelector');
@@ -3258,7 +3483,7 @@ select.input-base{ font-size: 19px !important; }
         const cls = classesDB.find(c => c.id === classId);
         if(!cls) return;
 
-        currentEditingClass = cls; // نحفظ المرجع للاستخدام في الخريطة
+        currentEditingClass = cls;
 
         document.getElementById('editClassId').value = cls.id;
         document.getElementById('editGroupName').value = cls.groupName;
@@ -3285,7 +3510,6 @@ select.input-base{ font-size: 19px !important; }
             maxCapacityInput.value = cls.maxCapacity || '';
         }
 
-        // ========== تحميل بيانات الموقع الحالية ==========
         document.getElementById('editCenterName').value = cls.location || '';
         document.getElementById('editCenterAddress').value = cls.address || '';
         document.getElementById('editTeacherLat').value = cls.lat || '';
@@ -3308,7 +3532,6 @@ select.input-base{ font-size: 19px !important; }
             status.className = "text-xs text-rose-600 font-bold text-center mt-3 flex items-center justify-center gap-1";
         }
 
-        // تحديث المتغيرات المؤقتة للخريطة
         tempLat = cls.lat ? parseFloat(cls.lat) : null;
         tempLng = cls.lng ? parseFloat(cls.lng) : null;
         tempRadius = cls.radius ? parseFloat(cls.radius) : 2000;
@@ -3348,7 +3571,6 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
 
-        // ========== التحقق من بيانات الموقع ==========
         const newLocationName = document.getElementById('editCenterName').value.trim();
         const newAddress = document.getElementById('editCenterAddress').value.trim();
         const newLat = document.getElementById('editTeacherLat').value;
@@ -3370,7 +3592,6 @@ select.input-base{ font-size: 19px !important; }
         const oldLng = parseFloat(cls.lng || 0);
         const locationChanged = Math.abs(oldLat - parseFloat(newLat)) > 0.00001 || Math.abs(oldLng - parseFloat(newLng)) > 0.00001;
 
-        // ========== حفظ كل البيانات ==========
         cls.groupName = document.getElementById('editGroupName').value;
         cls.startTime = startTime;
         cls.endTime = endTime;
@@ -3387,7 +3608,6 @@ select.input-base{ font-size: 19px !important; }
             cls.maxCapacity = 1;
         }
 
-        // حفظ بيانات الموقع الجديدة
         cls.location = newLocationName;
         cls.address = newAddress;
         cls.lat = parseFloat(newLat);
