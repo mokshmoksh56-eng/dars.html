@@ -676,6 +676,44 @@ input[type=range] { accent-color: var(--primary-600); }
     text-align: center;
 }
 
+/* ✅ أزرار التنقل بين الأيام داخل الـ Drawer */
+.drawer-day-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.drawer-day-nav-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fff;
+    border: 2px solid var(--primary-200);
+    color: var(--primary-800);
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px -4px rgba(30, 58, 138, 0.2);
+}
+.drawer-day-nav-btn:hover {
+    background: var(--primary-50);
+    border-color: var(--primary-400);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -6px rgba(30, 58, 138, 0.4);
+}
+.drawer-day-nav-btn:active {
+    transform: scale(0.96);
+}
+.drawer-day-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
 @media (max-width: 640px) {
     .calendar-drawer { max-width: 92%; }
     .week-slot .time-badge { font-size: 11px; padding: 5px 9px; }
@@ -1201,7 +1239,7 @@ select.input-base{ font-size: 19px !important; }
                         <span class="single-badge !bg-sky-100 !text-sky-800 !border-sky-300">المواعيد ظاهرة</span>
                     </label>
                     <p class="text-[11px] text-slate-500 font-bold mb-2 leading-relaxed">
-                        💡 اضغط على أي يوم لعرض جدول الأسبوع كامل بالمواعيد.
+                        💡 اضغط على أي يوم لعرض جدول اليوم فقط بالمواعيد.
                     </p>
                     <div class="smart-calendar-card">
                         <div class="calendar-header">
@@ -1545,19 +1583,20 @@ select.input-base{ font-size: 19px !important; }
     </div>
 </div>
 
-<!-- ═══════════ Side Drawer للتقويم الأسبوعي ═══════════ -->
+<!-- ═══════════ Side Drawer للتقويم اليومي ═══════════ -->
 <div id="calendarDrawerOverlay" class="calendar-drawer-overlay" onclick="closeCalendarDrawer()"></div>
 
 <div id="calendarDrawer" class="calendar-drawer">
     <div class="calendar-drawer-header">
-        <h3>
+        <button type="button" class="calendar-drawer-close" onclick="closeCalendarDrawer()" style="transform: rotate(0deg); font-size: 22px;" title="رجوع">→</button>
+        <h3 style="flex:1; justify-content:center; text-align:center;">
             <span>📅</span>
             <div>
-                <span>جدول الأسبوع</span>
+                <span>جدول اليوم</span>
                 <span class="sub" id="calendarDrawerRange">--</span>
             </div>
         </h3>
-        <button type="button" class="calendar-drawer-close" onclick="closeCalendarDrawer()">✕</button>
+        <div style="width:40px; height:40px; flex-shrink:0;"></div>
     </div>
     <div class="calendar-drawer-body" id="calendarDrawerBody">
         <!-- سيتم توليد المحتوى ديناميكياً -->
@@ -1593,7 +1632,7 @@ select.input-base{ font-size: 19px !important; }
     }
 
     document.addEventListener('click', function(e) {
-        const target = e.target.closest('button, a, .day-chip, .acc-chip, .stage-card, .option-btn, .type-btn, .filter-chip, .role-card, .calendar-cell, .calendar-nav-btn, .add-class-subject-chip, .quick-radius-btn, .filter-chip, input[type="radio"], input[type="checkbox"], input[type="range"], .banner-group-item, .payment-item-delete, .custom-subject-delete');
+        const target = e.target.closest('button, a, .day-chip, .acc-chip, .stage-card, .option-btn, .type-btn, .filter-chip, .role-card, .calendar-cell, .calendar-nav-btn, .add-class-subject-chip, .quick-radius-btn, .filter-chip, input[type="radio"], input[type="checkbox"], input[type="range"], .banner-group-item, .payment-item-delete, .custom-subject-delete, .drawer-day-nav-btn');
         if (target) {
             playClickSound();
         }
@@ -3217,7 +3256,7 @@ select.input-base{ font-size: 19px !important; }
         openCalendarDrawer(day);
     }
 
-    // ═══════════ فتح/إغلاق الـ Drawer ═══════════
+    // ═══════════ فتح/إغلاق الـ Drawer - يعرض اليوم المختار فقط ═══════════
     function openCalendarDrawer(day) {
         if (!currentTeacherProfile) return;
         
@@ -3231,101 +3270,79 @@ select.input-base{ font-size: 19px !important; }
         const year = currentCalendarDate.getFullYear();
         const month = currentCalendarDate.getMonth();
         const selectedDate = new Date(year, month, day);
-        const dayOfWeek = selectedDate.getDay();
         const selectedDayKey = getWeekdayKeyFromDate(selectedDate);
-        
-        // ✅ حساب بداية ونهاية الأسبوع (السبت → الجمعة)
-        const offsetFromSat = (dayOfWeek + 1) % 7;
-        const weekStartDate = new Date(year, month, day - offsetFromSat);
-        const weekEndDate = new Date(weekStartDate.getFullYear(), weekStartDate.getMonth(), weekStartDate.getDate() + 6);
+        const wdInfo = WEEK_DAYS.find(d => d.key === selectedDayKey);
         
         const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-        const startMonthName = arabicMonths[weekStartDate.getMonth()];
-        const endMonthName = arabicMonths[weekEndDate.getMonth()];
         
-        let rangeText = '';
-        if (weekStartDate.getMonth() === weekEndDate.getMonth()) {
-            rangeText = `من ${weekStartDate.getDate()} إلى ${weekEndDate.getDate()} ${startMonthName} ${weekEndDate.getFullYear()}`;
-        } else {
-            rangeText = `من ${weekStartDate.getDate()} ${startMonthName} إلى ${weekEndDate.getDate()} ${endMonthName} ${weekEndDate.getFullYear()}`;
+        // ✅ عرض التاريخ المختار فقط
+        if (rangeEl) {
+            rangeEl.textContent = `${wdInfo.name} ${day} ${arabicMonths[month]} ${year}`;
         }
         
-        if (rangeEl) rangeEl.textContent = rangeText;
-        
-        // ✅ جلب كل مجموعات المدرس
+        // ✅ جلب مجموعات هذا اليوم فقط
         const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile.phone);
-        
-        // حساب إجمالي الدروس في الأسبوع
-        let totalWeekLessons = 0;
-        const weekOrder = ['sat','sun','mon','tue','wed','thu','fri'];
-        weekOrder.forEach(wk => {
-            totalWeekLessons += teacherClasses.filter(c => c.days && c.days.includes(wk)).length;
-        });
+        const dayGroups = teacherClasses.filter(c => c.days && c.days.includes(selectedDayKey));
         
         // ✅ بطاقة الملخص
         let html = `
             <div class="drawer-summary">
-                <div class="summary-icon">📚</div>
+                <div class="summary-icon">${wdInfo.emoji}</div>
                 <div class="summary-text">
-                    <div class="t1">إجمالي دروس الأسبوع</div>
-                    <div class="t2">موزعة على ${teacherClasses.length} مجموعة</div>
+                    <div class="t1">${wdInfo.name}</div>
+                    <div class="t2">${dayGroups.length > 0 ? `${dayGroups.length} درس في هذا اليوم` : 'لا توجد دروس'}</div>
                 </div>
-                <div class="summary-num">${totalWeekLessons}</div>
+                <div class="summary-num">${dayGroups.length}</div>
             </div>
         `;
         
-        // ✅ عرض أيام الأسبوع السبعة
-        weekOrder.forEach(wk => {
-            const wdInfo = WEEK_DAYS.find(d => d.key === wk);
-            if (!wdInfo) return;
-            
-            const dayGroups = teacherClasses.filter(c => c.days && c.days.includes(wk));
-            const isSelectedDay = wk === selectedDayKey;
-            const isEmpty = dayGroups.length === 0;
-            
-            let groupsHtml = '';
-            if (isEmpty) {
-                groupsHtml = `<div class="week-no-lessons">🎉 يوم فراغ - لا توجد دروس</div>`;
-            } else {
-                const sorted = [...dayGroups].sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
-                groupsHtml = sorted.map((cls, idx) => {
-                    const stageKey = getStageForGrade(cls.grade) !== 'custom' 
-                        ? getStageForGrade(cls.grade) 
-                        : getStageForSubject(cls.subject);
-                    const colorInfo = STAGE_COLORS[stageKey] || STAGE_COLORS.custom;
-                    
-                    let locIcon = '🏫';
-                    if (cls.type === 'teacher_home') locIcon = '🏡';
-                    else if (cls.type === 'student_home') locIcon = '🚗';
-                    
-                    const startTxt = formatHour12(cls.startTime);
-                    const endTxt = formatHour12(cls.endTime);
-                    const timeText = `من ${startTxt} : ${endTxt}`;
-                    
-                    return `
-                        <div class="week-slot" style="border-right-color:${colorInfo.solid}; background:${colorInfo.bg}; animation-delay:${idx * 0.05}s;">
-                            <span class="text-base flex-shrink-0">${locIcon}</span>
-                            <div class="flex-1 min-w-0">
-                                <div class="font-black text-[13px] truncate" style="color:${colorInfo.text};">${cls.groupName}</div>
-                                <div class="text-[11px] font-bold opacity-85 truncate mt-0.5" style="color:${colorInfo.text};">📚 ${cls.subject || ''}</div>
-                            </div>
-                            <span class="time-badge" style="background:${colorInfo.solid}; color:#fff;">${timeText}</span>
-                        </div>
-                    `;
-                }).join('');
-            }
-            
+        // ✅ عرض المجموعات أو رسالة فارغة
+        if (dayGroups.length === 0) {
             html += `
-                <div class="week-day-block ${isSelectedDay ? 'selected-day-highlight' : ''} ${isEmpty ? 'empty-day' : ''}">
-                    <div class="week-day-header">
-                        <span class="text-lg">${wdInfo.emoji}</span>
-                        <span class="font-black">${wdInfo.name}</span>
-                        ${!isEmpty ? `<span class="count-pill">${dayGroups.length}</span>` : ''}
+                <div class="week-day-block empty-day" style="animation-delay: 0.05s;">
+                    <div class="week-day-body">
+                        <div class="week-no-lessons">🎉 يوم فراغ - لا توجد دروس</div>
                     </div>
-                    <div class="week-day-body">${groupsHtml}</div>
                 </div>
             `;
-        });
+        } else {
+            const sorted = [...dayGroups].sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+            
+            html += `<div class="week-day-block" style="animation-delay: 0.05s;">
+                <div class="week-day-header">
+                    <span class="text-lg">📚</span>
+                    <span class="font-black">جدول اليوم</span>
+                    <span class="count-pill">${sorted.length}</span>
+                </div>
+                <div class="week-day-body">
+                    ${sorted.map((cls, idx) => {
+                        const stageKey = getStageForGrade(cls.grade) !== 'custom' 
+                            ? getStageForGrade(cls.grade) 
+                            : getStageForSubject(cls.subject);
+                        const colorInfo = STAGE_COLORS[stageKey] || STAGE_COLORS.custom;
+                        
+                        let locIcon = '🏫';
+                        if (cls.type === 'teacher_home') locIcon = '🏡';
+                        else if (cls.type === 'student_home') locIcon = '🚗';
+                        
+                        const startTxt = formatHour12(cls.startTime);
+                        const endTxt = formatHour12(cls.endTime);
+                        const timeText = `من ${startTxt} : ${endTxt}`;
+                        
+                        return `
+                            <div class="week-slot" style="border-right-color:${colorInfo.solid}; background:${colorInfo.bg}; animation-delay:${idx * 0.05}s;">
+                                <span class="text-base flex-shrink-0">${locIcon}</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-black text-[13px] truncate" style="color:${colorInfo.text};">${cls.groupName}</div>
+                                    <div class="text-[11px] font-bold opacity-85 truncate mt-0.5" style="color:${colorInfo.text};">📚 ${cls.subject || ''}</div>
+                                </div>
+                                <span class="time-badge" style="background:${colorInfo.solid}; color:#fff;">${timeText}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>`;
+        }
         
         bodyEl.innerHTML = html;
         
@@ -3333,8 +3350,6 @@ select.input-base{ font-size: 19px !important; }
         drawer.classList.add('open');
         overlay.classList.add('open');
         document.body.style.overflow = 'hidden';
-        
-        // ✅ إعادة تعيين موضع التمرير للأعلى
         bodyEl.scrollTop = 0;
     }
 
@@ -3350,6 +3365,40 @@ select.input-base{ font-size: 19px !important; }
         // إزالة التحديد من التقويم
         selectedCalendarDay = null;
         renderSmartCalendar();
+    }
+
+    // ✅ التنقل لليوم السابق
+    function goToPreviousDay() {
+        if (!selectedCalendarDay) return;
+        
+        const year = currentCalendarDate.getFullYear();
+        const month = currentCalendarDate.getMonth();
+        const prevDate = new Date(year, month, selectedCalendarDay - 1);
+        
+        if (prevDate.getMonth() !== month) {
+            currentCalendarDate.setMonth(month - 1);
+        }
+        
+        selectedCalendarDay = prevDate.getDate();
+        renderSmartCalendar();
+        openCalendarDrawer(selectedCalendarDay);
+    }
+
+    // ✅ التنقل لليوم التالي
+    function goToNextDay() {
+        if (!selectedCalendarDay) return;
+        
+        const year = currentCalendarDate.getFullYear();
+        const month = currentCalendarDate.getMonth();
+        const nextDate = new Date(year, month, selectedCalendarDay + 1);
+        
+        if (nextDate.getMonth() !== month) {
+            currentCalendarDate.setMonth(month + 1);
+        }
+        
+        selectedCalendarDay = nextDate.getDate();
+        renderSmartCalendar();
+        openCalendarDrawer(selectedCalendarDay);
     }
 
     function handleAddClass(e) {
