@@ -1663,6 +1663,14 @@ select.input-base{ font-size: 19px !important; }
     let currentAccountStudentId = null;
     let weatherData = null;
 
+    // ✅ حفظ اختيار كل مرحلة على حدة (الصف + المادة)
+    let stageSelections = {
+        kg: { grade: null, subject: null },
+        primary: { grade: null, subject: null },
+        prep: { grade: null, subject: null },
+        secondary: { grade: null, subject: null }
+    };
+
     function fetchClassesFromFirebase() {
         db.ref('classes').on('value', (snapshot) => {
             const data = snapshot.val();
@@ -1745,9 +1753,8 @@ select.input-base{ font-size: 19px !important; }
         const today = new Date();
         const currentDay = today.getDay();
         
-        // حساب عدد الأيام من اليوم الحالي لليوم المستهدف (هذا الأسبوع)
         let diff = targetDay - currentDay;
-        if (diff < 0) diff += 7; // الأسبوع القادم لو فات
+        if (diff < 0) diff += 7;
         
         const targetDate = new Date(today);
         targetDate.setDate(today.getDate() + diff);
@@ -1775,7 +1782,6 @@ select.input-base{ font-size: 19px !important; }
             const isActive = selectedDays.includes(day.key);
             const hasConflict = conflictDays.includes(day.key);
             
-            // ✅ استخدام أيقونة الطقس الحقيقية لهذا اليوم من هذا الأسبوع
             const dateObj = getDateForWeekday(day.key);
             const weatherIcon = getWeatherIconForDate(dateObj) || day.emoji;
             
@@ -2444,6 +2450,13 @@ select.input-base{ font-size: 19px !important; }
             selectedClassStage = null;
             selectedDays = [];
             openAccordionStage = null;
+            // ✅ إعادة تعيين اختيارات المراحل
+            stageSelections = {
+                kg: { grade: null, subject: null },
+                primary: { grade: null, subject: null },
+                prep: { grade: null, subject: null },
+                secondary: { grade: null, subject: null }
+            };
             localStorage.removeItem('logged_in_teacher_phone');
             document.getElementById('loginFormContainer').reset?.();
             document.getElementById('registerFormContainer').reset?.();
@@ -2518,6 +2531,12 @@ select.input-base{ font-size: 19px !important; }
             openAccordionStage = null;
             currentOpenedGroupId = null;
             currentAccountStudentId = null;
+            stageSelections = {
+                kg: { grade: null, subject: null },
+                primary: { grade: null, subject: null },
+                prep: { grade: null, subject: null },
+                secondary: { grade: null, subject: null }
+            };
 
             alert(
                 '✅ تم حذف حسابك بنجاح\n\n' +
@@ -2914,7 +2933,7 @@ select.input-base{ font-size: 19px !important; }
         // ✅ تحميل الأرصاد الجوية + إعادة رسم الأيام لحظة وصول الطقس
         getWeatherForecast(30.0444, 31.2357).then(data => {
             weatherData = data;
-            renderDaysSelector(); // ✅ إعادة رسم أيام الأسبوع بالطقس الحقيقي
+            renderDaysSelector();
             if(document.getElementById('teacherClassDetailsView').classList.contains('fade-enter-active')) {
                 renderSmartCalendar();
             }
@@ -2954,6 +2973,13 @@ select.input-base{ font-size: 19px !important; }
             document.getElementById('classSubjectGradeGrid').classList.add('hidden');
             return;
         }
+        
+        // ✅ تهيئة الاختيارات لكل المراحل
+        availableStages.forEach(sk => {
+            if (!stageSelections[sk]) {
+                stageSelections[sk] = { grade: null, subject: null };
+            }
+        });
         
         if (!selectedClassStage || !availableStages.includes(selectedClassStage)) {
             selectedClassStage = availableStages[0];
@@ -3036,6 +3062,7 @@ select.input-base{ font-size: 19px !important; }
         renderClassStageSelector();
     }
 
+    // ═══════════ عرض الصفوف مع حفظ اختيار كل مرحلة ═══════════
     function renderClassGradeSelector() {
         const container = document.getElementById('classGradeContainer');
         if (!container || !currentTeacherProfile) return;
@@ -3052,31 +3079,50 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
         
+        // ✅ استرجاع الاختيار المحفوظ لهذه المرحلة (أو اختيار أول صف افتراضياً)
+        const savedGrade = stageSelections[selectedClassStage]?.grade;
+        const validSavedGrade = grades.includes(savedGrade) ? savedGrade : grades[0];
+        
+        if (!stageSelections[selectedClassStage]) {
+            stageSelections[selectedClassStage] = { grade: null, subject: null };
+        }
+        stageSelections[selectedClassStage].grade = validSavedGrade;
+        
         const gradesHtml = grades.map(grade => {
-            let isSel = false;
+            const isSel = grade === validSavedGrade;
+            const safeGrade = grade.replace(/'/g, "\\'");
             return `
                 <label>
-                    <input type="radio" name="classGrade" value="${grade}" class="hidden" ${isSel ? 'checked' : ''}>
-                    <div class="add-class-subject-chip ${isSel ? 'selected' : ''}" data-stage="${selectedClassStage}">🎯 ${grade}</div>
+                    <input type="radio" name="classGrade_${selectedClassStage}" value="${grade}" class="hidden" ${isSel ? 'checked' : ''}>
+                    <div class="add-class-subject-chip ${isSel ? 'selected' : ''}" data-stage="${selectedClassStage}" onclick="event.preventDefault(); selectGradeForStage('${selectedClassStage}', '${safeGrade}')">🎯 ${grade}</div>
                 </label>`;
         }).join('');
         
         container.innerHTML = `<div class="flex flex-wrap gap-2">${gradesHtml}</div>`;
-        
-        container.querySelectorAll('input[name="classGrade"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                container.querySelectorAll('.add-class-subject-chip').forEach(c => c.classList.remove('selected'));
-                if (this.checked) this.nextElementSibling.classList.add('selected');
-            });
-        });
-        
-        const checked = container.querySelector('input[name="classGrade"]:checked');
-        if (!checked) {
-            const first = container.querySelector('input[name="classGrade"]');
-            if (first) { first.checked = true; first.nextElementSibling.classList.add('selected'); }
-        }
     }
 
+    // ✅ دالة اختيار الصف لكل مرحلة على حدة
+    function selectGradeForStage(stage, grade) {
+        if (!stageSelections[stage]) {
+            stageSelections[stage] = { grade: null, subject: null };
+        }
+        stageSelections[stage].grade = grade;
+        
+        const container = document.getElementById('classGradeContainer');
+        container.querySelectorAll('.add-class-subject-chip').forEach(c => c.classList.remove('selected'));
+        
+        const radios = container.querySelectorAll(`input[name="classGrade_${stage}"]`);
+        radios.forEach(r => {
+            if (r.value === grade) {
+                r.checked = true;
+                r.nextElementSibling.classList.add('selected');
+            } else {
+                r.checked = false;
+            }
+        });
+    }
+
+    // ═══════════ عرض المواد مع حفظ اختيار كل مرحلة ═══════════
     function renderClassSubjectSelector() {
         const container = document.getElementById('classSubjectContainer');
         if (!container || !currentTeacherProfile) return;
@@ -3095,23 +3141,41 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
         
+        // ✅ استرجاع الاختيار المحفوظ لهذه المرحلة
+        const allAvailableSubjects = [...stageSubjects, ...customSubjects];
+        const savedSubject = stageSelections[selectedClassStage]?.subject;
+        const validSavedSubject = allAvailableSubjects.includes(savedSubject) ? savedSubject : (stageSubjects[0] || customSubjects[0]);
+        
+        if (!stageSelections[selectedClassStage]) {
+            stageSelections[selectedClassStage] = { grade: null, subject: null };
+        }
+        stageSelections[selectedClassStage].subject = validSavedSubject;
+        
         let html = '';
         
         if (stageSubjects.length > 0) {
-            const stageHtml = stageSubjects.map(sub => `
-                <label>
-                    <input type="radio" name="classSubject" value="${sub}" class="hidden">
-                    <div class="add-class-subject-chip" data-stage="${selectedClassStage}">📚 ${sub}</div>
-                </label>`).join('');
+            const stageHtml = stageSubjects.map(sub => {
+                const isSel = sub === validSavedSubject;
+                const safeSub = sub.replace(/'/g, "\\'");
+                return `
+                    <label>
+                        <input type="radio" name="classSubject_${selectedClassStage}" value="${sub}" class="hidden" ${isSel ? 'checked' : ''}>
+                        <div class="add-class-subject-chip ${isSel ? 'selected' : ''}" data-stage="${selectedClassStage}" onclick="event.preventDefault(); selectSubjectForStage('${selectedClassStage}', '${safeSub}')">📚 ${sub}</div>
+                    </label>`;
+            }).join('');
             html += `<div class="flex flex-wrap gap-2">${stageHtml}</div>`;
         }
         
         if (customSubjects.length > 0) {
-            const customHtml = customSubjects.map(sub => `
-                <label>
-                    <input type="radio" name="classSubject" value="${sub}" class="hidden">
-                    <div class="add-class-subject-chip" data-stage="custom">✏️ ${sub}</div>
-                </label>`).join('');
+            const customHtml = customSubjects.map(sub => {
+                const isSel = sub === validSavedSubject;
+                const safeSub = sub.replace(/'/g, "\\'");
+                return `
+                    <label>
+                        <input type="radio" name="classSubject_${selectedClassStage}" value="${sub}" class="hidden" ${isSel ? 'checked' : ''}>
+                        <div class="add-class-subject-chip ${isSel ? 'selected' : ''}" data-stage="custom" onclick="event.preventDefault(); selectSubjectForStage('${selectedClassStage}', '${safeSub}')">✏️ ${sub}</div>
+                    </label>`;
+            }).join('');
             
             html += `
                 <div class="w-full ${stageSubjects.length > 0 ? 'mt-3 pt-3 border-t border-dashed border-slate-300' : ''}">
@@ -3123,16 +3187,27 @@ select.input-base{ font-size: 19px !important; }
         }
         
         container.innerHTML = html;
+    }
+
+    // ✅ دالة اختيار المادة لكل مرحلة على حدة
+    function selectSubjectForStage(stage, subject) {
+        if (!stageSelections[stage]) {
+            stageSelections[stage] = { grade: null, subject: null };
+        }
+        stageSelections[stage].subject = subject;
         
-        container.querySelectorAll('input[name="classSubject"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                container.querySelectorAll('.add-class-subject-chip').forEach(c => c.classList.remove('selected'));
-                if (this.checked) this.nextElementSibling.classList.add('selected');
-            });
+        const container = document.getElementById('classSubjectContainer');
+        container.querySelectorAll('.add-class-subject-chip').forEach(c => c.classList.remove('selected'));
+        
+        const radios = container.querySelectorAll(`input[name="classSubject_${stage}"]`);
+        radios.forEach(r => {
+            if (r.value === subject) {
+                r.checked = true;
+                r.nextElementSibling.classList.add('selected');
+            } else {
+                r.checked = false;
+            }
         });
-        
-        const first = container.querySelector('input[name="classSubject"]');
-        if (first) { first.checked = true; first.nextElementSibling.classList.add('selected'); }
     }
 
     const originalShowView = showView;
@@ -3449,11 +3524,19 @@ select.input-base{ font-size: 19px !important; }
         const lng = document.getElementById('teacherLng').value;
         if(!lat || !lng) { alert("يرجى تحديد نقطة الدرس على الخريطة أولاً!"); return; }
         
-        const selectedSubjectEl = document.querySelector('input[name="classSubject"]:checked');
-        if(!selectedSubjectEl) { alert("يرجى اختيار المادة الدراسية"); return; }
+        // ✅ استخدام الاختيار المحفوظ للمرحلة الحالية
+        const currentSelection = stageSelections[selectedClassStage];
+        if (!currentSelection || !currentSelection.grade) {
+            alert("يرجى اختيار الصف الدراسي");
+            return;
+        }
+        if (!currentSelection.subject) {
+            alert("يرجى اختيار المادة الدراسية");
+            return;
+        }
         
-        const selectedGradeEl = document.querySelector('input[name="classGrade"]:checked');
-        if(!selectedGradeEl) { alert("يرجى اختيار الصف الدراسي"); return; }
+        const selectedGrade = currentSelection.grade;
+        const selectedSubject = currentSelection.subject;
         
         if(selectedDays.length === 0) { alert("يرجى اختيار يوم واحد على الأقل"); return; }
         
@@ -3491,8 +3574,8 @@ select.input-base{ font-size: 19px !important; }
             phone: currentTeacherProfile.phone,
             subjects: currentTeacherProfile.subjects || [],
             grades: currentTeacherProfile.grades || [],
-            subject: selectedSubjectEl.value,
-            grade: selectedGradeEl.value,
+            subject: selectedSubject,
+            grade: selectedGrade,
             gov: currentTeacherProfile.gov,
             stage: selectedClassStage,
             groupName: document.getElementById('groupName').value, 
@@ -3553,6 +3636,13 @@ select.input-base{ font-size: 19px !important; }
 
         updateLocationPlaceholder();
         
+        // ✅ إعادة تعيين اختيارات المراحل بعد النجاح
+        stageSelections = {
+            kg: { grade: null, subject: null },
+            primary: { grade: null, subject: null },
+            prep: { grade: null, subject: null },
+            secondary: { grade: null, subject: null }
+        };
         selectedClassStage = null;
         
         showView('teacherDashboardView'); 
@@ -4156,7 +4246,6 @@ select.input-base{ font-size: 19px !important; }
             const isActive = editSelectedDays.includes(day.key);
             const hasConflict = conflictDays.includes(day.key);
             
-            // ✅ استخدام أيقونة الطقس الحقيقية
             const dateObj = getDateForWeekday(day.key);
             const weatherIcon = getWeatherIconForDate(dateObj) || day.emoji;
             
