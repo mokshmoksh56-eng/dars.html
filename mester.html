@@ -164,7 +164,7 @@ input[type=range] { accent-color: var(--primary-600); }
 .contact-info-box .icon { font-size:18px; }
 .contact-info-box .num { direction:ltr; font-weight:900; letter-spacing:0.5px; }
 .days-selector { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-.day-chip { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:12px 4px; border-radius:12px; font-size:13px; font-weight:900; background:#F8FAFC; border:1.5px solid #CBD5E1; color:#475569; cursor:pointer; transition:all .2s ease; user-select:none; }
+.day-chip { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:12px 4px; border-radius:12px; font-size:13px; font-weight:900; background:#F8FAFC; border:1.5px solid #CBD5E1; color:#475569; cursor:pointer; transition:all .2s ease; user-select:none; }
 .day-chip .day-emoji { font-size:26px; line-height:1; }
 .day-chip.active { background:linear-gradient(135deg,var(--primary-600),var(--primary-900)); color:#fff; border-color:var(--primary-900); box-shadow:0 4px 12px rgba(30,58,138,.35); }
 .day-chip.active .day-emoji { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
@@ -396,7 +396,6 @@ input[type=range] { accent-color: var(--primary-600); }
 .calendar-cell.has-bookings { background: #F8FAFC; border-color: #CBD5E1; }
 .calendar-cell.has-bookings:hover { background: #F1F5F9; border-color: var(--primary-400); }
 
-/* ✅ أيقونة الطقس فقط في خلايا التقويم */
 .calendar-weather {
     position: absolute;
     bottom: 2px;
@@ -523,7 +522,6 @@ input[type=range] { accent-color: var(--primary-600); }
 .calendar-drawer-body::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 999px; }
 .calendar-drawer-body::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-/* ✅ مقبض السحب المرئي */
 .drawer-swipe-handle {
     position: absolute;
     top: 50%;
@@ -742,6 +740,400 @@ input[type=range] { accent-color: var(--primary-600); }
     gap: 10px;
 }
 
+/* ═══════════ Modal حالة اليوم - جديد ═══════════ */
+.day-status-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 30, 63, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.day-status-modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.day-status-card {
+    background: #fff;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.5);
+    animation: dayStatusIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+.day-status-card::-webkit-scrollbar { width: 5px; }
+.day-status-card::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 999px; }
+
+@keyframes dayStatusIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.day-status-header {
+    padding: 22px 20px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.day-status-header::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-600), var(--gold-400), var(--gold-600));
+}
+
+.day-status-header .day-emoji-big {
+    font-size: 60px;
+    line-height: 1;
+    display: block;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+    animation: dayEmojiFloat 3s ease-in-out infinite;
+}
+
+@keyframes dayEmojiFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.day-status-header .day-name {
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 5px;
+}
+
+.day-status-header .day-date {
+    font-size: 13px;
+    font-weight: 800;
+    opacity: 0.9;
+}
+
+.day-status-close {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+.day-status-close:hover {
+    background: rgba(255,255,255,0.35);
+    transform: rotate(90deg) scale(1.1);
+}
+.day-status-close:active {
+    transform: scale(0.9) rotate(90deg);
+}
+
+.day-status-body {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.day-status-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 900;
+    animation: badgePulse 2s ease-in-out infinite;
+    border: 2px solid;
+    text-align: center;
+}
+
+.day-status-badge.available {
+    background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+    color: #065F46;
+    border-color: #10B981;
+    box-shadow: 0 4px 14px -4px rgba(16, 185, 129, 0.5);
+}
+
+.day-status-badge.partial {
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    color: #92400E;
+    border-color: #F59E0B;
+    box-shadow: 0 4px 14px -4px rgba(245, 158, 11, 0.5);
+}
+
+.day-status-badge.full {
+    background: linear-gradient(135deg, #FEE2E2, #FECACA);
+    color: #991B1B;
+    border-color: #EF4444;
+    box-shadow: 0 4px 14px -4px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.day-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.day-stat-box {
+    background: #fff;
+    border: 2px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 12px;
+    text-align: center;
+}
+
+.day-stat-box.booked-stat {
+    border-color: #FCA5A5;
+    background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+}
+
+.day-stat-box.free-stat {
+    border-color: #6EE7B7;
+    background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+}
+
+.day-stat-box .stat-num {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.day-stat-box.booked-stat .stat-num {
+    color: #DC2626;
+}
+
+.day-stat-box.free-stat .stat-num {
+    color: #059669;
+}
+
+.day-stat-box .stat-label {
+    font-size: 11px;
+    font-weight: 900;
+    opacity: 0.85;
+}
+
+.day-stat-box.booked-stat .stat-label {
+    color: #991B1B;
+}
+
+.day-stat-box.free-stat .stat-label {
+    color: #065F46;
+}
+
+.day-slots-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.day-slot-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 2px solid;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    animation: slotItemIn 0.4s ease-out backwards;
+}
+
+.day-slot-item:nth-child(1) { animation-delay: 0.05s; }
+.day-slot-item:nth-child(2) { animation-delay: 0.10s; }
+.day-slot-item:nth-child(3) { animation-delay: 0.15s; }
+.day-slot-item:nth-child(4) { animation-delay: 0.20s; }
+.day-slot-item:nth-child(5) { animation-delay: 0.25s; }
+.day-slot-item:nth-child(6) { animation-delay: 0.30s; }
+
+@keyframes slotItemIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.day-slot-item.booked {
+    background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+    border-color: #FCA5A5;
+}
+
+.day-slot-item.free {
+    background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+    border-color: #6EE7B7;
+}
+
+.day-slot-item .slot-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px -2px rgba(0,0,0,0.15);
+}
+
+.day-slot-item.booked .slot-icon {
+    background: linear-gradient(135deg, #EF4444, #991B1B);
+    color: #fff;
+}
+
+.day-slot-item.free .slot-icon {
+    background: linear-gradient(135deg, #10B981, #047857);
+    color: #fff;
+}
+
+.day-slot-item .slot-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.day-slot-item .slot-title {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.day-slot-item.booked .slot-title {
+    color: #7F1D1D;
+}
+
+.day-slot-item.free .slot-title {
+    color: #065F46;
+}
+
+.day-slot-item .slot-subtitle {
+    font-size: 11px;
+    font-weight: 800;
+    opacity: 0.9;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+.day-slot-item.booked .slot-subtitle {
+    color: #991B1B;
+}
+
+.day-slot-item.free .slot-subtitle {
+    color: #047857;
+}
+
+.day-slot-item .slot-time {
+    font-size: 11px;
+    font-weight: 900;
+    padding: 5px 9px;
+    border-radius: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.2px;
+    box-shadow: 0 2px 6px -2px rgba(0,0,0,0.2);
+}
+
+.day-slot-item.booked .slot-time {
+    background: linear-gradient(135deg, #EF4444, #B91C1C);
+    color: #fff;
+}
+
+.day-slot-item.free .slot-time {
+    background: linear-gradient(135deg, #10B981, #047857);
+    color: #fff;
+}
+
+.booking-badge-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(255,255,255,0.85);
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 900;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.day-empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: #64748B;
+    font-weight: 800;
+}
+
+.day-empty-state .empty-emoji {
+    font-size: 60px;
+    display: block;
+    margin-bottom: 10px;
+    animation: dayEmojiFloat 3s ease-in-out infinite;
+}
+
+.day-empty-state .empty-text {
+    font-size: 15px;
+    margin-bottom: 5px;
+    color: #334155;
+}
+
+.day-empty-state .empty-sub {
+    font-size: 12px;
+    opacity: 0.8;
+    font-weight: 700;
+    color: #64748B;
+    line-height: 1.6;
+}
+
+.day-status-action-btn {
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 900;
+    font-size: 15px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-900));
+    box-shadow: 0 8px 20px -10px rgba(30, 58, 138, 0.7);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 4px;
+}
+.day-status-action-btn:active {
+    transform: scale(0.97);
+}
+.day-status-action-btn.selected {
+    background: linear-gradient(135deg, #EF4444, #991B1B);
+    box-shadow: 0 8px 20px -10px rgba(239, 68, 68, 0.7);
+}
+
 @media (max-width: 640px) {
     .calendar-drawer { max-width: 92%; }
     .week-slot .time-badge { font-size: 11px; padding: 5px 9px; }
@@ -897,7 +1289,6 @@ select.input-base{ font-size: 19px !important; }
 
     <div class="flex-1 relative w-full">
 
-        <!-- واجهة المصادقة -->
         <div id="authView" class="fade-enter-active">
             <h2 class="text-[18px] font-black text-[var(--primary-900)] mb-4 flex items-center gap-2">
                 <span>🔐</span> تسجيل الدخول للمعلمين
@@ -1217,7 +1608,7 @@ select.input-base{ font-size: 19px !important; }
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
                     <p class="text-[12.5px] text-[var(--primary-800)] font-black mb-3 text-center flex items-center justify-center gap-1.5 bg-white py-2 rounded-lg border border-[var(--primary-200)]">
                         <span>👆</span>
-                        <span>اختر مواعيد الدرس من الأيام التالية</span>
+                        <span>اضغط على أي يوم لعرض مواعيده</span>
                     </p>
                     <div class="days-selector" id="daysSelector"></div>
                 </div>
@@ -1631,8 +2022,14 @@ select.input-base{ font-size: 19px !important; }
     </div>
 </div>
 
+<!-- ═══════════ Modal حالة اليوم ═══════════ -->
+<div id="dayStatusModal" class="day-status-modal" onclick="closeDayStatusModal(event)">
+    <div class="day-status-card" onclick="event.stopPropagation()">
+        <div id="dayStatusContent"></div>
+    </div>
+</div>
+
 <script>
-    // ✅ نظام صوت الضغط - يعمل على جميع الأزرار والروابط
     let clickAudioCtx = null;
     function playClickSound() {
         try {
@@ -1687,7 +2084,6 @@ select.input-base{ font-size: 19px !important; }
     let currentAccountStudentId = null;
     let weatherData = null;
 
-    // ✅ حفظ اختيار كل مرحلة على حدة
     let stageSelections = {
         kg: { grade: null, subject: null },
         primary: { grade: null, subject: null },
@@ -1802,10 +2198,19 @@ select.input-base{ font-size: 19px !important; }
             const isActive = selectedDays.includes(day.key);
             const hasConflict = conflictDays.includes(day.key);
             
+            const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile?.phone);
+            const dayBookings = teacherClasses.filter(c => c.days && c.days.includes(day.key));
+            const hasBookings = dayBookings.length > 0;
+            
             const dateObj = getDateForWeekday(day.key);
             const weatherIcon = getWeatherIconForDate(dateObj) || day.emoji;
             
-            return `<div class="day-chip ${isActive ? 'active' : ''} ${hasConflict ? 'conflict' : ''}" onclick="toggleDay('${day.key}')">
+            const bookingBadge = hasBookings 
+                ? `<span style="position:absolute; top:5px; left:5px; background:linear-gradient(135deg,#EF4444,#991B1B); color:#fff; font-size:10px; font-weight:900; min-width:20px; height:20px; padding:0 5px; border-radius:999px; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index:3;">${dayBookings.length}</span>` 
+                : '';
+            
+            return `<div class="day-chip ${isActive ? 'active' : ''} ${hasConflict ? 'conflict' : ''}" onclick="toggleDay('${day.key}')" style="position:relative;">
+                ${bookingBadge}
                 <span class="day-emoji">${weatherIcon}</span>
                 <span>${day.name}${hasConflict ? ' ⚠️' : ''}</span>
             </div>`;
@@ -1813,13 +2218,8 @@ select.input-base{ font-size: 19px !important; }
     }
 
     function toggleDay(dayKey) {
-        const idx = selectedDays.indexOf(dayKey);
-        if(idx > -1) selectedDays.splice(idx, 1);
-        else selectedDays.push(dayKey);
-        renderDaysSelector();
-        updateSchedulePreview();
-        renderSmartCalendar();
-        updateScheduleConflictWarning();
+        // ✅ فتح modal حالة اليوم
+        openDayStatusModal(dayKey);
     }
 
     function updateSchedulePreview() {
@@ -2957,7 +3357,6 @@ select.input-base{ font-size: 19px !important; }
             }
         });
 
-        // ✅ تهيئة السحب للقائمة
         initDrawerSwipe();
 
         document.addEventListener('keydown', (e) => {
@@ -2965,6 +3364,10 @@ select.input-base{ font-size: 19px !important; }
                 const drawer = document.getElementById('calendarDrawer');
                 if (drawer && drawer.classList.contains('open')) {
                     closeCalendarDrawer();
+                }
+                const dayModal = document.getElementById('dayStatusModal');
+                if (dayModal && dayModal.classList.contains('show')) {
+                    closeDayStatusModal();
                 }
             }
         });
@@ -3430,7 +3833,6 @@ select.input-base{ font-size: 19px !important; }
         
         if (!drawer || !overlay || !bodyEl) return;
         
-        // ✅ إعادة تعيين أي transform سابق من السحب
         drawer.style.transform = '';
         drawer.style.transition = '';
         
@@ -3529,7 +3931,6 @@ select.input-base{ font-size: 19px !important; }
         overlay.classList.remove('open');
         document.body.style.overflow = '';
         
-        // ✅ إعادة تعيين الـ transform بعد الإغلاق
         setTimeout(() => {
             drawer.style.transform = '';
             drawer.style.transition = '';
@@ -3539,9 +3940,7 @@ select.input-base{ font-size: 19px !important; }
         renderSmartCalendar();
     }
 
-    // ═══════════════════════════════════════════════════════
-    // ✅ Swipe Gesture لسحب القائمة المنبثقة للإغلاق
-    // ═══════════════════════════════════════════════════════
+    // ═══════════ Swipe Gesture ═══════════
     let drawerTouchStartX = 0;
     let drawerTouchStartY = 0;
     let drawerTouchCurrentX = 0;
@@ -3553,9 +3952,7 @@ select.input-base{ font-size: 19px !important; }
         if (!drawerEl || drawerSwipeInitialized) return;
         drawerSwipeInitialized = true;
 
-        // ✅ بداية اللمس
         drawerEl.addEventListener('touchstart', (e) => {
-            // تجاهل لو جاي من عنصر قابل للتمرير جوه (scroll)
             drawerTouchStartX = e.touches[0].clientX;
             drawerTouchStartY = e.touches[0].clientY;
             drawerTouchCurrentX = drawerTouchStartX;
@@ -3563,7 +3960,6 @@ select.input-base{ font-size: 19px !important; }
             drawerEl.style.transition = 'none';
         }, { passive: true });
 
-        // ✅ أثناء السحب
         drawerEl.addEventListener('touchmove', (e) => {
             if (!drawerTouchStartX) return;
 
@@ -3571,7 +3967,6 @@ select.input-base{ font-size: 19px !important; }
             const diffX = drawerTouchCurrentX - drawerTouchStartX;
             const diffY = e.touches[0].clientY - drawerTouchStartY;
 
-            // ✅ لو الحركة عمودية أكثر → نسمح بالـ scroll العادي
             if (!drawerIsDragging) {
                 if (Math.abs(diffY) > Math.abs(diffX) * 1.2) {
                     return;
@@ -3581,7 +3976,6 @@ select.input-base{ font-size: 19px !important; }
                 }
             }
 
-            // ✅ السحب لليمين فقط (لأن القائمة على اليمين)
             if (diffX > 0) {
                 drawerIsDragging = true;
                 e.preventDefault();
@@ -3591,7 +3985,6 @@ select.input-base{ font-size: 19px !important; }
 
                 drawerEl.style.transform = `translateX(${translateX}px)`;
 
-                // ✅ تفاعل الـ overlay مع السحب
                 const overlay = document.getElementById('calendarDrawerOverlay');
                 if (overlay) {
                     const opacity = Math.max(0, 0.6 * (1 - translateX / maxTranslate));
@@ -3600,7 +3993,6 @@ select.input-base{ font-size: 19px !important; }
             }
         }, { passive: false });
 
-        // ✅ نهاية اللمس
         drawerEl.addEventListener('touchend', () => {
             if (!drawerIsDragging) {
                 drawerEl.style.transition = '';
@@ -3609,26 +4001,22 @@ select.input-base{ font-size: 19px !important; }
 
             const diffX = drawerTouchCurrentX - drawerTouchStartX;
             const drawerWidth = drawerEl.offsetWidth;
-            const threshold = drawerWidth * 0.3; // 30%
+            const threshold = drawerWidth * 0.3;
 
             drawerEl.style.transition = '';
 
             if (diffX > threshold) {
-                // ✅ سحب كافي → اقفل القائمة
                 closeCalendarDrawer();
             } else {
-                // ✅ رجّع القائمة لمكانها
                 drawerEl.style.transform = '';
             }
 
-            // ✅ رجّع الـ overlay لحالته
             const overlay = document.getElementById('calendarDrawerOverlay');
             if (overlay) overlay.style.background = '';
 
             drawerIsDragging = false;
         });
 
-        // ✅ لو المستخدم لغى اللمس
         drawerEl.addEventListener('touchcancel', () => {
             drawerEl.style.transition = '';
             drawerEl.style.transform = '';
@@ -3637,6 +4025,166 @@ select.input-base{ font-size: 19px !important; }
             const overlay = document.getElementById('calendarDrawerOverlay');
             if (overlay) overlay.style.background = '';
         });
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // ✅ Modal حالة اليوم - عرض جميل ومبتكر
+    // ═══════════════════════════════════════════════════════
+
+    function openDayStatusModal(dayKey) {
+        const modal = document.getElementById('dayStatusModal');
+        const content = document.getElementById('dayStatusContent');
+        if (!modal || !content) return;
+        
+        const dayInfo = WEEK_DAYS.find(d => d.key === dayKey);
+        if (!dayInfo) return;
+        
+        const teacherClasses = classesDB.filter(c => c.phone === currentTeacherProfile?.phone);
+        const dayGroups = teacherClasses.filter(c => c.days && c.days.includes(dayKey));
+        
+        const dateObj = getDateForWeekday(dayKey);
+        const weatherIcon = getWeatherIconForDate(dateObj) || dayInfo.emoji;
+        
+        const arabicMonths = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+        const arabicDays = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+        const dateText = `${arabicDays[dateObj.getDay()]} ${dateObj.getDate()} ${arabicMonths[dateObj.getMonth()]}`;
+        
+        const totalSlots = dayGroups.length;
+        const totalStudents = dayGroups.reduce((sum, g) => sum + ((g.bookedBoys || 0) + (g.bookedGirls || 0)), 0);
+        
+        const isDaySelected = selectedDays.includes(dayKey);
+        
+        let statusClass = 'available';
+        let statusIcon = '✅';
+        let statusText = '';
+        let headerColor = '';
+        
+        if (totalSlots === 0) {
+            statusClass = 'available';
+            statusIcon = '🎉';
+            statusText = 'اليوم متاح بالكامل - لا توجد حجوزات';
+            headerColor = 'linear-gradient(135deg, #10B981, #047857)';
+        } else if (totalSlots >= 3) {
+            statusClass = 'full';
+            statusIcon = '🔥';
+            statusText = `اليوم مزدحم - ${totalSlots} مجموعات محجوزة`;
+            headerColor = 'linear-gradient(135deg, #EF4444, #991B1B)';
+        } else {
+            statusClass = 'partial';
+            statusIcon = '⚡';
+            statusText = `اليوم فيه ${totalSlots} ${totalSlots === 1 ? 'مجموعة' : 'مجموعات'} - فيه مواعيد متاحة`;
+            headerColor = 'linear-gradient(135deg, #F59E0B, #B45309)';
+        }
+        
+        let slotsHtml = '';
+        
+        if (dayGroups.length === 0) {
+            slotsHtml = `
+                <div class="day-empty-state">
+                    <span class="empty-emoji">${weatherIcon}</span>
+                    <div class="empty-text">لا توجد مجموعات محجوزة في هذا اليوم</div>
+                    <div class="empty-sub">💡 يمكنك إضافة مواعيد جديدة لهذا اليوم<br>من خلال اختيار هذا اليوم وملء بيانات الموعد</div>
+                </div>
+            `;
+        } else {
+            const sortedGroups = [...dayGroups].sort((a, b) => {
+                return timeToMinutes(a.startTime) - timeToMinutes(b.startTime);
+            });
+            
+            slotsHtml = `<div class="day-slots-list">${sortedGroups.map((group, idx) => {
+                const startTxt = formatHour12(group.startTime);
+                const endTxt = formatHour12(group.endTime);
+                const totalBooked = (group.bookedBoys || 0) + (group.bookedGirls || 0);
+                const isFull = totalBooked >= group.maxCapacity;
+                
+                let typeIcon = '🏫';
+                if (group.type === 'teacher_home') typeIcon = '🏡';
+                else if (group.type === 'student_home') typeIcon = '🚗';
+                
+                return `
+                    <div class="day-slot-item booked" style="animation-delay: ${idx * 0.05}s;">
+                        <div class="slot-icon">${typeIcon}</div>
+                        <div class="slot-info">
+                            <div class="slot-title">${group.groupName}</div>
+                            <div class="slot-subtitle">
+                                <span class="booking-badge-mini">🎯 ${group.grade || ''}</span>
+                                <span class="booking-badge-mini">📚 ${group.subject || ''}</span>
+                                <span class="booking-badge-mini">${isFull ? '🔴 مكتمل' : `👥 ${totalBooked}/${group.maxCapacity}`}</span>
+                            </div>
+                        </div>
+                        <span class="slot-time">${startTxt} : ${endTxt}</span>
+                    </div>
+                `;
+            }).join('')}</div>`;
+        }
+        
+        content.innerHTML = `
+            <div class="day-status-header" style="background: ${headerColor};">
+                <button type="button" class="day-status-close" onclick="closeDayStatusModal()">✕</button>
+                <span class="day-emoji-big">${weatherIcon}</span>
+                <div class="day-name">${dayInfo.name}</div>
+                <div class="day-date">📅 ${dateText}</div>
+            </div>
+            
+            <div class="day-status-body">
+                <div class="day-status-badge ${statusClass}">
+                    <span style="font-size:20px;">${statusIcon}</span>
+                    <span>${statusText}</span>
+                </div>
+                
+                ${totalSlots > 0 ? `
+                    <div class="day-stats-grid">
+                        <div class="day-stat-box booked-stat">
+                            <div class="stat-num">${totalSlots}</div>
+                            <div class="stat-label">🎯 مجموعة</div>
+                        </div>
+                        <div class="day-stat-box free-stat">
+                            <div class="stat-num">${totalStudents}</div>
+                            <div class="stat-label">👥 طالب</div>
+                        </div>
+                    </div>
+                ` : ''}
+                
+                ${slotsHtml}
+                
+                <button type="button" onclick="closeDayStatusModalAndSelect('${dayKey}')" 
+                    class="day-status-action-btn ${isDaySelected ? 'selected' : ''}">
+                    <span>${isDaySelected ? '✕' : '✓'}</span>
+                    <span>${isDaySelected ? 'إلغاء اختيار هذا اليوم' : 'اختيار هذا اليوم للدرس'}</span>
+                </button>
+            </div>
+        `;
+        
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDayStatusModal(event) {
+        const modal = document.getElementById('dayStatusModal');
+        if (!modal) return;
+        
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    function closeDayStatusModalAndSelect(dayKey) {
+        const modal = document.getElementById('dayStatusModal');
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        selectDayAfterModal(dayKey);
+    }
+
+    function selectDayAfterModal(dayKey) {
+        const idx = selectedDays.indexOf(dayKey);
+        if(idx > -1) selectedDays.splice(idx, 1);
+        else selectedDays.push(dayKey);
+        renderDaysSelector();
+        updateSchedulePreview();
+        renderSmartCalendar();
+        updateScheduleConflictWarning();
     }
 
     function handleAddClass(e) {
