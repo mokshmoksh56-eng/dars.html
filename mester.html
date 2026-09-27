@@ -396,7 +396,7 @@ input[type=range] { accent-color: var(--primary-600); }
 .calendar-cell.has-bookings { background: #F8FAFC; border-color: #CBD5E1; }
 .calendar-cell.has-bookings:hover { background: #F1F5F9; border-color: var(--primary-400); }
 
-/* ✅ أيقونة الطقس فقط في خلايا التقويم (بدون كتابة) */
+/* ✅ أيقونة الطقس فقط في خلايا التقويم */
 .calendar-weather {
     position: absolute;
     bottom: 2px;
@@ -440,9 +440,13 @@ input[type=range] { accent-color: var(--primary-600); }
     transform: translateX(100%);
     transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     will-change: transform;
+    touch-action: pan-y;
 }
 .calendar-drawer.open {
     transform: translateX(0);
+}
+.calendar-drawer.dragging {
+    transition: none !important;
 }
 
 .calendar-drawer-header {
@@ -519,6 +523,46 @@ input[type=range] { accent-color: var(--primary-600); }
 .calendar-drawer-body::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 999px; }
 .calendar-drawer-body::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
+/* ✅ مقبض السحب المرئي */
+.drawer-swipe-handle {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 10px 5px;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(8px);
+    border-radius: 999px;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    pointer-events: none;
+    animation: handlePulse 2.5s ease-in-out infinite;
+}
+.drawer-swipe-handle span {
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--primary-700);
+    opacity: 0.7;
+}
+@keyframes handlePulse {
+    0%, 100% { 
+        opacity: 0.7;
+        transform: translateY(-50%) scale(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: translateY(-50%) scale(1.08);
+    }
+}
+
 .week-day-block {
     border-radius: 14px;
     background: #fff;
@@ -528,14 +572,6 @@ input[type=range] { accent-color: var(--primary-600); }
     animation: drawerItemIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
     box-shadow: 0 2px 8px -4px rgba(15, 23, 42, 0.1);
 }
-.week-day-block:nth-child(1) { animation-delay: 0.04s; }
-.week-day-block:nth-child(2) { animation-delay: 0.08s; }
-.week-day-block:nth-child(3) { animation-delay: 0.12s; }
-.week-day-block:nth-child(4) { animation-delay: 0.16s; }
-.week-day-block:nth-child(5) { animation-delay: 0.20s; }
-.week-day-block:nth-child(6) { animation-delay: 0.24s; }
-.week-day-block:nth-child(7) { animation-delay: 0.28s; }
-
 @keyframes drawerItemIn {
     from { opacity: 0; transform: translateX(30px); }
     to { opacity: 1; transform: translateX(0); }
@@ -580,10 +616,6 @@ input[type=range] { accent-color: var(--primary-600); }
     min-width: 26px;
     text-align: center;
     box-shadow: 0 2px 6px -2px rgba(37, 99, 235, 0.5);
-}
-.week-day-block.selected-day-highlight .count-pill {
-    background: #D97706;
-    box-shadow: 0 2px 6px -2px rgba(217, 119, 6, 0.6);
 }
 .week-day-block.empty-day .count-pill {
     background: #CBD5E1;
@@ -688,7 +720,6 @@ input[type=range] { accent-color: var(--primary-600); }
     text-align: center;
 }
 
-/* ✅ بطاقة الطقس في القائمة - أيقونة فقط */
 .drawer-weather-badge {
     display: flex;
     align-items: center;
@@ -840,11 +871,6 @@ select.input-base{ font-size: 19px !important; }
 
 .account-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; margin-bottom: 20px; overflow: hidden; }
 .account-card-header { background: linear-gradient(135deg, #1E3A8A 0%, #0F2D5C 100%); color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-.account-card-body { padding: 15px; }
-.account-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #E2E8F0; }
-.account-row:last-child { border-bottom: none; }
-.account-row-label { font-size: 13px; color: #64748B; font-weight: 800; }
-.account-row-value { font-size: 15px; color: #0F172A; font-weight: 900; }
 .account-total-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .account-remaining-box { background: #0A1E3F; color: #fff; border-radius: 12px; padding: 15px; text-align: center; margin-top: 15px; }
 .account-remaining-box p { font-size: 12px; opacity: 0.8; margin-bottom: 5px; }
@@ -1122,7 +1148,6 @@ select.input-base{ font-size: 19px !important; }
                     </div>
                 </div>
 
-                <!-- ═══════════ 1. العدد المطلوب ═══════════ -->
                 <div id="capacityContainer" class="mb-4">
                     <div class="flex items-center gap-2 mb-2">
                         <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">1</div>
@@ -1131,21 +1156,18 @@ select.input-base{ font-size: 19px !important; }
                     <input type="number" id="maxCapacity" required placeholder="مثال: 30" min="1" class="input-base text-center">
                 </div>
 
-                <!-- ═══════════ 2. اسم المجموعة ═══════════ -->
                 <div class="flex items-center gap-2 mb-2 mt-4">
                     <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">2</div>
                     <label class="field-label !mb-0">اسم المجموعة <span class="text-rose-500">*</span></label>
                 </div>
                 <input type="text" id="groupName" required placeholder="مثال: مجموعة السبت، المجموعة الأولى..." class="input-base">
 
-                <!-- ═══════════ 3. اسم السنتر / المستر ═══════════ -->
                 <div class="flex items-center gap-2 mb-2 mt-4">
                     <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">3</div>
                     <label class="field-label !mb-0" id="locationLabel">اسم السنتر / المستر <span class="text-rose-500">*</span></label>
                 </div>
                 <input type="text" id="centerName" required placeholder="مثال: سنتر الأوائل / مستر أحمد" class="input-base">
 
-                <!-- ═══════════ 4. العنوان من GPS ═══════════ -->
                 <div class="mb-4 bg-gradient-to-br from-emerald-50 to-teal-50/40 p-4 rounded-2xl border-2 border-emerald-200 shadow-sm">
                     <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
                         <div class="flex items-center gap-2">
@@ -1188,7 +1210,6 @@ select.input-base{ font-size: 19px !important; }
                     <input type="hidden" id="teacherRadius"> 
                 </div>
 
-                <!-- ═══════════ 5. أيام الأسبوع ═══════════ -->
                 <div class="flex items-center gap-2 mb-2 mt-4">
                     <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">5</div>
                     <label class="field-label !mb-0">أيام الأسبوع <span class="text-rose-500">*</span></label>
@@ -1201,7 +1222,6 @@ select.input-base{ font-size: 19px !important; }
                     <div class="days-selector" id="daysSelector"></div>
                 </div>
 
-                <!-- ═══════════ 6. وقت الحصة ═══════════ -->
                 <div class="flex items-center gap-2 mb-2 mt-4">
                     <div class="w-7 h-7 rounded-full bg-[var(--primary-600)] text-white flex items-center justify-center font-black text-xs shadow-sm">6</div>
                     <label class="field-label !mb-0">وقت الحصة <span class="text-rose-500">*</span></label>
@@ -1590,6 +1610,11 @@ select.input-base{ font-size: 19px !important; }
 <div id="calendarDrawerOverlay" class="calendar-drawer-overlay" onclick="closeCalendarDrawer()"></div>
 
 <div id="calendarDrawer" class="calendar-drawer">
+    <div class="drawer-swipe-handle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
     <div class="calendar-drawer-header">
         <button type="button" class="calendar-drawer-close" onclick="closeCalendarDrawer()" style="transform: rotate(0deg); font-size: 22px;" title="رجوع">→</button>
         <h3 style="flex:1; justify-content:center; text-align:center;">
@@ -1641,7 +1666,6 @@ select.input-base{ font-size: 19px !important; }
         }
     }, true);
 
-    // ✅ أيام الأسبوع: السبت إلى الجمعة (7 أيام)
     const WEEK_DAYS = [
         { key: 'sat', name: 'السبت', emoji: '🌙' },
         { key: 'sun', name: 'الأحد', emoji: '☀️' },
@@ -1663,7 +1687,7 @@ select.input-base{ font-size: 19px !important; }
     let currentAccountStudentId = null;
     let weatherData = null;
 
-    // ✅ حفظ اختيار كل مرحلة على حدة (الصف + المادة)
+    // ✅ حفظ اختيار كل مرحلة على حدة
     let stageSelections = {
         kg: { grade: null, subject: null },
         primary: { grade: null, subject: null },
@@ -1690,7 +1714,6 @@ select.input-base{ font-size: 19px !important; }
         });
     }
 
-    // ✅ دالة لجلب الأرصاد الجوية من Open-Meteo
     async function getWeatherForecast(lat, lng) {
         try {
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weather_code&timezone=Africa/Cairo&forecast_days=16`;
@@ -1708,7 +1731,6 @@ select.input-base{ font-size: 19px !important; }
         }
     }
 
-    // ✅ تحويل كود الطقس إلى أيقونة فقط
     function getWeatherIcon(code) {
         const weatherIcons = {
             0: '☀️',
@@ -1733,7 +1755,6 @@ select.input-base{ font-size: 19px !important; }
         return weatherIcons[code] || '🌡️';
     }
 
-    // ✅ الحصول على أيقونة الطقس لتاريخ معين
     function getWeatherIconForDate(dateObj) {
         if (!weatherData || !weatherData.time) return null;
         const year = dateObj.getFullYear();
@@ -1745,7 +1766,6 @@ select.input-base{ font-size: 19px !important; }
         return getWeatherIcon(weatherData.weather_code[idx]);
     }
 
-    // ✅ ربط كل يوم من أيام الأسبوع بالتاريخ الفعلي لهذا الأسبوع
     function getDateForWeekday(dayKey) {
         const dayMap = { sat: 6, sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5 };
         const targetDay = dayMap[dayKey];
@@ -2450,7 +2470,6 @@ select.input-base{ font-size: 19px !important; }
             selectedClassStage = null;
             selectedDays = [];
             openAccordionStage = null;
-            // ✅ إعادة تعيين اختيارات المراحل
             stageSelections = {
                 kg: { grade: null, subject: null },
                 primary: { grade: null, subject: null },
@@ -2930,7 +2949,6 @@ select.input-base{ font-size: 19px !important; }
         document.getElementById('startTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); updateSchedulePreview(); });
         document.getElementById('endTime')?.addEventListener('input', () => { updateScheduleConflictWarning(); renderDaysSelector(); updateSchedulePreview(); });
 
-        // ✅ تحميل الأرصاد الجوية + إعادة رسم الأيام لحظة وصول الطقس
         getWeatherForecast(30.0444, 31.2357).then(data => {
             weatherData = data;
             renderDaysSelector();
@@ -2938,6 +2956,9 @@ select.input-base{ font-size: 19px !important; }
                 renderSmartCalendar();
             }
         });
+
+        // ✅ تهيئة السحب للقائمة
+        initDrawerSwipe();
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -2974,7 +2995,6 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
         
-        // ✅ تهيئة الاختيارات لكل المراحل
         availableStages.forEach(sk => {
             if (!stageSelections[sk]) {
                 stageSelections[sk] = { grade: null, subject: null };
@@ -3062,7 +3082,6 @@ select.input-base{ font-size: 19px !important; }
         renderClassStageSelector();
     }
 
-    // ═══════════ عرض الصفوف مع حفظ اختيار كل مرحلة ═══════════
     function renderClassGradeSelector() {
         const container = document.getElementById('classGradeContainer');
         if (!container || !currentTeacherProfile) return;
@@ -3079,7 +3098,6 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
         
-        // ✅ استرجاع الاختيار المحفوظ لهذه المرحلة (أو اختيار أول صف افتراضياً)
         const savedGrade = stageSelections[selectedClassStage]?.grade;
         const validSavedGrade = grades.includes(savedGrade) ? savedGrade : grades[0];
         
@@ -3101,7 +3119,6 @@ select.input-base{ font-size: 19px !important; }
         container.innerHTML = `<div class="flex flex-wrap gap-2">${gradesHtml}</div>`;
     }
 
-    // ✅ دالة اختيار الصف لكل مرحلة على حدة
     function selectGradeForStage(stage, grade) {
         if (!stageSelections[stage]) {
             stageSelections[stage] = { grade: null, subject: null };
@@ -3122,7 +3139,6 @@ select.input-base{ font-size: 19px !important; }
         });
     }
 
-    // ═══════════ عرض المواد مع حفظ اختيار كل مرحلة ═══════════
     function renderClassSubjectSelector() {
         const container = document.getElementById('classSubjectContainer');
         if (!container || !currentTeacherProfile) return;
@@ -3141,7 +3157,6 @@ select.input-base{ font-size: 19px !important; }
             return;
         }
         
-        // ✅ استرجاع الاختيار المحفوظ لهذه المرحلة
         const allAvailableSubjects = [...stageSubjects, ...customSubjects];
         const savedSubject = stageSelections[selectedClassStage]?.subject;
         const validSavedSubject = allAvailableSubjects.includes(savedSubject) ? savedSubject : (stageSubjects[0] || customSubjects[0]);
@@ -3189,7 +3204,6 @@ select.input-base{ font-size: 19px !important; }
         container.innerHTML = html;
     }
 
-    // ✅ دالة اختيار المادة لكل مرحلة على حدة
     function selectSubjectForStage(stage, subject) {
         if (!stageSelections[stage]) {
             stageSelections[stage] = { grade: null, subject: null };
@@ -3416,6 +3430,10 @@ select.input-base{ font-size: 19px !important; }
         
         if (!drawer || !overlay || !bodyEl) return;
         
+        // ✅ إعادة تعيين أي transform سابق من السحب
+        drawer.style.transform = '';
+        drawer.style.transition = '';
+        
         const year = currentCalendarDate.getFullYear();
         const month = currentCalendarDate.getMonth();
         const selectedDate = new Date(year, month, day);
@@ -3511,8 +3529,114 @@ select.input-base{ font-size: 19px !important; }
         overlay.classList.remove('open');
         document.body.style.overflow = '';
         
+        // ✅ إعادة تعيين الـ transform بعد الإغلاق
+        setTimeout(() => {
+            drawer.style.transform = '';
+            drawer.style.transition = '';
+        }, 400);
+        
         selectedCalendarDay = null;
         renderSmartCalendar();
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // ✅ Swipe Gesture لسحب القائمة المنبثقة للإغلاق
+    // ═══════════════════════════════════════════════════════
+    let drawerTouchStartX = 0;
+    let drawerTouchStartY = 0;
+    let drawerTouchCurrentX = 0;
+    let drawerIsDragging = false;
+    let drawerSwipeInitialized = false;
+
+    function initDrawerSwipe() {
+        const drawerEl = document.getElementById('calendarDrawer');
+        if (!drawerEl || drawerSwipeInitialized) return;
+        drawerSwipeInitialized = true;
+
+        // ✅ بداية اللمس
+        drawerEl.addEventListener('touchstart', (e) => {
+            // تجاهل لو جاي من عنصر قابل للتمرير جوه (scroll)
+            drawerTouchStartX = e.touches[0].clientX;
+            drawerTouchStartY = e.touches[0].clientY;
+            drawerTouchCurrentX = drawerTouchStartX;
+            drawerIsDragging = false;
+            drawerEl.style.transition = 'none';
+        }, { passive: true });
+
+        // ✅ أثناء السحب
+        drawerEl.addEventListener('touchmove', (e) => {
+            if (!drawerTouchStartX) return;
+
+            drawerTouchCurrentX = e.touches[0].clientX;
+            const diffX = drawerTouchCurrentX - drawerTouchStartX;
+            const diffY = e.touches[0].clientY - drawerTouchStartY;
+
+            // ✅ لو الحركة عمودية أكثر → نسمح بالـ scroll العادي
+            if (!drawerIsDragging) {
+                if (Math.abs(diffY) > Math.abs(diffX) * 1.2) {
+                    return;
+                }
+                if (Math.abs(diffX) < 8) {
+                    return;
+                }
+            }
+
+            // ✅ السحب لليمين فقط (لأن القائمة على اليمين)
+            if (diffX > 0) {
+                drawerIsDragging = true;
+                e.preventDefault();
+
+                const maxTranslate = drawerEl.offsetWidth;
+                const translateX = Math.min(diffX, maxTranslate);
+
+                drawerEl.style.transform = `translateX(${translateX}px)`;
+
+                // ✅ تفاعل الـ overlay مع السحب
+                const overlay = document.getElementById('calendarDrawerOverlay');
+                if (overlay) {
+                    const opacity = Math.max(0, 0.6 * (1 - translateX / maxTranslate));
+                    overlay.style.background = `rgba(10, 30, 63, ${opacity})`;
+                }
+            }
+        }, { passive: false });
+
+        // ✅ نهاية اللمس
+        drawerEl.addEventListener('touchend', () => {
+            if (!drawerIsDragging) {
+                drawerEl.style.transition = '';
+                return;
+            }
+
+            const diffX = drawerTouchCurrentX - drawerTouchStartX;
+            const drawerWidth = drawerEl.offsetWidth;
+            const threshold = drawerWidth * 0.3; // 30%
+
+            drawerEl.style.transition = '';
+
+            if (diffX > threshold) {
+                // ✅ سحب كافي → اقفل القائمة
+                closeCalendarDrawer();
+            } else {
+                // ✅ رجّع القائمة لمكانها
+                drawerEl.style.transform = '';
+            }
+
+            // ✅ رجّع الـ overlay لحالته
+            const overlay = document.getElementById('calendarDrawerOverlay');
+            if (overlay) overlay.style.background = '';
+
+            drawerIsDragging = false;
+        });
+
+        // ✅ لو المستخدم لغى اللمس
+        drawerEl.addEventListener('touchcancel', () => {
+            drawerEl.style.transition = '';
+            drawerEl.style.transform = '';
+            drawerIsDragging = false;
+
+            const overlay = document.getElementById('calendarDrawerOverlay');
+            if (overlay) overlay.style.background = '';
+        });
     }
 
     function handleAddClass(e) {
@@ -3524,7 +3648,6 @@ select.input-base{ font-size: 19px !important; }
         const lng = document.getElementById('teacherLng').value;
         if(!lat || !lng) { alert("يرجى تحديد نقطة الدرس على الخريطة أولاً!"); return; }
         
-        // ✅ استخدام الاختيار المحفوظ للمرحلة الحالية
         const currentSelection = stageSelections[selectedClassStage];
         if (!currentSelection || !currentSelection.grade) {
             alert("يرجى اختيار الصف الدراسي");
@@ -3636,7 +3759,6 @@ select.input-base{ font-size: 19px !important; }
 
         updateLocationPlaceholder();
         
-        // ✅ إعادة تعيين اختيارات المراحل بعد النجاح
         stageSelections = {
             kg: { grade: null, subject: null },
             primary: { grade: null, subject: null },
